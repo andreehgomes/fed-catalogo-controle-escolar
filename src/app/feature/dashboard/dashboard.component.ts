@@ -4,13 +4,18 @@ import { combineLatest } from "rxjs";
 import { CampaignService } from "src/app/shared/service/campaign/campaign.service";
 import { SaleService } from "src/app/shared/service/sale/sale.service";
 import { LoaderService } from "src/app/components/loader/loader.service";
-import { Campaign } from "src/app/shared/model/campaign";
+import { Campaign, CampaignSponsor } from "src/app/shared/model/campaign";
 import { Sale } from "src/app/shared/model/sale";
 
 interface TopItem {
   descricao: string;
   qtdTotal: number;
   valorTotal: number;
+}
+
+interface SponsorEntry {
+  sponsor: CampaignSponsor;
+  campaignNome: string;
 }
 
 @Component({
@@ -124,6 +129,30 @@ export class DashboardComponent implements OnInit {
     const key = this.campaignCtrl.value;
     if (!key) return undefined;
     return this.campaigns.find((c) => c.key === key);
+  }
+
+  get patrociniosFiltrados(): SponsorEntry[] {
+    const campKey = this.campaignCtrl.value ?? "";
+    const fonte = campKey
+      ? this.campaigns.filter((c) => c.key === campKey)
+      : this.campaigns;
+    const result: SponsorEntry[] = [];
+    fonte.forEach((c) => {
+      (c.patrocinadores ?? []).forEach((sponsor) => {
+        result.push({ sponsor, campaignNome: c.nome });
+      });
+    });
+    return result;
+  }
+
+  get totalPatrocinioValor(): number {
+    return this.patrociniosFiltrados
+      .filter((p) => p.sponsor.tipo === "valor")
+      .reduce((acc, p) => acc + (p.sponsor.valor ?? 0), 0);
+  }
+
+  get qtdPatrocinioProduto(): number {
+    return this.patrociniosFiltrados.filter((p) => p.sponsor.tipo === "produto").length;
   }
 
   get pctMeta(): number {

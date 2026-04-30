@@ -70,6 +70,22 @@
         </div>
       </mat-card>
 
+      <mat-card class="kpi-card kpi-pink" *ngIf="patrociniosFiltrados.length > 0">
+        <div class="kpi-icon"><mat-icon>volunteer_activism</mat-icon></div>
+        <div class="kpi-body">
+          <span class="kpi-label">Patrocínio (R$)</span>
+          <span class="kpi-value">R$ {{ fmt(totalPatrocinioValor) }}</span>
+        </div>
+      </mat-card>
+
+      <mat-card class="kpi-card kpi-teal" *ngIf="qtdPatrocinioProduto > 0">
+        <div class="kpi-icon"><mat-icon>inventory_2</mat-icon></div>
+        <div class="kpi-body">
+          <span class="kpi-label">Patrocínio (Produto)</span>
+          <span class="kpi-value">{{ qtdPatrocinioProduto }} {{ qtdPatrocinioProduto === 1 ? 'item' : 'itens' }}</span>
+        </div>
+      </mat-card>
+
       <mat-card class="kpi-card kpi-purple kpi-full" *ngIf="campaignSelecionada?.meta">
         <div class="kpi-icon"><mat-icon>flag</mat-icon></div>
         <div class="kpi-body">
@@ -99,6 +115,26 @@
         <span class="top-desc">{{ it.descricao }}</span>
         <span class="top-qtd">{{ it.qtdTotal }} un</span>
         <span class="top-valor">R$ {{ fmt(it.valorTotal) }}</span>
+      </div>
+    </mat-card>
+
+    <mat-card class="section-card" *ngIf="patrociniosFiltrados.length > 0">
+      <h3>
+        <mat-icon>volunteer_activism</mat-icon>
+        Patrocinadores
+      </h3>
+      <div class="pat-row" *ngFor="let p of patrociniosFiltrados">
+        <div class="pat-info">
+          <span class="pat-nome">{{ p.sponsor.nome }}</span>
+          <span class="pat-meta" *ngIf="!campaignSelecionada">{{ p.campaignNome }}</span>
+          <span class="pat-detalhe pat-detalhe-produto" *ngIf="p.sponsor.tipo === 'produto'">
+            {{ p.sponsor.produto }}
+          </span>
+        </div>
+        <span class="pat-valor" *ngIf="p.sponsor.tipo === 'valor'">R$ {{ fmt(p.sponsor.valor || 0) }}</span>
+        <span class="pat-tipo-pill" [class.produto]="p.sponsor.tipo === 'produto'">
+          {{ p.sponsor.tipo === 'valor' ? 'R$' : 'Produto' }}
+        </span>
       </div>
     </mat-card>
 
