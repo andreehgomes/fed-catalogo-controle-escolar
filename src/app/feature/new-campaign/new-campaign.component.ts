@@ -19,6 +19,7 @@ export class NewCampaignComponent implements OnInit {
   alerta: { tipo: AlertasType; codigo: string; mensagem: string } | null = null;
   editingKey: string | null = null;
   private dataCriacaoOriginal: string | null = null;
+  private patrocinadoresOriginais: Campaign["patrocinadores"] = undefined;
 
   itemDescricaoCtrl = new FormControl<string>("", { nonNullable: true, validators: [Validators.required] });
   itemValorCtrl = new FormControl<number | null>(null, [Validators.required, Validators.min(0.01)]);
@@ -46,6 +47,7 @@ export class NewCampaignComponent implements OnInit {
     if (selected) {
       this.editingKey = selected.key ?? null;
       this.dataCriacaoOriginal = selected.dataCriacao;
+      this.patrocinadoresOriginais = selected.patrocinadores;
       this.form.patchValue({
         nome: selected.nome,
         descricao: selected.descricao ?? "",
@@ -108,6 +110,9 @@ export class NewCampaignComponent implements OnInit {
       ...(v.dataFim ? { dataFim: v.dataFim } : {}),
       ...(v.meta ? { meta: v.meta } : {}),
       ...(itensPadrao.length > 0 ? { itensPadrao } : {}),
+      ...(this.patrocinadoresOriginais && this.patrocinadoresOriginais.length > 0
+        ? { patrocinadores: this.patrocinadoresOriginais }
+        : {}),
     };
 
     const obs$: Observable<unknown> = this.editingKey

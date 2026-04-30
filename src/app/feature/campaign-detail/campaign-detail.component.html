@@ -37,6 +37,46 @@
       <mat-progress-bar mode="determinate" color="accent" [value]="pctMeta"></mat-progress-bar>
     </mat-card>
 
+    <mat-card class="patrocinio-card">
+      <div class="patrocinio-header">
+        <mat-icon>volunteer_activism</mat-icon>
+        <span>Patrocinadores</span>
+        <span class="pat-total" *ngIf="totalPatrocinioValor > 0">
+          R$ {{ fmt(totalPatrocinioValor) }}
+        </span>
+      </div>
+
+      <div class="pat-list" *ngIf="campaign.patrocinadores?.length">
+        <div class="pat-item" *ngFor="let p of campaign.patrocinadores; let i = index">
+          <div class="pat-info">
+            <span class="pat-nome">{{ p.nome }}</span>
+            <span class="pat-detalhe" *ngIf="p.tipo === 'valor'">
+              R$ {{ fmt(p.valor || 0) }}
+            </span>
+            <span class="pat-detalhe pat-detalhe-produto" *ngIf="p.tipo === 'produto'">
+              {{ p.produto }}
+            </span>
+            <span class="pat-obs" *ngIf="p.observacao">{{ p.observacao }}</span>
+          </div>
+          <span class="pat-tipo-pill" [class.produto]="p.tipo === 'produto'">
+            {{ p.tipo === 'valor' ? 'R$' : 'Produto' }}
+          </span>
+          <button mat-icon-button class="btn-pat-delete" (click)="excluirPatrocinador(i)" title="Remover">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <div class="pat-empty" *ngIf="!campaign.patrocinadores?.length">
+        Nenhum patrocinador cadastrado.
+      </div>
+
+      <button mat-stroked-button color="accent" class="btn-add-pat" (click)="adicionarPatrocinio()">
+        <mat-icon>add</mat-icon>
+        Adicionar patrocínio
+      </button>
+    </mat-card>
+
     <button mat-flat-button color="accent" class="btn-nova-venda" (click)="novaVenda()">
       <mat-icon>add</mat-icon>
       Nova venda nesta campanha

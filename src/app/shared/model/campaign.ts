@@ -5,6 +5,16 @@ export interface CampaignDefaultItem {
   valorUnitario: number;
 }
 
+export type SponsorTipo = 'valor' | 'produto';
+
+export interface CampaignSponsor {
+  nome: string;
+  tipo: SponsorTipo;
+  valor?: number;       // R$ — quando tipo === 'valor'
+  produto?: string;     // descrição do produto — quando tipo === 'produto'
+  observacao?: string;
+}
+
 export interface Campaign {
   key?: string;
   nome: string;
@@ -15,6 +25,7 @@ export interface Campaign {
   meta?: number;
   status: CampaignStatus;
   itensPadrao?: CampaignDefaultItem[];
+  patrocinadores?: CampaignSponsor[];
   dataCriacao: string;
   dataAlteracao?: string;
 }

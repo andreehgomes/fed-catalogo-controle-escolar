@@ -11,6 +11,7 @@ export enum RouterEnum {
   CAMPAIGN_LIST = "campaign-list",
   NEW_CAMPAIGN = "new-campaign",
   CAMPAIGN_DETAIL = "campaign-detail",
+  NEW_SPONSOR = "new-sponsor",
 
   CLIENT_LIST = "client-list",
   NEW_CLIENT = "new-client",

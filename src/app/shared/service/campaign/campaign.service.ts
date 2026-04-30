@@ -4,7 +4,7 @@ import {
   orderByChild, equalTo, startAt, endAt, limitToFirst, limitToLast,
 } from "@angular/fire/database";
 import { BehaviorSubject, Observable } from "rxjs";
-import { Campaign, CampaignStatus } from "../../model/campaign";
+import { Campaign, CampaignStatus, CampaignSponsor } from "../../model/campaign";
 import { Path } from "../../model/path.enum";
 
 export const PAGE_SIZE = 50;
@@ -142,6 +142,19 @@ export class CampaignService {
     return runInInjectionContext(this.injector, () =>
       remove(ref(this.database, `${Path.CAMPAIGN}/${key}`))
     );
+  }
+
+  updatePatrocinadores(
+    campaignKey: string,
+    patrocinadores: CampaignSponsor[]
+  ): Promise<void> {
+    return runInInjectionContext(this.injector, () => {
+      const value = patrocinadores.length > 0 ? patrocinadores : null;
+      return update(ref(this.database, `${Path.CAMPAIGN}/${campaignKey}`), {
+        patrocinadores: value,
+        dataAlteracao: new Date().toISOString(),
+      });
+    });
   }
 
   private mapSnapshot(snapshot: any, observer: any): void {

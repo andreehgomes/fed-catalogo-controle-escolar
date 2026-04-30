@@ -1,0 +1,59 @@
+<div class="page" *ngIf="campaign">
+  <div class="header">
+    <button mat-icon-button class="btn-back" (click)="cancelar()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <span class="page-title">Novo patrocínio</span>
+  </div>
+
+  <div class="page-content">
+    <mat-card class="info-card">
+      <span class="info-label">Campanha</span>
+      <span class="info-value">{{ campaign.nome }}</span>
+    </mat-card>
+
+    <form [formGroup]="form" class="form-card">
+      <card-alert
+        *ngIf="alerta?.codigo != null"
+        tipo="{{ alerta.tipo }}"
+        codigo="{{ alerta.codigo }}"
+        mensagem="{{ alerta.mensagem }}"
+      ></card-alert>
+
+      <div class="fields">
+        <mat-form-field appearance="outline" color="accent" class="field-full">
+          <mat-label>Nome do patrocinador</mat-label>
+          <mat-icon matPrefix>volunteer_activism</mat-icon>
+          <input matInput formControlName="nome" autocomplete="off" />
+        </mat-form-field>
+
+        <span class="section-label">Tipo de patrocínio</span>
+        <mat-button-toggle-group [formControl]="tipoCtrl" class="tipo-toggle">
+          <mat-button-toggle value="valor">Valor (R$)</mat-button-toggle>
+          <mat-button-toggle value="produto">Produto</mat-button-toggle>
+        </mat-button-toggle-group>
+
+        <input-moeda *ngIf="tipoCtrl.value === 'valor'"
+                     formControlName="valor" label="Valor patrocinado" />
+
+        <mat-form-field *ngIf="tipoCtrl.value === 'produto'"
+                        appearance="outline" color="accent" class="field-full">
+          <mat-label>Produto/Material patrocinado</mat-label>
+          <input matInput formControlName="produto" autocomplete="off" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" color="accent" class="field-full">
+          <mat-label>Observação (opcional)</mat-label>
+          <textarea matInput formControlName="observacao" rows="2"></textarea>
+        </mat-form-field>
+      </div>
+
+      <div class="actions">
+        <button mat-stroked-button type="button" (click)="cancelar()">Cancelar</button>
+        <button mat-flat-button color="accent" type="button" (click)="salvar()">
+          Salvar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

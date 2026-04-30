@@ -61,6 +61,14 @@ const routes: Routes = [
       ),
   },
   {
+    path: "campaign/:key/new-sponsor",
+    canActivate: [authGuard],
+    loadChildren: () =>
+      import("./feature/new-sponsor/new-sponsor.module").then(
+        (m) => m.NewSponsorModule
+      ),
+  },
+  {
     path: "client-list",
     canActivate: [authGuard],
     loadChildren: () =>
