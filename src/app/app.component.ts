@@ -76,19 +76,21 @@ export class AppComponent implements OnInit {
   }
 
   initiByStorage() {
-    const isNewAccount = window.location.href.includes(RouterEnum.NEW_ACCOUNT);
-    const stayOnCurrentPage = isNewAccount;
+    const url = window.location.href;
+    const isPublicRoute =
+      url.includes(RouterEnum.REDEFINE_PASSWORD) ||
+      url.includes(RouterEnum.LOGIN);
     const usuario = this.auth.getToken();
     if (usuario) {
       this.autenticarWithEmail({
         email: usuario.email,
         senha: usuario.senha,
       }).subscribe(() => {
-        if (!stayOnCurrentPage) this.goTo();
+        if (!isPublicRoute) this.goTo();
       });
     } else {
-      if (!stayOnCurrentPage) this.goTo();
       this.analyticsService.markProfileReady();
+      if (!isPublicRoute) this.router.navigate(this.router.route.LOGIN);
     }
   }
 
