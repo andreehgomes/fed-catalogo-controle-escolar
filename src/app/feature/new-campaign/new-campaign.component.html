@@ -51,19 +51,21 @@
           <span class="section-label">Itens padrão</span>
           <span class="section-hint">Preenchidos automaticamente em cada nova venda desta campanha.</span>
 
-          <div class="item-input-row">
-            <mat-form-field appearance="outline" color="accent" class="field-desc">
+          <div class="item-input-col">
+            <mat-form-field appearance="outline" color="accent" class="field-full">
               <mat-label>Descrição</mat-label>
               <input matInput [formControl]="itemDescricaoCtrl" />
             </mat-form-field>
 
-            <input-moeda [formControl]="itemValorCtrl" label="Valor" />
+            <div class="item-row-valor">
+              <input-moeda [formControl]="itemValorCtrl" label="Valor" />
 
-            <button mat-mini-fab color="accent" type="button" class="btn-add-item"
-                    [disabled]="itemDescricaoCtrl.invalid || itemValorCtrl.invalid"
-                    (click)="adicionarItemPadrao()">
-              <mat-icon>add</mat-icon>
-            </button>
+              <button mat-mini-fab color="accent" type="button" class="btn-add-item"
+                      [disabled]="itemDescricaoCtrl.invalid || itemValorCtrl.invalid"
+                      (click)="adicionarItemPadrao()">
+                <mat-icon>add</mat-icon>
+              </button>
+            </div>
           </div>
 
           <div class="itens-padrao-list" *ngIf="itensPadraoArray.length > 0">

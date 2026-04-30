@@ -85,14 +85,20 @@
   }
 }
 
-.item-input-row {
+.item-input-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  .field-full {
+    width: 100%;
+  }
+}
+
+.item-row-valor {
   display: flex;
   gap: 8px;
   align-items: flex-start;
-
-  .field-desc {
-    flex: 2;
-  }
 
   input-moeda {
     flex: 1;

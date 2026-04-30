@@ -140,7 +140,7 @@ export class NewSaleComponent implements OnInit {
         const c = list.find((x) => x.key === currentKey);
         if (c) {
           this.form.patchValue({ campaignNome: c.nome }, { emitEvent: false });
-          if (!this.editingKey && this.itensArray.length === 0) {
+          if (!this.editingKey) {
             this.aplicarItensPadrao(c);
           }
         }
@@ -148,20 +148,22 @@ export class NewSaleComponent implements OnInit {
     });
   }
 
+  itensPadrao: { descricao: string; valorUnitario: number }[] = [];
+
   private aplicarItensPadrao(c?: Campaign): void {
-    this.itensArray.clear();
-    if (!c?.itensPadrao?.length) return;
-    c.itensPadrao.forEach((it) => {
-      const valorSubtotal = +(1 * it.valorUnitario).toFixed(2);
-      this.itensArray.push(
-        this.fb.group({
-          descricao: [it.descricao],
-          quantidade: [1],
-          valorUnitario: [it.valorUnitario],
-          valorSubtotal: [valorSubtotal],
-        })
-      );
-    });
+    this.itensPadrao = c?.itensPadrao ?? [];
+    if (this.itensPadrao.length === 0) {
+      this.itemDescricaoCtrl.reset("");
+      this.itemValorUnitarioCtrl.reset(null);
+      return;
+    }
+    this.preencherItem(this.itensPadrao[0]);
+  }
+
+  preencherItem(it: { descricao: string; valorUnitario: number }): void {
+    this.itemDescricaoCtrl.setValue(it.descricao);
+    this.itemQuantidadeCtrl.setValue(1);
+    this.itemValorUnitarioCtrl.setValue(it.valorUnitario);
   }
 
   limparItens(): void {

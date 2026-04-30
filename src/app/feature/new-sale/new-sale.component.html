@@ -46,6 +46,15 @@
         <div class="item-input-section">
           <span class="section-label">Adicionar item</span>
 
+          <div class="itens-padrao-chips" *ngIf="itensPadrao.length > 1">
+            <span class="chips-label">Itens da campanha:</span>
+            <button *ngFor="let p of itensPadrao" type="button"
+                    class="chip-padrao"
+                    (click)="preencherItem(p)">
+              {{ p.descricao }}
+            </button>
+          </div>
+
           <mat-form-field appearance="outline" color="accent" class="field-full">
             <mat-label>Descrição do item</mat-label>
             <input matInput [formControl]="itemDescricaoCtrl" />
