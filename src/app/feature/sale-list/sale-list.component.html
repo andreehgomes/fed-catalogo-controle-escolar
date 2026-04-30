@@ -1,0 +1,57 @@
+<div class="page">
+  <div class="header">
+    <span class="page-title">Vendas</span>
+    <button mat-mini-fab color="accent" class="btn-add" (click)="novaVenda()">
+      <mat-icon>add</mat-icon>
+    </button>
+  </div>
+
+  <div class="page-content">
+    <div class="filtros">
+      <mat-form-field appearance="outline" color="accent" class="field-full">
+        <mat-label>Buscar cliente</mat-label>
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput [formControl]="searchCtrl" autocomplete="off" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" color="accent" class="field-full">
+        <mat-label>Campanha</mat-label>
+        <mat-icon matPrefix>campaign</mat-icon>
+        <mat-select [formControl]="campaignCtrl">
+          <mat-option [value]="">Todas</mat-option>
+          <mat-option *ngFor="let c of campaigns" [value]="c.key">{{ c.nome }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <button mat-button class="btn-clear"
+              *ngIf="searchCtrl.value || campaignCtrl.value"
+              (click)="limparFiltros()">
+        <mat-icon>filter_alt_off</mat-icon> Limpar
+      </button>
+    </div>
+
+    <div *ngIf="filtered.length === 0" class="empty">
+      <mat-icon>info</mat-icon>
+      <span>Nenhuma venda encontrada.</span>
+    </div>
+
+    <div class="sale-card" *ngFor="let s of filtered" (click)="editar(s)">
+      <div class="sale-top">
+        <span class="sale-cliente">{{ s.clienteNome }}</span>
+        <span class="sale-valor">R$ {{ fmt(s.valorTotal) }}</span>
+      </div>
+      <div class="sale-mid">
+        <span class="sale-campaign">
+          <mat-icon>campaign</mat-icon>{{ s.campaignNome }}
+        </span>
+        <span class="sale-data">{{ fmtData(s.dataCriacao) }}</span>
+      </div>
+      <div class="sale-bottom">
+        <span class="sale-itens">{{ s.itens.length }} {{ s.itens.length === 1 ? 'item' : 'itens' }}</span>
+        <button mat-icon-button class="btn-del" (click)="excluir(s, $event)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

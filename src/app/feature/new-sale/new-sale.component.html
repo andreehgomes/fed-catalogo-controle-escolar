@@ -1,0 +1,117 @@
+<div class="page">
+  <div class="header">
+    <span class="page-title">{{ editingKey ? 'Editar venda' : 'Nova venda' }}</span>
+  </div>
+
+  <div class="page-content">
+    <form [formGroup]="form" class="form-card">
+      <card-alert
+        *ngIf="alerta?.codigo != null"
+        tipo="{{ alerta.tipo }}"
+        codigo="{{ alerta.codigo }}"
+        mensagem="{{ alerta.mensagem }}"
+      ></card-alert>
+
+      <div class="fields">
+
+        <!-- Campanha -->
+        <mat-form-field appearance="outline" color="accent" class="field-full">
+          <mat-label>Campanha</mat-label>
+          <mat-icon matPrefix>campaign</mat-icon>
+          <mat-select formControlName="campaignKey">
+            <mat-option *ngFor="let c of campaigns" [value]="c.key">{{ c.nome }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Cliente -->
+        <div class="cliente-wrap">
+          <mat-form-field appearance="outline" color="accent" class="field-full">
+            <mat-label>Buscar/criar cliente</mat-label>
+            <mat-icon matPrefix>person_search</mat-icon>
+            <input matInput formControlName="clienteNome" autocomplete="off" />
+          </mat-form-field>
+          <ul class="suggestions-list" *ngIf="sugestoes.length > 0">
+            <li *ngFor="let c of sugestoes">
+              <button type="button" class="suggestion-btn"
+                      (click)="selecionarCliente(c)">{{ c.nome }}</button>
+            </li>
+          </ul>
+          <p class="hint" *ngIf="form.get('clienteNome').value && !form.get('clienteKey').value && sugestoes.length === 0">
+            <mat-icon>info</mat-icon>
+            Cliente novo: será cadastrado ao salvar a venda.
+          </p>
+        </div>
+
+        <!-- Adicionar item -->
+        <div class="item-input-section">
+          <span class="section-label">Adicionar item</span>
+
+          <mat-form-field appearance="outline" color="accent" class="field-full">
+            <mat-label>Descrição do item</mat-label>
+            <input matInput [formControl]="itemDescricaoCtrl" />
+          </mat-form-field>
+
+          <div class="item-row-2">
+            <mat-form-field appearance="outline" color="accent" class="field-qtd">
+              <mat-label>Qtd</mat-label>
+              <input matInput type="number" min="1" [formControl]="itemQuantidadeCtrl" />
+            </mat-form-field>
+
+            <input-moeda [formControl]="itemValorUnitarioCtrl" label="Valor unitário" />
+
+            <button mat-mini-fab color="accent" type="button" class="btn-add-item"
+                    [disabled]="itemDescricaoCtrl.invalid || itemQuantidadeCtrl.invalid || itemValorUnitarioCtrl.invalid"
+                    (click)="adicionarItem()">
+              <mat-icon>add</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        <!-- Lista de itens -->
+        <div class="itens-section" *ngIf="itensArray.length > 0">
+          <div class="itens-header">
+            <span class="itens-titulo">
+              <mat-icon>shopping_bag</mat-icon>
+              Itens
+            </span>
+            <span class="itens-count">{{ itensArray.length }} {{ itensArray.length === 1 ? 'item' : 'itens' }}</span>
+          </div>
+          <div class="item-card" *ngFor="let item of itensArray.controls; let i = index">
+            <div class="item-card-info">
+              <span class="item-card-desc">{{ item.get('descricao').value }}</span>
+              <span class="item-card-meta">
+                {{ item.get('quantidade').value }} × R$ {{ fmt(item.get('valorUnitario').value) }}
+                = <strong>R$ {{ fmt(item.get('valorSubtotal').value) }}</strong>
+              </span>
+            </div>
+            <button mat-icon-button type="button" class="btn-remove" (click)="removerItem(i)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        <!-- Total -->
+        <div class="total-row">
+          <span class="total-label">Total</span>
+          <span class="total-value">R$ {{ fmt(form.get('valorTotal').value || 0) }}</span>
+        </div>
+
+        <!-- Observação -->
+        <mat-form-field appearance="outline" color="accent" class="field-full">
+          <mat-label>Observação (opcional)</mat-label>
+          <textarea matInput formControlName="observacao" rows="2"></textarea>
+        </mat-form-field>
+
+      </div>
+
+      <div class="actions">
+        <button mat-stroked-button type="button" (click)="cancelar()">Cancelar</button>
+        <button mat-flat-button color="accent" type="button"
+                [disabled]="form.invalid || itensArray.length === 0"
+                (click)="salvar()">
+          Salvar venda
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

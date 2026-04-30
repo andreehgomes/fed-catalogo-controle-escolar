@@ -1,0 +1,115 @@
+@import "../../shared/style/colors";
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+.footer {
+  width: 100%;
+  background: linear-gradient(135deg, #2d1b2e 0%, #4a1942 100%);
+  padding: 28px 20px 20px;
+  box-sizing: border-box;
+}
+
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+// ─── Marca ──────────────────────────────────────────────────────────────────
+
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.footer-name {
+  font-size: 14pt;
+  font-weight: 700;
+  color: white;
+  letter-spacing: 0.5px;
+}
+
+.footer-tagline {
+  font-size: 9pt;
+  color: rgba(255, 255, 255, 0.55);
+  letter-spacing: 0.3px;
+}
+
+// ─── Redes sociais ──────────────────────────────────────────────────────────
+
+.footer-socials {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+}
+
+.social-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  text-decoration: none;
+  transition: transform 0.2s ease, filter 0.2s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    filter: brightness(1.15);
+  }
+}
+
+.whatsapp {
+  background-color: #25d366;
+  color: white;
+}
+
+.instagram {
+  background: linear-gradient(135deg, #f9ce34, #ee2a7b, #6228d7);
+  color: white;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+}
+
+.linkedin {
+  background-color: #0077b5;
+  color: white;
+}
+
+// ─── E-mail ─────────────────────────────────────────────────────────────────
+
+.footer-email {
+  font-size: 9pt;
+  color: rgba(255, 255, 255, 0.65);
+  text-decoration: none;
+  transition: color 0.2s;
+
+  &:hover {
+    color: white;
+  }
+}
+
+// ─── Divisor ────────────────────────────────────────────────────────────────
+
+.footer-divider {
+  width: 40px;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+// ─── Copyright ──────────────────────────────────────────────────────────────
+
+.footer-copy {
+  margin: 0;
+  font-size: 8pt;
+  color: rgba(255, 255, 255, 0.4);
+  text-align: center;
+}

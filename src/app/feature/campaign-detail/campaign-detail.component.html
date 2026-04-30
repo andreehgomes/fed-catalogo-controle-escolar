@@ -1,0 +1,65 @@
+<div class="page" *ngIf="campaign">
+  <div class="header">
+    <button mat-icon-button class="btn-back" (click)="voltar()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <span class="page-title">{{ campaign.nome }}</span>
+    <span class="status-pill" [class.encerrada]="campaign.status === 'encerrada'">
+      {{ campaign.status === 'ativa' ? 'Ativa' : 'Encerrada' }}
+    </span>
+  </div>
+
+  <div class="page-content">
+    <mat-card class="info-card">
+      <p *ngIf="campaign.descricao" class="desc">{{ campaign.descricao }}</p>
+      <div class="info-row">
+        <span><mat-icon>event</mat-icon> Início: {{ fmtDataInicio(campaign.dataInicio) }}</span>
+        <span *ngIf="campaign.dataFim"><mat-icon>event_available</mat-icon> Fim: {{ fmtDataInicio(campaign.dataFim) }}</span>
+      </div>
+    </mat-card>
+
+    <div class="stats-grid">
+      <mat-card class="stat-card">
+        <span class="stat-label">Vendas</span>
+        <span class="stat-value">{{ sales.length }}</span>
+      </mat-card>
+      <mat-card class="stat-card">
+        <span class="stat-label">Arrecadado</span>
+        <span class="stat-value">R$ {{ fmt(totalArrecadado) }}</span>
+      </mat-card>
+    </div>
+
+    <mat-card class="meta-card" *ngIf="campaign.meta && campaign.meta > 0">
+      <div class="meta-header">
+        <span class="meta-label">Meta: R$ {{ fmt(campaign.meta) }}</span>
+        <span class="meta-pct">{{ pctMeta }}%</span>
+      </div>
+      <mat-progress-bar mode="determinate" color="accent" [value]="pctMeta"></mat-progress-bar>
+    </mat-card>
+
+    <button mat-flat-button color="accent" class="btn-nova-venda" (click)="novaVenda()">
+      <mat-icon>add</mat-icon>
+      Nova venda nesta campanha
+    </button>
+
+    <div class="sales-section">
+      <h3>Vendas</h3>
+
+      <div *ngIf="sales.length === 0" class="empty">
+        <mat-icon>info</mat-icon>
+        <span>Nenhuma venda registrada nesta campanha.</span>
+      </div>
+
+      <div class="sale-card" *ngFor="let s of sales" (click)="editarVenda(s)">
+        <div class="sale-top">
+          <span class="sale-cliente">{{ s.clienteNome }}</span>
+          <span class="sale-valor">R$ {{ fmt(s.valorTotal) }}</span>
+        </div>
+        <div class="sale-bottom">
+          <span class="sale-data">{{ fmtData(s.dataCriacao) }}</span>
+          <span class="sale-itens">{{ s.itens.length }} {{ s.itens.length === 1 ? 'item' : 'itens' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

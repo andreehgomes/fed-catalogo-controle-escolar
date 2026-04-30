@@ -1,1 +1,128 @@
-/* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
+@import "./app/shared/style/colors";
+
+html {
+  @include mat.theme((
+    color: (
+      primary: mat.$blue-palette,
+      tertiary: mat.$blue-palette,
+    ),
+    typography: Roboto,
+    density: 0,
+  ));
+  height: 100%;
+  scroll-behavior: smooth;
+}
+
+.mat-typography {
+  background-color: none;
+  background: linear-gradient(135deg, #0a1929 0%, #102a43 100%);
+}
+
+body {
+  color-scheme: light;
+  background-color: #0a1929;
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-body-medium);
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  margin: 0;
+  height: 100%;
+  scroll-behavior: smooth;
+}
+
+.content {
+  display: flex;
+  height: 100%;
+  margin: 0 auto 5px;
+  background: linear-gradient(135deg, #0a1929 0%, #102a43 100%);
+  max-width: 500px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  border-radius: 4px;
+  border: 0 !important;
+}
+
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.containers {
+  width: 100%;
+  min-height: 5%;
+  background: linear-gradient(135deg, #0a1929 0%, #102a43 100%);
+  display: flex;
+}
+
+.body {
+  height: 100%;
+  background: linear-gradient(135deg, #0a1929 0%, #102a43 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start !important;
+}
+
+.mat-dialog-container {
+  background-color: transparent;
+  box-shadow: none;
+}
+
+.loader-dialog-panel {
+  .mat-mdc-dialog-container,
+  .mdc-dialog__surface {
+    background-color: transparent !important;
+    box-shadow: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+}
+
+.mat-mdc-form-field {
+  --mat-form-field-filled-container-color: #ffffff;
+}
+
+app-toolbar {
+  left: 0;
+  position: fixed;
+  z-index: 998;
+}
+
+mat-drawer-container,
+mat-drawer-content,
+.mat-drawer-container,
+.mat-drawer-content {
+  background: linear-gradient(135deg, #0a1929 0%, #102a43 100%) !important;
+}
+
+a {
+  cursor: pointer;
+}
+
+.snack-sucesso .mdc-snackbar__surface {
+  background-color: #297000 !important;
+  border-radius: 12px !important;
+}
+
+.snack-sucesso .mdc-snackbar__label {
+  color: #fff !important;
+}
+
+@media screen and (max-width: 767px) {
+  .card-container > *:not(.circle-link),
+  .terminal {
+    width: 100%;
+  }
+
+  .card:not(.highlight-card) {
+    margin: 8px 0;
+  }
+
+  .card.highlight-card span {
+    margin-left: 72px;
+  }
+}

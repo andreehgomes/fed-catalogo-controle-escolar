@@ -1,0 +1,56 @@
+<div class="page">
+  <div class="header">
+    <span class="page-title">Campanhas</span>
+    <button mat-mini-fab color="accent" class="btn-add" (click)="novaCampanha()">
+      <mat-icon>add</mat-icon>
+    </button>
+  </div>
+
+  <div class="page-content">
+    <mat-form-field appearance="outline" color="accent" class="field-full">
+      <mat-label>Buscar</mat-label>
+      <mat-icon matPrefix>search</mat-icon>
+      <input matInput [formControl]="searchCtrl" autocomplete="off" />
+    </mat-form-field>
+
+    <div *ngIf="campaigns.length === 0" class="empty">
+      <mat-icon>info</mat-icon>
+      <span>Nenhuma campanha encontrada.</span>
+    </div>
+
+    <div class="campaign-card" *ngFor="let c of campaigns" (click)="abrirDetalhe(c)">
+      <div class="campaign-top">
+        <div class="campaign-titulo-wrap">
+          <span class="campaign-nome">{{ c.nome }}</span>
+          <span class="campaign-status" [class.encerrada]="c.status === 'encerrada'">
+            {{ c.status === 'ativa' ? 'Ativa' : 'Encerrada' }}
+          </span>
+        </div>
+        <div class="campaign-actions">
+          <button mat-icon-button (click)="editar(c, $event)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button (click)="excluir(c, $event)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <div class="campaign-desc" *ngIf="c.descricao">{{ c.descricao }}</div>
+
+      <div class="campaign-info">
+        <span><mat-icon>event</mat-icon> {{ fmtData(c.dataInicio) }}<span *ngIf="c.dataFim"> – {{ fmtData(c.dataFim) }}</span></span>
+        <span><mat-icon>shopping_cart</mat-icon> {{ qtdVendas(c.key) }} {{ qtdVendas(c.key) === 1 ? 'venda' : 'vendas' }}</span>
+        <span><mat-icon>payments</mat-icon> R$ {{ fmt(totalArrecadado(c.key)) }}</span>
+      </div>
+
+      <div class="campaign-meta" *ngIf="c.meta && c.meta > 0">
+        <div class="meta-header">
+          <span>Meta: R$ {{ fmt(c.meta) }}</span>
+          <span class="meta-pct">{{ pctMeta(c) }}%</span>
+        </div>
+        <mat-progress-bar mode="determinate" color="accent" [value]="pctMeta(c)"></mat-progress-bar>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,60 @@
+<div class="page" *ngIf="client">
+  <div class="header">
+    <button mat-icon-button class="btn-back" (click)="voltar()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <span class="page-title">{{ client.nome }}</span>
+    <button mat-icon-button class="btn-edit" (click)="editar()">
+      <mat-icon>edit</mat-icon>
+    </button>
+  </div>
+
+  <div class="page-content">
+    <mat-card class="info-card">
+      <div class="info-row" *ngIf="client.telefone">
+        <mat-icon>phone</mat-icon>
+        <span>{{ client.telefone }}</span>
+      </div>
+      <div class="info-row" *ngIf="!client.telefone">
+        <mat-icon>info</mat-icon>
+        <span class="muted">Sem telefone cadastrado.</span>
+      </div>
+    </mat-card>
+
+    <div class="stats-grid">
+      <mat-card class="stat-card">
+        <span class="stat-label">Vendas</span>
+        <span class="stat-value">{{ sales.length }}</span>
+      </mat-card>
+      <mat-card class="stat-card">
+        <span class="stat-label">Total gasto</span>
+        <span class="stat-value">R$ {{ fmt(totalGasto) }}</span>
+      </mat-card>
+    </div>
+
+    <button mat-flat-button color="accent" class="btn-nova-venda" (click)="novaVenda()">
+      <mat-icon>add</mat-icon>
+      Nova venda para este cliente
+    </button>
+
+    <div class="sales-section">
+      <h3>Histórico de vendas</h3>
+
+      <div *ngIf="sales.length === 0" class="empty">
+        <mat-icon>info</mat-icon>
+        <span>Nenhuma venda registrada.</span>
+      </div>
+
+      <div class="sale-card" *ngFor="let s of sales" (click)="editarVenda(s)">
+        <div class="sale-top">
+          <span class="sale-campaign">{{ s.campaignNome }}</span>
+          <span class="sale-valor">R$ {{ fmt(s.valorTotal) }}</span>
+        </div>
+        <div class="sale-bottom">
+          <span class="sale-data">{{ fmtData(s.dataCriacao) }}</span>
+          <span class="sale-itens">{{ s.itens.length }} {{ s.itens.length === 1 ? 'item' : 'itens' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

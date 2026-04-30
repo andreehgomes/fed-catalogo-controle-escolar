@@ -1,0 +1,109 @@
+@import "../../shared/style/colors";
+
+// ─── Página ───────────────────────────────────────────────────────────────────
+
+.page {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(135deg, #2d1b2e 0%, #4a1942 100%);
+  overflow-x: hidden;
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+
+// ─── Header fixo ─────────────────────────────────────────────────────────────
+
+.header {
+  position: fixed;
+  z-index: 998;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 8px 16px 16px 62px;
+  height: 40px;
+  box-sizing: content-box;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background: linear-gradient(135deg, #2d1b2e 0%, #4a1942 100%);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.page-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+// ─── Conteúdo ─────────────────────────────────────────────────────────────────
+
+.page-content {
+  width: 100%;
+  max-width: 500px;
+  padding: 0;
+  box-sizing: border-box;
+  margin-top: 76px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+// ─── Alerta ───────────────────────────────────────────────────────────────────
+
+card-alert {
+  display: block;
+  width: 100%;
+
+  ::ng-deep mat-card {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 16px;
+  }
+}
+
+// ─── Card do formulário ───────────────────────────────────────────────────────
+
+.form-card {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 20px 16px 16px;
+  background-color: $c-white;
+  border-radius: 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 24px;
+}
+
+// ─── Campos ───────────────────────────────────────────────────────────────────
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.field-full {
+  width: 100%;
+}
+
+// ─── Botões ───────────────────────────────────────────────────────────────────
+
+.actions {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.btn-action {
+  flex: 1;
+  height: 44px;
+  border-radius: 22px !important;
+  font-weight: 600;
+  font-size: 14px;
+}

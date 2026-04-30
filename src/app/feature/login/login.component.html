@@ -1,0 +1,52 @@
+<div class="page">
+  <div class="login-container">
+
+    <div class="logo-wrapper">
+      <img
+        src="../../../assets/imagens/logo.png"
+        width="280"
+        height="280"
+        alt="Logo Controle de Campanhas"
+        class="logo"
+      />
+      <span class="brand-name">Controle de Campanhas</span>
+    </div>
+
+    <div class="form-card">
+      <card-alert
+        *ngIf="mensagemRespostaLogin?.codigo != null"
+        tipo="{{ mensagemRespostaLogin.tipo }}"
+        codigo="{{ mensagemRespostaLogin.codigo }}"
+        mensagem="{{ mensagemRespostaLogin.mensagem }}"
+        class="alert-block"
+      ></card-alert>
+
+      <form
+        #form="ngForm"
+        [formGroup]="formControlUsuario"
+        (ngSubmit)="onSubmitLogin()"
+        class="form"
+      >
+        <mat-form-field class="field-full" appearance="outline" color="accent">
+          <mat-label>E-mail</mat-label>
+          <input formControlName="emailFormGroup" type="email" matInput />
+        </mat-form-field>
+
+        <mat-form-field class="field-full" appearance="outline" color="accent">
+          <mat-label>Senha</mat-label>
+          <input formControlName="senhaFormGroup" type="password" matInput />
+        </mat-form-field>
+
+        <button mat-flat-button color="accent" type="submit" class="btn-entrar">
+          Entrar
+        </button>
+
+        <div class="links">
+          <a class="link" (click)="newPassword()">Esqueci minha senha</a>
+          <a class="link link-secondary" (click)="feed()">Continuar sem login</a>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>

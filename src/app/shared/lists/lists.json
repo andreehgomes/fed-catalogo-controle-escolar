@@ -1,0 +1,11 @@
+{
+  "marcasFiltro": ["TODOS", "NATURA", "AVON", "O BOTICARIO", "EUDORA", "O.U.I"],
+  "marcasCadastro": ["NATURA", "AVON", "O BOTICARIO", "EUDORA", "O.U.I"],
+  "promocoesFiltro": ["TODOS"],
+  "promocoesCadastro": ["NÃO"],
+  "estadosBrasileiros": [
+    "AC","AL","AP","AM","BA","CE","DF","ES","GO",
+    "MA","MT","MS","MG","PA","PB","PR","PE","PI",
+    "RJ","RN","RS","RO","RR","SC","SP","SE","TO"
+  ]
+}

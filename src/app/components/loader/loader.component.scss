@@ -1,0 +1,16 @@
+@import "../../shared/style/colors";
+.dialog-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+img {
+  max-width: 100%;
+  position: absolute;
+  max-height: 100%;
+  top: 0;
+  height: 95%;
+  width: 95%;
+  clip-path: circle(45% at 50% 49%);
+}

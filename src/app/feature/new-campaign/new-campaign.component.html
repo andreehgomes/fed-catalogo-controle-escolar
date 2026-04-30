@@ -1,0 +1,59 @@
+<div class="page">
+  <div class="header">
+    <span class="page-title">{{ editingKey ? 'Editar campanha' : 'Nova campanha' }}</span>
+  </div>
+
+  <div class="page-content">
+    <form [formGroup]="form" class="form-card">
+      <card-alert
+        *ngIf="alerta?.codigo != null"
+        tipo="{{ alerta.tipo }}"
+        codigo="{{ alerta.codigo }}"
+        mensagem="{{ alerta.mensagem }}"
+      ></card-alert>
+
+      <div class="fields">
+        <mat-form-field appearance="outline" color="accent" class="field-full">
+          <mat-label>Nome da campanha</mat-label>
+          <mat-icon matPrefix>campaign</mat-icon>
+          <input matInput formControlName="nome" autocomplete="off" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" color="accent" class="field-full">
+          <mat-label>Descrição</mat-label>
+          <textarea matInput formControlName="descricao" rows="3"></textarea>
+        </mat-form-field>
+
+        <div class="row-2">
+          <mat-form-field appearance="outline" color="accent" class="field-half">
+            <mat-label>Data de início</mat-label>
+            <input matInput type="date" formControlName="dataInicio" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" color="accent" class="field-half">
+            <mat-label>Data de fim</mat-label>
+            <input matInput type="date" formControlName="dataFim" />
+          </mat-form-field>
+        </div>
+
+        <input-moeda formControlName="meta" label="Meta (opcional)" />
+
+        <mat-form-field appearance="outline" color="accent" class="field-full">
+          <mat-label>Status</mat-label>
+          <mat-select formControlName="status">
+            <mat-option value="ativa">Ativa</mat-option>
+            <mat-option value="encerrada">Encerrada</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="actions">
+        <button mat-stroked-button type="button" (click)="cancelar()">Cancelar</button>
+        <button mat-flat-button color="accent" type="button"
+                [disabled]="form.invalid" (click)="salvar()">
+          Salvar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

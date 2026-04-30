@@ -1,0 +1,110 @@
+<div class="page">
+  <div class="header">
+    <span class="page-title">Dashboard</span>
+    <span class="page-subtitle">Resumo das campanhas e vendas</span>
+  </div>
+
+  <div class="page-content">
+
+    <div class="filtros">
+      <mat-form-field appearance="outline" color="accent" class="field-full" subscriptSizing="dynamic">
+        <mat-label>Campanha</mat-label>
+        <mat-icon matPrefix>campaign</mat-icon>
+        <mat-select [formControl]="campaignCtrl">
+          <mat-option [value]="">Todas</mat-option>
+          <mat-option *ngFor="let c of campaigns" [value]="c.key">{{ c.nome }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div class="row-2">
+        <mat-form-field appearance="outline" color="accent" class="field-half" subscriptSizing="dynamic">
+          <mat-label>De</mat-label>
+          <mat-icon matPrefix>calendar_today</mat-icon>
+          <input matInput type="date" [formControl]="dataDeCtrl" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" color="accent" class="field-half" subscriptSizing="dynamic">
+          <mat-label>Até</mat-label>
+          <mat-icon matPrefix>calendar_today</mat-icon>
+          <input matInput type="date" [formControl]="dataAteCtrl" />
+        </mat-form-field>
+      </div>
+
+      <button mat-button class="btn-clear"
+              *ngIf="campaignCtrl.value || dataDeCtrl.value || dataAteCtrl.value"
+              (click)="limparFiltros()">
+        <mat-icon>filter_alt_off</mat-icon> Limpar filtros
+      </button>
+    </div>
+
+    <div class="cards-grid">
+      <mat-card class="kpi-card kpi-blue">
+        <div class="kpi-icon"><mat-icon>receipt_long</mat-icon></div>
+        <div class="kpi-body">
+          <span class="kpi-label">Vendas</span>
+          <span class="kpi-value">{{ totalVendas }}</span>
+        </div>
+      </mat-card>
+
+      <mat-card class="kpi-card kpi-green">
+        <div class="kpi-icon"><mat-icon>payments</mat-icon></div>
+        <div class="kpi-body">
+          <span class="kpi-label">Arrecadado</span>
+          <span class="kpi-value">R$ {{ fmt(totalArrecadado) }}</span>
+        </div>
+      </mat-card>
+
+      <mat-card class="kpi-card kpi-orange">
+        <div class="kpi-icon"><mat-icon>trending_up</mat-icon></div>
+        <div class="kpi-body">
+          <span class="kpi-label">Ticket médio</span>
+          <span class="kpi-value">R$ {{ fmt(ticketMedio) }}</span>
+        </div>
+      </mat-card>
+
+      <mat-card class="kpi-card kpi-purple" *ngIf="campaignSelecionada?.meta">
+        <div class="kpi-icon"><mat-icon>flag</mat-icon></div>
+        <div class="kpi-body">
+          <span class="kpi-label">Meta atingida</span>
+          <span class="kpi-value">{{ pctMeta }}%</span>
+        </div>
+      </mat-card>
+    </div>
+
+    <mat-card class="meta-card" *ngIf="campaignSelecionada?.meta && campaignSelecionada.meta > 0">
+      <div class="meta-header">
+        <span>Progresso da meta</span>
+        <span class="pct">{{ pctMeta }}%</span>
+      </div>
+      <mat-progress-bar mode="determinate" color="accent" [value]="pctMeta"></mat-progress-bar>
+      <div class="meta-legend">
+        <span>Arrecadado: R$ {{ fmt(totalArrecadado) }}</span>
+        <span>Meta: R$ {{ fmt(campaignSelecionada.meta) }}</span>
+      </div>
+    </mat-card>
+
+    <mat-card class="section-card">
+      <h3>Top 10 itens vendidos</h3>
+      <div *ngIf="topItens.length === 0" class="empty-mini">Nenhum item vendido no período.</div>
+      <div class="top-row" *ngFor="let it of topItens; let i = index">
+        <span class="top-rank">{{ i + 1 }}</span>
+        <span class="top-desc">{{ it.descricao }}</span>
+        <span class="top-qtd">{{ it.qtdTotal }} un</span>
+        <span class="top-valor">R$ {{ fmt(it.valorTotal) }}</span>
+      </div>
+    </mat-card>
+
+    <mat-card class="section-card">
+      <h3>Últimas vendas</h3>
+      <div *ngIf="ultimasVendas.length === 0" class="empty-mini">Nenhuma venda no período.</div>
+      <div class="last-row" *ngFor="let s of ultimasVendas">
+        <div class="last-info">
+          <span class="last-cliente">{{ s.clienteNome }}</span>
+          <span class="last-meta">{{ s.campaignNome }} · {{ fmtData(s.dataCriacao) }}</span>
+        </div>
+        <span class="last-valor">R$ {{ fmt(s.valorTotal) }}</span>
+      </div>
+    </mat-card>
+
+  </div>
+</div>

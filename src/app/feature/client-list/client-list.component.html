@@ -1,0 +1,38 @@
+<div class="page">
+  <div class="header">
+    <span class="page-title">Clientes</span>
+    <button mat-mini-fab color="accent" class="btn-add" (click)="novoCliente()">
+      <mat-icon>person_add</mat-icon>
+    </button>
+  </div>
+
+  <div class="page-content">
+    <mat-form-field appearance="outline" color="accent" class="field-full">
+      <mat-label>Buscar</mat-label>
+      <mat-icon matPrefix>search</mat-icon>
+      <input matInput [formControl]="searchCtrl" autocomplete="off" />
+    </mat-form-field>
+
+    <div *ngIf="clients.length === 0" class="empty">
+      <mat-icon>info</mat-icon>
+      <span>Nenhum cliente encontrado.</span>
+    </div>
+
+    <div class="client-card" *ngFor="let c of clients" (click)="abrirDetalhe(c)">
+      <div class="client-info">
+        <span class="client-nome">{{ c.nome }}</span>
+        <span class="client-tel" *ngIf="c.telefone">
+          <mat-icon>phone</mat-icon>{{ c.telefone }}
+        </span>
+      </div>
+      <div class="client-actions">
+        <button mat-icon-button (click)="editar(c, $event)">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button (click)="excluir(c, $event)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

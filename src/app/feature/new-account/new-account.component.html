@@ -1,0 +1,71 @@
+<div class="page">
+  <div class="header">
+    <span class="page-title">Cadastro de usuários</span>
+  </div>
+
+  <div class="page-content">
+    <card-alert
+      *ngIf="mensagemRespostaCadastro?.codigo != null"
+      tipo="{{ mensagemRespostaCadastro.tipo }}"
+      codigo="{{ mensagemRespostaCadastro.codigo }}"
+      mensagem="{{ mensagemRespostaCadastro.mensagem }}"
+    ></card-alert>
+
+    <form
+      [formGroup]="formControlNewAccount"
+      (ngSubmit)="onSubmit()"
+      class="form-card"
+      #formDirective="ngForm"
+    >
+      <div class="fields">
+        <mat-form-field color="accent" class="field-full" appearance="outline">
+          <mat-label>Nome completo</mat-label>
+          <input matInput formControlName="nome" />
+        </mat-form-field>
+
+        <mat-form-field color="accent" class="field-full" appearance="outline">
+          <mat-label>Celular</mat-label>
+          <input matInput formControlName="celular" type="tel" placeholder="00 00000-0000" />
+        </mat-form-field>
+
+        <mat-form-field color="accent" class="field-full" appearance="outline">
+          <mat-label>E-mail</mat-label>
+          <input matInput formControlName="email" type="text" />
+        </mat-form-field>
+
+        <mat-form-field color="accent" class="field-full" appearance="outline">
+          <mat-label>Data de Nascimento</mat-label>
+          <input matInput formControlName="dataNascimento" [matDatepicker]="datepicker" />
+          <mat-hint>DD/MM/AAAA</mat-hint>
+          <mat-datepicker-toggle matSuffix [for]="datepicker"></mat-datepicker-toggle>
+          <mat-datepicker #datepicker>
+            <mat-datepicker-actions>
+              <button mat-button matDatepickerCancel>Cancelar</button>
+              <button mat-raised-button color="primary" matDatepickerApply>Aplicar</button>
+            </mat-datepicker-actions>
+          </mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field color="accent" class="field-full" appearance="outline">
+          <mat-label>Nova senha</mat-label>
+          <input formControlName="novaSenha" [type]="hide ? 'password' : 'text'" matInput />
+          <mat-hint>Mínimo 6 dígitos</mat-hint>
+          <button mat-icon-button matSuffix type="button" (click)="hide = !hide" [attr.aria-label]="'Mostrar senha'" [attr.aria-pressed]="hide">
+            <mat-icon>{{ hide ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
+
+      <div class="actions">
+        <a mat-stroked-button color="accent" class="btn-action" (click)="zerarForm()">Cancelar</a>
+        <button
+          mat-flat-button
+          color="accent"
+          class="btn-action"
+          type="submit"
+          [disabled]="formControlNewAccount.invalid"
+        >Salvar</button>
+      </div>
+    </form>
+  </div>
+</div>

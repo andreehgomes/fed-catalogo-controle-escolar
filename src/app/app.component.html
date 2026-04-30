@@ -1,0 +1,105 @@
+<mat-drawer-container class="app-container" [hasBackdrop]="true">
+
+  <mat-drawer #drawer mode="over" class="app-sidenav">
+
+    <div class="sidenav-header">
+      <div class="sidenav-brand">
+        <mat-icon class="brand-icon">school</mat-icon>
+        <span class="brand-name">Campanhas</span>
+      </div>
+      <button mat-icon-button class="btn-close" (click)="drawer.close()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <mat-nav-list class="sidenav-nav">
+
+      <a mat-list-item class="nav-item" (click)="goTo(); drawer.toggle()">
+        <mat-icon matListItemIcon>home</mat-icon>
+        <span matListItemTitle>Página inicial</span>
+      </a>
+
+      <mat-divider></mat-divider>
+
+      <ng-container *ngIf="state">
+        <div class="nav-section-label">Campanhas</div>
+
+        <a mat-list-item class="nav-item" (click)="goTo(routes.NEW_CAMPAIGN); drawer.toggle()">
+          <mat-icon matListItemIcon>campaign</mat-icon>
+          <span matListItemTitle>Nova campanha</span>
+        </a>
+
+        <a mat-list-item class="nav-item" (click)="goTo(routes.CAMPAIGN_LIST); drawer.toggle()">
+          <mat-icon matListItemIcon>list_alt</mat-icon>
+          <span matListItemTitle>Listar campanhas</span>
+        </a>
+
+        <mat-divider></mat-divider>
+
+        <div class="nav-section-label">Vendas & Clientes</div>
+
+        <a mat-list-item class="nav-item" (click)="goTo(routes.NEW_SALE); drawer.toggle()">
+          <mat-icon matListItemIcon>point_of_sale</mat-icon>
+          <span matListItemTitle>Nova venda</span>
+        </a>
+
+        <a mat-list-item class="nav-item" (click)="goTo(routes.SALE_LIST); drawer.toggle()">
+          <mat-icon matListItemIcon>receipt_long</mat-icon>
+          <span matListItemTitle>Listar vendas</span>
+        </a>
+
+        <a mat-list-item class="nav-item" (click)="goTo(routes.NEW_CLIENT); drawer.toggle()">
+          <mat-icon matListItemIcon>person_add</mat-icon>
+          <span matListItemTitle>Novo cliente</span>
+        </a>
+
+        <a mat-list-item class="nav-item" (click)="goTo(routes.CLIENT_LIST); drawer.toggle()">
+          <mat-icon matListItemIcon>people</mat-icon>
+          <span matListItemTitle>Clientes</span>
+        </a>
+
+        <mat-divider></mat-divider>
+
+        <div class="nav-section-label">Gestão</div>
+
+        <a mat-list-item class="nav-item" (click)="goTo(routes.DASHBOARD); drawer.toggle()">
+          <mat-icon matListItemIcon>dashboard</mat-icon>
+          <span matListItemTitle>Dashboard</span>
+        </a>
+
+        <a mat-list-item class="nav-item" (click)="goTo(routes.NEW_ACCOUNT); drawer.toggle()">
+          <mat-icon matListItemIcon>manage_accounts</mat-icon>
+          <span matListItemTitle>Cadastro de usuário</span>
+        </a>
+
+        <mat-divider></mat-divider>
+      </ng-container>
+
+      <a *ngIf="!state" mat-list-item class="nav-item nav-item--auth"
+         (click)="drawer.toggle(); logout(routes.LOGIN)">
+        <mat-icon matListItemIcon>login</mat-icon>
+        <span matListItemTitle>Entrar</span>
+      </a>
+
+      <a *ngIf="state" mat-list-item class="nav-item nav-item--auth"
+         (click)="drawer.toggle(); logout(routes.DEFAULT)">
+        <mat-icon matListItemIcon>logout</mat-icon>
+        <span matListItemTitle>Sair</span>
+      </a>
+
+    </mat-nav-list>
+
+    <div class="sidenav-footer">
+      <span class="footer-label">Controle de Campanhas Escolares</span>
+    </div>
+
+  </mat-drawer>
+
+  <mat-drawer-content>
+    <button *ngIf="showBtnMenu" class="btn-menu-float" mat-mini-fab (click)="drawer.toggle()">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <router-outlet></router-outlet>
+  </mat-drawer-content>
+
+</mat-drawer-container>

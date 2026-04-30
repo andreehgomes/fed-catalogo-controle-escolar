@@ -1,0 +1,30 @@
+@import '../../shared/style/colors';
+mat-card {
+    width: 90%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  #sucesso {
+    background: $c-green-alert-light;
+    color: $c-green-alert;
+    border-color: $c-green-alert-border;
+  }
+
+  #erro {
+    background: $c-red-alert-light;
+    color: $c-red-alert;
+    border-color: $c-red-alert-border;
+  }
+  .card-status-verde {
+    background: $c-green-alert-light;
+    color: $c-green-alert;
+    border-color: $c-green-alert-border;
+  }
+  .card-status-vermelho {
+    background: $c-red-alert-light;
+    color: $c-red-alert;
+    border-color: $c-red-alert-border;
+  }

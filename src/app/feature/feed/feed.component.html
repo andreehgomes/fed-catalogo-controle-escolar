@@ -1,0 +1,20 @@
+<div class="feed-page">
+  <div class="logo-wrap">
+    <img src="../../../assets/imagens/logo.png" alt="Logo" class="logo" />
+    <span class="brand-name">Controle de Campanhas</span>
+    <span class="brand-tagline">Vendas escolares organizadas</span>
+  </div>
+
+  <div class="cards-grid">
+    <button *ngFor="let card of cards"
+            class="feed-card"
+            [class.card-primary]="card.color === 'primary'"
+            [class.card-accent]="card.color === 'accent'"
+            [class.card-success]="card.color === 'success'"
+            [class.card-warn]="card.color === 'warn'"
+            (click)="goTo(card.route)">
+      <mat-icon>{{ card.icon }}</mat-icon>
+      <span>{{ card.label }}</span>
+    </button>
+  </div>
+</div>

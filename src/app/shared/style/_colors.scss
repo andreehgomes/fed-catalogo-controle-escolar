@@ -1,0 +1,48 @@
+$c-primary: #1565c0;
+$c-primary-light: #5e92f3;
+$c-primary-dark: #003c8f;
+$c-secondary: #0d47a1;
+$c-accent: #1976d2;
+$c-background: #e3f2fd;
+$c-white: #fff;
+$c-bg-gradient-start: #0a1929;
+$c-bg-gradient-end: #102a43;
+$c-white-alert-border: rgb(212, 212, 212);
+$c-pink-saudacao: $c-primary-dark;
+$c-pink-accent: $c-primary;
+
+$c-red: #e42a1d;
+$c-red-alert: #721c24;
+$c-red-alert-light: #f8d7da;
+$c-red-alert-border: #f5c6cb;
+$c-yellow-alert-ligth: #ffecb3;
+$c-yellow-alert: #ff6f00;
+$c-yellow-alert-border: #ffc107;
+$c-blue-alert-light: #e3f2fd;
+$c-blue-alert: #3174da;
+$c-blue-alert-border: #64b5f6;
+$c-green-alert-light: #ebfde3;
+$c-green-alert: #297000;
+$c-green-alert-border: #92f664;
+
+.c-primary {
+  background-color: $c-primary;
+}
+.c-primary-light {
+  background-color: $c-primary-light;
+}
+.c-secondary {
+  background-color: $c-secondary;
+}
+.c-background {
+  background-color: $c-background;
+}
+.c-white {
+  background-color: $c-white;
+}
+.c-red {
+  background-color: $c-red;
+}
+.c-yellow {
+  background-color: $c-yellow-alert-ligth;
+}

@@ -1,0 +1,140 @@
+@import "../../shared/style/colors";
+
+.mat-toolbar {
+  aspect-ratio: 1/1;
+  border-radius: 180px;
+  padding: 0;
+  background-color: #2d1b2e;
+  align-items: center;
+  justify-content: center;
+}
+
+.spacer {
+  flex: 1 1 auto;
+  height: 100%;
+}
+
+.sidenav-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: flex-start;
+  min-width: max-content;
+  height: 100vh;
+  z-index: 999;
+  background-color: white;
+}
+
+.mat-drawer-container {
+  position: absolute;
+  background-color: transparent;
+  // margin-left: -19px;
+  border-radius: 4px;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+}
+
+.fechaMenu {
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  z-index: 998;
+}
+
+.header {
+  width: 100%;
+  height: 100%;
+  min-height: 5%;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.saudacao-usuario {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  width: 50%;
+  max-width: 90%;
+}
+
+h1 {
+  float: left;
+}
+
+.wraper {
+  word-break: break-word;
+}
+
+p {
+  font-size: 15px;
+  color: gray;
+  margin: 0;
+  max-width: 400px;
+}
+
+.nome {
+  font-size: 20px !important;
+  color: $c-pink-saudacao !important;
+}
+
+.mat-icon-button {
+  height: 32px;
+  line-height: 0px;
+}
+
+mat-nav-list {
+  min-width: max-content;
+  height: 98%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+mat-nav-list mat-list-item:last-child {
+  position: absolute;
+  bottom: 0;
+  margin-bottom: 70px;
+}
+
+::ng-deep .containers {
+  min-height: 5% !important;
+}
+
+// .mat-list-base .mat-list-item .mat-list-icon,
+// .mat-list-base .mat-list-option .mat-list-icon {
+//   width: 27%;
+// }
+
+span.full-width {
+  min-width: max-content;
+}
+
+div.mat-list-item-content {
+  min-width: max-content;
+}
+
+.pink-icon {
+  color: $c-pink-saudacao;
+}
+
+mat-icon {
+  color: $c-pink-saudacao;
+}
+
+.sobre {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.fa-whatsapp {
+  font-size: 24px;
+  color: #00b800;
+  text-decoration: none;
+}

@@ -1,0 +1,18 @@
+{
+  "rules": {
+    ".read": "auth != null",
+    ".write": "auth != null",
+    "account": {
+      ".indexOn": ["uid"]
+    },
+    "campaigns": {
+      ".indexOn": ["nome", "nomeLower", "status", "dataCriacao"]
+    },
+    "clients": {
+      ".indexOn": ["nomeLower"]
+    },
+    "sales": {
+      ".indexOn": ["campaignKey", "clienteKey", "clienteNomeLower", "dataCriacao"]
+    }
+  }
+}

@@ -1,0 +1,14 @@
+<div class="content">
+  <div class="top">
+    <h3 (click)="showMensagemTecnica = !showMensagemTecnica">Ops...</h3>
+    <p *ngIf="showMensagemTecnica">{{ mensagemTecnica }}</p>
+  </div>
+  <div class="menssagem-error">
+    <img src="../../../assets/imagens/logo.png" width="300" height="300" />
+    <h3>{{ mensagem1 }}</h3>
+    <h3>{{ mensagem2 }}</h3>
+  </div>
+  <div class="botao">
+    <button mat-flat-button color="accent" (click)="voltar()">Voltar</button>
+  </div>
+</div>

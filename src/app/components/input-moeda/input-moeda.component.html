@@ -1,0 +1,62 @@
+<div class="inputText">
+  <div
+    class="input-text-container"
+    [ngClass]="{ fill: !!valorAtual, desabilitado: disabled }"
+    (click)="inputChild.focus()"
+  >
+    <div
+      *ngIf="mostrarSimboloComoPrefixo"
+      class="input-prefixo"
+      [ngClass]="{ desabilitado: disabled }"
+    >
+      <ng-content select="[prefixo]"></ng-content>
+      <span>{{ moeda | siglaMoeda }}</span>
+    </div>
+    <div class="input-conteudo">
+      <mat-form-field
+        class="example-full-width"
+        color="accent"
+        appearance="outline"
+      >
+        <mat-label>{{ label }}</mat-label>
+        <input
+          matInput
+          #inputChild
+          type="tel"
+          [id]="idInput"
+          (blur)="aoPerderFoco.emit(); onBlur()"
+          (focus)="handleFocus()"
+          (ngModelChange)="atualizarValor($event)"
+          (keydown)="handleDecimalChanges($event)"
+          [attr.aria-disabled]="desabilitado"
+          [attr.aria-invalid]="temClasseNGInvalid"
+          [attr.autofocus]="autofocus ? '' : null"
+          [attr.title]="title"
+          [disabled]="disabled"
+          [ngClass]="{ ativo: !!valorAtual || valorAtual === 0 }"
+          [ngModel]="
+            valorAtual
+              | formatarNumeroMoeda
+                : moeda
+                : digitsInfo
+                : separadorDecimal
+                : separadorMilhar
+                : renderizarSimboloMoeda
+          "
+        />
+      </mat-form-field>
+    </div>
+    <div class="input-sufixo" *ngIf="mostrarIconeStatus">
+      <div class="icon-v2 input-erro-moeda"></div>
+      <div
+        class="icon-v2 input-sucesso-moeda"
+        [ngStyle]="{
+          visibility:
+            valorAtual > 0 && !temClasseNGInvalid ? 'visible' : 'hidden'
+        }"
+      ></div>
+      <ng-content select="[sufixo]"></ng-content>
+    </div>
+  </div>
+  <ng-content></ng-content>
+</div>
