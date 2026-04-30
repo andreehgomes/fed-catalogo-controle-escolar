@@ -44,10 +44,19 @@
 
         <!-- Adicionar item -->
         <div class="item-input-section">
-          <span class="section-label">Adicionar item</span>
+          <div class="section-header">
+            <span class="section-label">Adicionar item</span>
+
+            <button *ngIf="itensPadrao.length === 1"
+                    type="button" class="btn-padrao"
+                    (click)="preencherItem(itensPadrao[0])">
+              <mat-icon>auto_fix_high</mat-icon>
+              Item padrão
+            </button>
+          </div>
 
           <div class="itens-padrao-chips" *ngIf="itensPadrao.length > 1">
-            <span class="chips-label">Itens da campanha:</span>
+            <span class="chips-label">Itens padrão:</span>
             <button *ngFor="let p of itensPadrao" type="button"
                     class="chip-padrao"
                     (click)="preencherItem(p)">

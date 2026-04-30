@@ -106,13 +106,46 @@
   flex-direction: column;
   gap: 4px;
 
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+
   .section-label {
     font-size: 12px;
     font-weight: 700;
     color: $c-primary;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin-bottom: 4px;
+  }
+
+  .btn-padrao {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #fff;
+    border: 1px solid rgba($c-primary, 0.4);
+    color: $c-primary;
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.12s ease, color 0.12s ease;
+
+    mat-icon {
+      font-size: 14px;
+      width: 14px;
+      height: 14px;
+    }
+
+    &:hover {
+      background: $c-primary;
+      color: #fff;
+    }
   }
 }
 
