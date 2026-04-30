@@ -5,6 +5,14 @@ export interface SaleItem {
   valorSubtotal: number;
 }
 
+export interface Recebimento {
+  data: string;        // ISO date YYYY-MM-DD
+  valor: number;
+  descricao: string;
+}
+
+export type SaleStatus = 'pendente' | 'quitado';
+
 export interface Sale {
   key?: string;
   campaignKey: string;
@@ -15,6 +23,9 @@ export interface Sale {
   itens: SaleItem[];
   valorTotal: number;
   observacao?: string;
+  status?: SaleStatus;
+  valorRecebido?: number;
+  recebimentos?: { [key: string]: Recebimento };
   dataCriacao: string;
   dataAlteracao?: string;
 }

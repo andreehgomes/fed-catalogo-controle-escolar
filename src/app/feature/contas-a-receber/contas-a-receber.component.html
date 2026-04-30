@@ -1,0 +1,94 @@
+<div class="page">
+  <div class="header">
+    <span class="page-title">Contas a Receber</span>
+  </div>
+
+  <div class="page-content">
+    <div class="filtros">
+      <mat-form-field appearance="outline" color="accent" class="field-full" subscriptSizing="dynamic">
+        <mat-label>Buscar cliente</mat-label>
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput [formControl]="filterControl" autocomplete="off" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" color="accent" class="field-full" subscriptSizing="dynamic">
+        <mat-label>Campanha</mat-label>
+        <mat-icon matPrefix>campaign</mat-icon>
+        <mat-select [formControl]="campaignCtrl">
+          <mat-option [value]="">Todas</mat-option>
+          <mat-option *ngFor="let c of campaigns" [value]="c.key">{{ c.nome }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-button-toggle-group [value]="statusFiltro" (change)="setStatus($event.value)" class="status-toggle">
+        <mat-button-toggle value="pendente">Pendentes</mat-button-toggle>
+        <mat-button-toggle value="quitado">Quitados</mat-button-toggle>
+        <mat-button-toggle value="todos">Todos</mat-button-toggle>
+      </mat-button-toggle-group>
+
+      <button mat-button class="btn-clear" (click)="limparFiltros()">
+        <mat-icon>filter_alt_off</mat-icon> Limpar
+      </button>
+    </div>
+
+    <div class="totais" *ngIf="filteredSales.length > 0">
+      <div class="totais-row">
+        <span>{{ filteredSales.length }} {{ filteredSales.length === 1 ? 'venda' : 'vendas' }}</span>
+        <span class="totais-saldo">Saldo: <strong>R$ {{ fmt(totalSaldo) }}</strong></span>
+      </div>
+    </div>
+
+    <p class="empty-msg" *ngIf="filteredSales.length === 0">
+      <mat-icon>info</mat-icon> Nenhuma venda encontrada.
+    </p>
+
+    <mat-card class="sale-card" *ngFor="let sale of filteredSales">
+      <div class="card-header">
+        <span class="client-name">{{ sale.clienteNome }}</span>
+        <span class="status-pill" [class.quitado]="sale.status === 'quitado'">
+          {{ sale.status === 'quitado' ? 'Quitado' : 'Pendente' }}
+        </span>
+      </div>
+
+      <div class="campaign-info">
+        <mat-icon>campaign</mat-icon>{{ sale.campaignNome }}
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="info-label">Data</span>
+          <span class="info-value">{{ sale.dataCriacao | date:'dd/MM/yyyy' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Total</span>
+          <span class="info-value">R$ {{ fmt(sale.valorTotal) }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Recebido</span>
+          <span class="info-value">R$ {{ fmt(sale.valorRecebido ?? 0) }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Saldo</span>
+          <span class="info-value saldo">R$ {{ fmt(saldoVenda(sale)) }}</span>
+        </div>
+      </div>
+
+      <div class="card-actions">
+        <button mat-icon-button (click)="editSale(sale)" [disabled]="sale.status === 'quitado'" title="Editar venda">
+          <mat-icon class="icon-edit">edit</mat-icon>
+        </button>
+        <button mat-icon-button (click)="receberSale(sale)" [disabled]="sale.status === 'quitado'" title="Registrar recebimento">
+          <mat-icon class="icon-receber">payments</mat-icon>
+        </button>
+        <button mat-icon-button (click)="deleteSale(sale)" title="Excluir venda">
+          <mat-icon class="icon-delete">delete</mat-icon>
+        </button>
+      </div>
+
+      <app-lista-recebimentos
+        [recebimentos]="getRecebimentos(sale)"
+        (excluir)="excluirRecebimento(sale, $event)">
+      </app-lista-recebimentos>
+    </mat-card>
+  </div>
+</div>

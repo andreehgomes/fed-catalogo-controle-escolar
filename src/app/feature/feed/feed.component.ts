@@ -20,9 +20,9 @@ export class FeedComponent {
     { label: "Campanhas", icon: "campaign", route: RouterEnum.CAMPAIGN_LIST, color: "primary" },
     { label: "Nova venda", icon: "point_of_sale", route: RouterEnum.NEW_SALE, color: "accent" },
     { label: "Vendas", icon: "receipt_long", route: RouterEnum.SALE_LIST, color: "success" },
-    { label: "Clientes", icon: "people", route: RouterEnum.CLIENT_LIST, color: "warn" },
-    { label: "Dashboard", icon: "dashboard", route: RouterEnum.DASHBOARD, color: "primary" },
-    { label: "Nova campanha", icon: "add_circle", route: RouterEnum.NEW_CAMPAIGN, color: "accent" },
+    { label: "A receber", icon: "request_quote", route: RouterEnum.CONTAS_A_RECEBER, color: "warn" },
+    { label: "Clientes", icon: "people", route: RouterEnum.CLIENT_LIST, color: "primary" },
+    { label: "Dashboard", icon: "dashboard", route: RouterEnum.DASHBOARD, color: "accent" },
   ];
 
   constructor(private router: Router) {}

@@ -1,0 +1,130 @@
+@import "../../shared/style/colors";
+
+// ─── Wrapper ─────────────────────────────────────────────────────────────────
+
+.recebimentos-wrap {
+  width: 100%;
+  margin-top: 8px;
+}
+
+// ─── Accordion ───────────────────────────────────────────────────────────────
+
+::ng-deep {
+  .recebimentos-wrap .mat-expansion-panel {
+    background-color: $c-white;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07) !important;
+    border-radius: 16px !important;
+    overflow: hidden;
+  }
+
+  .recebimentos-wrap .mat-expansion-panel-header {
+    background-color: $c-white !important;
+    padding: 0 16px;
+    height: 48px;
+  }
+
+  .recebimentos-wrap .mat-expansion-panel-body {
+    padding: 0 0 8px;
+  }
+}
+
+// ─── Header do painel ────────────────────────────────────────────────────────
+
+.panel-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.82);
+}
+
+.panel-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: $c-secondary;
+}
+
+.panel-desc {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+// ─── Item ─────────────────────────────────────────────────────────────────────
+
+.recebimento-item {
+  padding: 10px 16px;
+  border-bottom: 1px solid $c-primary-light-card;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+// ─── Linha superior ──────────────────────────────────────────────────────────
+
+.recebimento-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.recebimento-data-wrap {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.row-icon {
+  font-size: 14px;
+  width: 14px;
+  height: 14px;
+  color: rgba(0, 0, 0, 0.36);
+}
+
+.recebimento-data {
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.54);
+}
+
+.recebimento-valor {
+  font-size: 14px;
+  font-weight: 700;
+  color: $c-secondary;
+}
+
+// ─── Linha inferior ───────────────────────────────────────────────────────────
+
+.recebimento-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 2px;
+}
+
+.recebimento-descricao {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.45);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 8px;
+}
+
+// ─── Botão excluir ────────────────────────────────────────────────────────────
+
+.btn-delete {
+  color: $c-red-alert;
+  width: 32px;
+  height: 32px;
+  line-height: 32px;
+  flex-shrink: 0;
+
+  ::ng-deep mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}

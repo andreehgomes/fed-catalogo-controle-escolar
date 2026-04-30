@@ -90,6 +90,20 @@ const routes: Routes = [
       ),
   },
   {
+    path: "contas-a-receber",
+    loadChildren: () =>
+      import("./feature/contas-a-receber/contas-a-receber.module").then(
+        (m) => m.ContasAReceberModule
+      ),
+  },
+  {
+    path: "recebimento/:saleKey",
+    loadChildren: () =>
+      import("./feature/recebimento/recebimento.module").then(
+        (m) => m.RecebimentoModule
+      ),
+  },
+  {
     path: "dashboard",
     loadChildren: () =>
       import("./feature/dashboard/dashboard.module").then(

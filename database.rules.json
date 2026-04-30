@@ -12,7 +12,7 @@
       ".indexOn": ["nomeLower"]
     },
     "sales": {
-      ".indexOn": ["campaignKey", "clienteKey", "clienteNomeLower", "dataCriacao"]
+      ".indexOn": ["campaignKey", "clienteKey", "clienteNomeLower", "dataCriacao", "status"]
     }
   }
 }

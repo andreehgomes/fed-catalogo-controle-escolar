@@ -19,5 +19,8 @@ export enum RouterEnum {
   NEW_SALE = "new-sale",
   SALE_LIST = "sale-list",
 
+  CONTAS_A_RECEBER = "contas-a-receber",
+  RECEBIMENTO = "recebimento",
+
   DASHBOARD = "dashboard",
 }

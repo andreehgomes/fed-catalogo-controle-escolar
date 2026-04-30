@@ -106,6 +106,15 @@
           <textarea matInput formControlName="observacao" rows="2"></textarea>
         </mat-form-field>
 
+        <!-- A receber -->
+        <mat-checkbox color="accent" [formControl]="aReceberCtrl" class="a-receber-check">
+          Venda a receber (cliente vai pagar depois)
+        </mat-checkbox>
+        <p class="a-receber-hint" *ngIf="aReceberCtrl.value">
+          <mat-icon>info</mat-icon>
+          Esta venda ficará como pendente em "Contas a receber" até o pagamento.
+        </p>
+
       </div>
 
       <div class="actions">

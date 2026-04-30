@@ -1,0 +1,172 @@
+@import "../../shared/style/colors";
+
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 70px 16px 32px;
+}
+
+.header {
+  width: 100%;
+  max-width: 540px;
+  margin-bottom: 16px;
+
+  .page-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: #fff;
+  }
+}
+
+.page-content {
+  width: 100%;
+  max-width: 540px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.filtros {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px;
+
+  .status-toggle {
+    align-self: flex-start;
+    margin-top: 4px;
+  }
+
+  .btn-clear {
+    align-self: flex-end;
+    font-size: 13px !important;
+  }
+}
+
+.field-full {
+  width: 100%;
+}
+
+.totais {
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 10px;
+  padding: 8px 14px;
+
+  .totais-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: #1a1a1a;
+  }
+
+  .totais-saldo strong {
+    color: #c62828;
+  }
+}
+
+.empty-msg {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.07);
+  color: rgba(255, 255, 255, 0.85);
+  border-radius: 10px;
+  padding: 14px;
+  font-size: 14px;
+  margin: 0;
+}
+
+.sale-card {
+  padding: 14px !important;
+  border-radius: 12px !important;
+  display: flex !important;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+
+  .client-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a1a1a;
+  }
+}
+
+.status-pill {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: #fff3e0;
+  color: #e65100;
+  text-transform: uppercase;
+
+  &.quitado {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+}
+
+.campaign-info {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: #555;
+
+  mat-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    color: $c-primary;
+  }
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px 14px;
+  margin-top: 4px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.info-label {
+  font-size: 11px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+
+  &.saldo {
+    color: #c62828;
+  }
+}
+
+.card-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0;
+  margin-top: 4px;
+
+  .icon-edit { color: $c-primary; }
+  .icon-receber { color: #2e7d32; }
+  .icon-delete { color: #c62828; }
+}

@@ -1,0 +1,68 @@
+<div class="page">
+  <div class="header">
+    <button mat-icon-button class="btn-back" (click)="cancelar()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <span class="page-title">Registrar recebimento</span>
+  </div>
+
+  <div class="page-content">
+
+    <card-alert
+      *ngIf="alerta?.codigo != null"
+      tipo="{{ alerta.tipo }}"
+      codigo="{{ alerta.codigo }}"
+      mensagem="{{ alerta.mensagem }}"
+    ></card-alert>
+
+    <mat-card class="sale-summary" *ngIf="sale">
+      <div class="summary-row">
+        <span class="summary-label">Cliente</span>
+        <span class="summary-value">{{ sale.clienteNome }}</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">Campanha</span>
+        <span class="summary-value">{{ sale.campaignNome }}</span>
+      </div>
+      <div class="summary-divider"></div>
+      <div class="summary-row">
+        <span class="summary-label">Total</span>
+        <span class="summary-value">R$ {{ fmt(sale.valorTotal) }}</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">Já recebido</span>
+        <span class="summary-value">R$ {{ fmt(sale.valorRecebido ?? 0) }}</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">Saldo restante</span>
+        <span class="summary-value summary-saldo">R$ {{ fmt(saldo) }}</span>
+      </div>
+    </mat-card>
+
+    <form [formGroup]="form" class="form-card" *ngIf="sale">
+      <div class="fields">
+        <mat-form-field appearance="outline" color="accent" class="field-full">
+          <mat-label>Data do recebimento</mat-label>
+          <mat-icon matPrefix>calendar_today</mat-icon>
+          <input matInput type="date" formControlName="data" />
+        </mat-form-field>
+
+        <input-moeda formControlName="valor" label="Valor recebido" />
+
+        <mat-form-field appearance="outline" color="accent" class="field-full">
+          <mat-label>Descrição (opcional)</mat-label>
+          <input matInput formControlName="descricao" />
+        </mat-form-field>
+      </div>
+
+      <div class="actions">
+        <button mat-stroked-button type="button" (click)="cancelar()">Cancelar</button>
+        <button mat-flat-button color="accent" type="button"
+                [disabled]="form.invalid"
+                (click)="salvar()">
+          Salvar recebimento
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

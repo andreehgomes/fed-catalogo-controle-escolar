@@ -37,6 +37,7 @@ export class NewSaleComponent implements OnInit {
   itemDescricaoCtrl = new FormControl<string>("", { nonNullable: true, validators: [Validators.required] });
   itemQuantidadeCtrl = new FormControl<number>(1, { nonNullable: true, validators: [Validators.required, Validators.min(1)] });
   itemValorUnitarioCtrl = new FormControl<number | null>(null, [Validators.required, Validators.min(0.01)]);
+  aReceberCtrl = new FormControl<boolean>(false, { nonNullable: true });
 
   form: FormGroup = this.fb.group({
     campaignKey: ["", Validators.required],
@@ -87,6 +88,7 @@ export class NewSaleComponent implements OnInit {
         );
       });
       this.recalcularTotal();
+      this.aReceberCtrl.setValue(selected.status === "pendente");
       this.saleService.selectedSale$.next(null);
     } else {
       const cliente = this.clientService.selectedClient$.getValue();
@@ -245,6 +247,7 @@ export class NewSaleComponent implements OnInit {
       }));
 
       const now = new Date().toISOString();
+      const aReceber = this.aReceberCtrl.value;
       const sale: Sale = {
         campaignKey: v.campaignKey,
         campaignNome: v.campaignNome,
@@ -254,12 +257,25 @@ export class NewSaleComponent implements OnInit {
         itens,
         valorTotal: v.valorTotal,
         observacao: v.observacao?.trim() || undefined,
+        status: aReceber ? "pendente" : "quitado",
+        valorRecebido: aReceber ? 0 : v.valorTotal,
         dataCriacao:
           this.editingKey && this.dataCriacaoOriginal
             ? this.dataCriacaoOriginal
             : now,
         ...(this.editingKey ? { dataAlteracao: now } : {}),
       };
+
+      if (!aReceber && !this.editingKey) {
+        const recebimentoKey = now.replace(/[:.]/g, "-");
+        sale.recebimentos = {
+          [recebimentoKey]: {
+            data: now.substring(0, 10),
+            valor: v.valorTotal,
+            descricao: "Pago no ato da venda",
+          },
+        };
+      }
 
       if (this.editingKey) {
         await firstValueFrom(this.saleService.updateSale(this.editingKey, sale));

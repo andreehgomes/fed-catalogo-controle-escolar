@@ -1,0 +1,99 @@
+@import "../../shared/style/colors";
+
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 70px 16px 32px;
+}
+
+.header {
+  width: 100%;
+  max-width: 540px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  color: #fff;
+
+  .btn-back {
+    color: #fff !important;
+  }
+
+  .page-title {
+    font-size: 20px;
+    font-weight: 600;
+    flex: 1;
+  }
+}
+
+.page-content {
+  width: 100%;
+  max-width: 540px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sale-summary {
+  background: #fff !important;
+  border-radius: 12px !important;
+  padding: 14px !important;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+
+  .summary-label {
+    color: #777;
+  }
+
+  .summary-value {
+    color: #1a1a1a;
+    font-weight: 500;
+  }
+
+  .summary-saldo {
+    color: #c62828;
+    font-weight: 700;
+  }
+}
+
+.summary-divider {
+  height: 1px;
+  background: #eee;
+  margin: 4px 0;
+}
+
+.form-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field-full {
+  width: 100%;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 6px;
+}

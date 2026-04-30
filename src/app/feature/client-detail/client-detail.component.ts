@@ -75,6 +75,20 @@ export class ClientDetailComponent implements OnInit {
     this.router.navigate([RouterEnum.NEW_SALE]);
   }
 
+  registrarRecebimento(s: Sale, event: Event): void {
+    event.stopPropagation();
+    if (!s.key) return;
+    this.router.navigate([RouterEnum.RECEBIMENTO, s.key], {
+      queryParams: { origem: RouterEnum.CLIENT_DETAIL },
+    });
+  }
+
+  get saldoPendente(): number {
+    return this.sales
+      .filter((s) => s.status === "pendente")
+      .reduce((acc, s) => acc + (s.valorTotal - (s.valorRecebido ?? 0)), 0);
+  }
+
   get totalGasto(): number {
     return this.sales.reduce((acc, s) => acc + s.valorTotal, 0);
   }

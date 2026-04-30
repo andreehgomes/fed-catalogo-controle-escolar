@@ -4,7 +4,7 @@ import {
   orderByChild, equalTo, startAt, endAt, startAfter, limitToFirst, limitToLast,
 } from "@angular/fire/database";
 import { BehaviorSubject, Observable } from "rxjs";
-import { Sale } from "../../model/sale";
+import { Sale, Recebimento, SaleStatus } from "../../model/sale";
 import { Path } from "../../model/path.enum";
 
 @Injectable({ providedIn: "root" })
@@ -216,6 +216,65 @@ export class SaleService {
   deleteSale(key: string): Promise<void> {
     return runInInjectionContext(this.injector, () =>
       remove(ref(this.database, `${Path.SALES}/${key}`))
+    );
+  }
+
+  getSalesByStatus(status: SaleStatus): Observable<Sale[]> {
+    return new Observable((observer) => {
+      runInInjectionContext(this.injector, () => {
+        const q = query(
+          ref(this.database, Path.SALES),
+          orderByChild("status"),
+          equalTo(status)
+        );
+        get(q)
+          .then((snapshot) => {
+            const items: Sale[] = [];
+            snapshot.forEach((child) => {
+              items.push({ key: child.key, ...child.val() } as Sale);
+            });
+            items.sort((a, b) => (b.dataCriacao ?? "").localeCompare(a.dataCriacao ?? ""));
+            observer.next(items);
+            observer.complete();
+          })
+          .catch((error) => observer.error(error));
+      });
+    });
+  }
+
+  addRecebimento(
+    saleKey: string,
+    recebimento: Recebimento,
+    novoValorRecebido: number,
+    quitar: boolean
+  ): Promise<void> {
+    return runInInjectionContext(this.injector, () => {
+      const novoId = push(ref(this.database, Path.SALES)).key!;
+      const updates: { [path: string]: any } = {};
+      updates[`${Path.SALES}/${saleKey}/recebimentos/${novoId}`] = recebimento;
+      updates[`${Path.SALES}/${saleKey}/valorRecebido`] = novoValorRecebido;
+      updates[`${Path.SALES}/${saleKey}/status`] = quitar ? "quitado" : "pendente";
+      return update(ref(this.database), updates);
+    });
+  }
+
+  deleteRecebimento(
+    saleKey: string,
+    recebimentoKey: string,
+    remainingRecebimentos: { [key: string]: Recebimento },
+    valorTotal: number
+  ): Promise<void> {
+    const novoValorRecebido = Object.values(remainingRecebimentos).reduce(
+      (sum, r) => sum + r.valor,
+      0
+    );
+    const novoStatus: SaleStatus = novoValorRecebido >= valorTotal ? "quitado" : "pendente";
+    const updates: { [path: string]: any } = {};
+    updates[`${Path.SALES}/${saleKey}/recebimentos/${recebimentoKey}`] = null;
+    updates[`${Path.SALES}/${saleKey}/valorRecebido`] = novoValorRecebido;
+    updates[`${Path.SALES}/${saleKey}/status`] = novoStatus;
+    return runInInjectionContext(this.injector, () =>
+      update(ref(this.database), updates)
     );
   }
 }

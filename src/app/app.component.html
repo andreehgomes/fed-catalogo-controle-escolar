@@ -48,6 +48,11 @@
           <span matListItemTitle>Listar vendas</span>
         </a>
 
+        <a mat-list-item class="nav-item" (click)="goTo(routes.CONTAS_A_RECEBER); drawer.toggle()">
+          <mat-icon matListItemIcon>request_quote</mat-icon>
+          <span matListItemTitle>Contas a receber</span>
+        </a>
+
         <a mat-list-item class="nav-item" (click)="goTo(routes.NEW_CLIENT); drawer.toggle()">
           <mat-icon matListItemIcon>person_add</mat-icon>
           <span matListItemTitle>Novo cliente</span>
