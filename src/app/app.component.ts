@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
+import { ChangeDetectorRef, Component, NgZone, OnInit, ViewChild } from "@angular/core";
 import { Subscription, Observable, filter } from "rxjs";
 import { ActivatedRoute, NavigationEnd, Router } from "@angular/router";
 import { Auth, authState } from "@angular/fire/auth";
@@ -42,7 +42,9 @@ export class AppComponent implements OnInit {
     private sidenavService: SidenavService,
     private fireAuth: Auth,
     private accountService: AccountService,
-    private analyticsService: AnalyticsService
+    private analyticsService: AnalyticsService,
+    private ngZone: NgZone,
+    private cdr: ChangeDetectorRef
   ) {
     this.route.events
       .pipe(
@@ -60,13 +62,16 @@ export class AppComponent implements OnInit {
     this.initiByStorage();
 
     authState(this.fireAuth).subscribe((user) => {
-      if (user) {
-        this.state = true;
-        this.loadUserProfile();
-      } else {
-        this.state = false;
-        this.isMaster = false;
-      }
+      this.ngZone.run(() => {
+        if (user) {
+          this.state = true;
+          this.loadUserProfile();
+        } else {
+          this.state = false;
+          this.isMaster = false;
+        }
+        this.cdr.detectChanges();
+      });
     });
   }
 
@@ -74,8 +79,11 @@ export class AppComponent implements OnInit {
     const uid = this.fireAuth.currentUser?.uid;
     if (!uid) return;
     this.accountService.getAccountByUidKey(uid).then((accounts) => {
-      this.isMaster = accounts[0]?.perfil === "master";
-      this.analyticsService.setUserProfile(accounts[0]?.perfil ?? null);
+      this.ngZone.run(() => {
+        this.isMaster = accounts[0]?.perfil === "master";
+        this.analyticsService.setUserProfile(accounts[0]?.perfil ?? null);
+        this.cdr.detectChanges();
+      });
     });
   }
 
