@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { Subscription, Observable, filter } from "rxjs";
 import { ActivatedRoute, NavigationEnd, Router } from "@angular/router";
-import { Auth } from "@angular/fire/auth";
+import { Auth, authState } from "@angular/fire/auth";
 
 import { RouterService } from "./core/router/router.service";
 import { LoginService } from "./feature/login/shared/service/login.service";
@@ -58,10 +58,14 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.sidenavService.toggle.subscribe(() => this.drawer?.toggle());
     this.initiByStorage();
-    this.auth.usuario$.subscribe((token) => {
-      if (token) {
+
+    authState(this.fireAuth).subscribe((user) => {
+      if (user) {
         this.state = true;
         this.loadUserProfile();
+      } else {
+        this.state = false;
+        this.isMaster = false;
       }
     });
   }
