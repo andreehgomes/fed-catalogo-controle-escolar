@@ -250,6 +250,7 @@ export class NewSaleComponent implements OnInit {
 
       const now = new Date().toISOString();
       const aReceber = this.aReceberCtrl.value;
+      const observacao = v.observacao?.trim() ?? "";
       const sale: Sale = {
         campaignKey: v.campaignKey,
         campaignNome: v.campaignNome,
@@ -258,13 +259,13 @@ export class NewSaleComponent implements OnInit {
         clienteNomeLower: clienteNome.toLowerCase(),
         itens,
         valorTotal: v.valorTotal,
-        observacao: v.observacao?.trim() || undefined,
         status: aReceber ? "pendente" : "quitado",
         valorRecebido: aReceber ? 0 : v.valorTotal,
         dataCriacao:
           this.editingKey && this.dataCriacaoOriginal
             ? this.dataCriacaoOriginal
             : now,
+        ...(observacao ? { observacao } : {}),
         ...(this.editingKey ? { dataAlteracao: now } : {}),
       };
 

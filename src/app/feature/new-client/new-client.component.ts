@@ -50,9 +50,10 @@ export class NewClientComponent implements OnInit {
     this.loader.openDialog();
 
     const v = this.form.getRawValue();
+    const telefone = v.telefone?.trim() ?? "";
     const client: Client = {
       nome: v.nome.trim(),
-      telefone: v.telefone?.trim() || undefined,
+      ...(telefone ? { telefone } : {}),
     };
 
     const obs$: Observable<unknown> = this.editingKey

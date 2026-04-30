@@ -98,15 +98,16 @@ export class NewCampaignComponent implements OnInit {
     }));
 
     const now = new Date().toISOString();
+    const descricao = v.descricao?.trim() ?? "";
     const campaign: Campaign = {
       nome: v.nome.trim(),
-      descricao: v.descricao?.trim() || undefined,
       dataInicio: v.dataInicio,
-      dataFim: v.dataFim || undefined,
-      meta: v.meta || undefined,
       status: v.status,
-      itensPadrao: itensPadrao.length > 0 ? itensPadrao : undefined,
       dataCriacao: this.editingKey && this.dataCriacaoOriginal ? this.dataCriacaoOriginal : now,
+      ...(descricao ? { descricao } : {}),
+      ...(v.dataFim ? { dataFim: v.dataFim } : {}),
+      ...(v.meta ? { meta: v.meta } : {}),
+      ...(itensPadrao.length > 0 ? { itensPadrao } : {}),
     };
 
     const obs$: Observable<unknown> = this.editingKey
