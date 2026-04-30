@@ -31,6 +31,13 @@ const routes: Routes = [
       ),
   },
   {
+    path: "c/:key",
+    loadChildren: () =>
+      import("./feature/campaign-public/campaign-public.module").then(
+        (m) => m.CampaignPublicModule
+      ),
+  },
+  {
     path: "feed",
     canActivate: [authGuard],
     loadChildren: () =>

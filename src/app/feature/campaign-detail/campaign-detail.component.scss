@@ -143,6 +143,17 @@
   }
 }
 
+.btn-compartilhar {
+  width: 100%;
+  margin-top: 6px;
+  color: #fff !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+
+  mat-icon {
+    margin-right: 4px;
+  }
+}
+
 .sales-section {
   display: flex;
   flex-direction: column;

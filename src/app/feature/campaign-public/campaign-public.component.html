@@ -1,0 +1,122 @@
+<div class="page" *ngIf="!loading && !notFound && campaign">
+  <div class="hero">
+    <mat-icon class="hero-icon">campaign</mat-icon>
+    <span class="hero-title">{{ campaign.nome }}</span>
+    <span class="hero-status" [class.encerrada]="campaign.status === 'encerrada'">
+      {{ campaign.status === 'ativa' ? 'Ativa' : 'Encerrada' }}
+    </span>
+    <span class="hero-desc" *ngIf="campaign.descricao">{{ campaign.descricao }}</span>
+    <span class="hero-data">
+      <mat-icon>event</mat-icon>
+      {{ fmtDataInicio(campaign.dataInicio) }}<span *ngIf="campaign.dataFim"> – {{ fmtDataInicio(campaign.dataFim) }}</span>
+    </span>
+  </div>
+
+  <div class="page-content">
+    <div class="cards-grid">
+      <mat-card class="kpi-card kpi-blue">
+        <div class="kpi-icon"><mat-icon>receipt_long</mat-icon></div>
+        <div class="kpi-body">
+          <span class="kpi-label">Vendas realizadas</span>
+          <span class="kpi-value">{{ totalVendas }}</span>
+        </div>
+      </mat-card>
+
+      <mat-card class="kpi-card kpi-blue">
+        <div class="kpi-icon"><mat-icon>shopping_cart</mat-icon></div>
+        <div class="kpi-body">
+          <span class="kpi-label">Total vendido</span>
+          <span class="kpi-value">R$ {{ fmt(totalVendido) }}</span>
+        </div>
+      </mat-card>
+
+      <mat-card class="kpi-card kpi-green">
+        <div class="kpi-icon"><mat-icon>payments</mat-icon></div>
+        <div class="kpi-body">
+          <span class="kpi-label">Total recebido</span>
+          <span class="kpi-value">R$ {{ fmt(totalRecebido) }}</span>
+        </div>
+      </mat-card>
+
+      <mat-card class="kpi-card kpi-orange">
+        <div class="kpi-icon"><mat-icon>pending_actions</mat-icon></div>
+        <div class="kpi-body">
+          <span class="kpi-label">Falta receber</span>
+          <span class="kpi-value">R$ {{ fmt(totalAReceber) }}</span>
+        </div>
+      </mat-card>
+
+      <mat-card class="kpi-card kpi-purple kpi-full" *ngIf="campaign.meta">
+        <div class="kpi-icon"><mat-icon>flag</mat-icon></div>
+        <div class="kpi-body">
+          <span class="kpi-label">Meta atingida</span>
+          <span class="kpi-value">{{ pctMeta }}%</span>
+        </div>
+      </mat-card>
+    </div>
+
+    <mat-card class="meta-card" *ngIf="campaign.meta && campaign.meta > 0">
+      <div class="meta-header">
+        <span>Progresso da meta</span>
+        <span class="pct">{{ pctMeta }}%</span>
+      </div>
+      <mat-progress-bar mode="determinate" color="accent" [value]="pctMeta"></mat-progress-bar>
+      <div class="meta-legend">
+        <span>Vendido: R$ {{ fmt(totalVendido) }}</span>
+        <span>Meta: R$ {{ fmt(campaign.meta) }}</span>
+      </div>
+    </mat-card>
+
+    <mat-card class="patrocinio-card" *ngIf="campaign.patrocinadores?.length">
+      <div class="patrocinio-header">
+        <mat-icon>volunteer_activism</mat-icon>
+        <span>Patrocinadores</span>
+        <span class="pat-total" *ngIf="totalPatrocinioValor > 0">
+          R$ {{ fmt(totalPatrocinioValor) }}
+        </span>
+      </div>
+      <div class="pat-list">
+        <div class="pat-item" *ngFor="let p of campaign.patrocinadores">
+          <div class="pat-info">
+            <span class="pat-nome">{{ p.nome }}</span>
+            <span class="pat-detalhe" *ngIf="p.tipo === 'valor'">
+              R$ {{ fmt(p.valor || 0) }}
+            </span>
+            <span class="pat-detalhe pat-detalhe-produto" *ngIf="p.tipo === 'produto'">
+              {{ p.produto }}
+            </span>
+            <span class="pat-obs" *ngIf="p.observacao">{{ p.observacao }}</span>
+          </div>
+          <span class="pat-tipo-pill" [class.produto]="p.tipo === 'produto'">
+            {{ p.tipo === 'valor' ? 'R$' : 'Produto' }}
+          </span>
+        </div>
+      </div>
+    </mat-card>
+
+    <mat-card class="section-card" *ngIf="topItens.length > 0">
+      <h3>Top itens vendidos</h3>
+      <div class="top-row" *ngFor="let it of topItens; let i = index">
+        <span class="top-rank">{{ i + 1 }}</span>
+        <span class="top-desc">{{ it.descricao }}</span>
+        <span class="top-qtd">{{ it.qtdTotal }} un</span>
+        <span class="top-valor">R$ {{ fmt(it.valorTotal) }}</span>
+      </div>
+    </mat-card>
+
+    <p class="footer-info">
+      <mat-icon>info</mat-icon>
+      Página de acompanhamento público — somente leitura.
+    </p>
+  </div>
+</div>
+
+<div class="state-msg" *ngIf="loading">
+  <mat-spinner diameter="40"></mat-spinner>
+  <span>Carregando campanha…</span>
+</div>
+
+<div class="state-msg state-error" *ngIf="!loading && notFound">
+  <mat-icon>error_outline</mat-icon>
+  <span>Campanha não encontrada ou link inválido.</span>
+</div>

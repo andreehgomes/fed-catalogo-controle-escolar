@@ -80,6 +80,36 @@ export class CampaignDetailComponent implements OnInit {
     this.router.navigate(["campaign", this.campaign.key, "new-sponsor"]);
   }
 
+  async compartilharPublico(): Promise<void> {
+    if (!this.campaign?.key) return;
+    const url = `${window.location.origin}/c/${this.campaign.key}`;
+    const title = `Acompanhe a campanha ${this.campaign.nome}`;
+
+    try {
+      if (navigator.share) {
+        await navigator.share({ title, text: title, url });
+      } else {
+        await navigator.clipboard.writeText(url);
+        this.snackBar.open("Link copiado para a área de transferência!", "", {
+          duration: 3000,
+          panelClass: ["snack-sucesso"],
+          verticalPosition: "top",
+        });
+      }
+    } catch (err: any) {
+      if (err?.name !== "AbortError") {
+        try {
+          await navigator.clipboard.writeText(url);
+          this.snackBar.open("Link copiado para a área de transferência!", "", {
+            duration: 3000,
+            panelClass: ["snack-sucesso"],
+            verticalPosition: "top",
+          });
+        } catch {}
+      }
+    }
+  }
+
   excluirPatrocinador(index: number): void {
     if (!this.campaign?.key || !this.campaign.patrocinadores) return;
     const patrocinador = this.campaign.patrocinadores[index];

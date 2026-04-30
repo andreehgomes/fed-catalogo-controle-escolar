@@ -29,8 +29,10 @@ export class AppComponent implements OnInit {
   isLogged$!: Observable<boolean>;
   isMaster: boolean = false;
   showBtnMenu: boolean = true;
+  isPublicView: boolean = false;
 
   private readonly routesWithToolbar: string[] = [];
+  private readonly publicPathPrefixes: string[] = ["/c/"];
 
   constructor(
     private router: RouterService,
@@ -48,9 +50,11 @@ export class AppComponent implements OnInit {
         filter((event): event is NavigationEnd => event instanceof NavigationEnd)
       )
       .subscribe((event) => {
-        this.showBtnMenu = !this.routesWithToolbar.some((r) =>
-          event.urlAfterRedirects.startsWith(r)
-        );
+        const url = event.urlAfterRedirects;
+        this.isPublicView = this.publicPathPrefixes.some((p) => url.startsWith(p));
+        this.showBtnMenu =
+          !this.isPublicView &&
+          !this.routesWithToolbar.some((r) => url.startsWith(r));
       });
   }
 
@@ -61,7 +65,7 @@ export class AppComponent implements OnInit {
     this.sidenavService.toggle.subscribe(() => this.drawer?.toggle());
 
     this.user$.subscribe((user) => {
-      if (user) {
+      if (user && !user.isAnonymous) {
         this.loadUserProfile(user.uid);
       } else {
         this.isMaster = false;
@@ -79,8 +83,11 @@ export class AppComponent implements OnInit {
   }
 
   initiByStorage() {
+    const path = window.location.pathname;
     const url = window.location.href;
+    const isPublicView = this.publicPathPrefixes.some((p) => path.startsWith(p));
     const isPublicRoute =
+      isPublicView ||
       url.includes(RouterEnum.REDEFINE_PASSWORD) ||
       url.includes(RouterEnum.LOGIN);
     const usuario = this.auth.getToken();
