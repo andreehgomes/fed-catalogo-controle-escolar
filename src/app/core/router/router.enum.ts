@@ -21,6 +21,7 @@ export enum RouterEnum {
 
   CONTAS_A_RECEBER = "contas-a-receber",
   RECEBIMENTO = "recebimento",
+  LISTAR_RECEBIMENTOS = "listar-recebimentos",
 
   DASHBOARD = "dashboard",
 }

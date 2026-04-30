@@ -37,6 +37,11 @@
       Nova venda para este cliente
     </button>
 
+    <button mat-stroked-button class="btn-resumo" *ngIf="saldoPendente > 0" (click)="compartilharResumo()">
+      <mat-icon>share</mat-icon>
+      Compartilhar resumo de pendências
+    </button>
+
     <div class="sales-section">
       <h3>Histórico de vendas</h3>
 
@@ -45,8 +50,8 @@
         <span>Nenhuma venda registrada.</span>
       </div>
 
-      <div class="sale-card" *ngFor="let s of sales" (click)="editarVenda(s)">
-        <div class="sale-top">
+      <div class="sale-card" *ngFor="let s of sales">
+        <div class="sale-top" (click)="editarVenda(s)">
           <span class="sale-campaign">{{ s.campaignNome }}</span>
           <span class="sale-valor">R$ {{ fmt(s.valorTotal) }}</span>
         </div>
@@ -61,10 +66,30 @@
                   (click)="registrarRecebimento(s, $event)" title="Registrar recebimento">
             <mat-icon>payments</mat-icon>
           </button>
+          <button mat-icon-button class="btn-comprovante"
+                  (click)="gerarComprovanteSale(s, $event)" title="Comprovante da venda">
+            <mat-icon>receipt_long</mat-icon>
+          </button>
         </div>
-        <div class="sale-bottom">
+        <div class="sale-bottom" (click)="editarVenda(s)">
           <span class="sale-data">{{ fmtData(s.dataCriacao) }}</span>
           <span class="sale-itens">{{ s.itens.length }} {{ s.itens.length === 1 ? 'item' : 'itens' }}</span>
+        </div>
+
+        <div class="recebimentos-section" *ngIf="saleRecebimentos(s).length > 0">
+          <span class="rec-label">Pagamentos</span>
+          <div class="rec-row" *ngFor="let item of saleRecebimentos(s)">
+            <div class="rec-info">
+              <span class="rec-data">{{ fmtData(item.r.data) }}</span>
+              <span class="rec-desc" *ngIf="item.r.descricao">— {{ item.r.descricao }}</span>
+            </div>
+            <span class="rec-valor">R$ {{ fmt(item.r.valor) }}</span>
+            <button mat-icon-button class="btn-comprovante-rec"
+                    (click)="gerarComprovanteRecebimento(s, item.key, item.r, $event)"
+                    title="Comprovante do pagamento">
+              <mat-icon>receipt_long</mat-icon>
+            </button>
+          </div>
         </div>
       </div>
     </div>

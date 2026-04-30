@@ -11,8 +11,13 @@ import { ConfirmDeleteDialogComponent } from 'src/app/components/confirm-delete-
 export class ListaRecebimentosComponent {
   @Input() recebimentos: { key: string; data: string; valor: number; descricao: string }[] = [];
   @Output() excluir = new EventEmitter<string>();
+  @Output() comprovante = new EventEmitter<string>();
 
   constructor(private readonly dialog: MatDialog) {}
+
+  onComprovante(key: string): void {
+    this.comprovante.emit(key);
+  }
 
   onExcluir(key: string): void {
     const ref = this.dialog.open(ConfirmDeleteDialogComponent, {

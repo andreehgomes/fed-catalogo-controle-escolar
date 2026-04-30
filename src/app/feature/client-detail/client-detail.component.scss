@@ -184,4 +184,78 @@
   .btn-pagar {
     color: #2e7d32 !important;
   }
+
+  .btn-comprovante {
+    color: $c-primary-dark !important;
+  }
+}
+
+.btn-resumo {
+  width: 100%;
+  margin-top: 4px;
+  color: #fff !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+
+  mat-icon {
+    margin-right: 4px;
+  }
+}
+
+.recebimentos-section {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  .rec-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: $c-green-alert;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  .rec-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+
+    .rec-info {
+      flex: 1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      color: #444;
+      min-width: 0;
+    }
+
+    .rec-data {
+      font-weight: 600;
+    }
+
+    .rec-desc {
+      color: #777;
+    }
+
+    .rec-valor {
+      font-weight: 700;
+      color: $c-green-alert;
+    }
+
+    .btn-comprovante-rec {
+      color: $c-primary-dark !important;
+      width: 28px;
+      height: 28px;
+      line-height: 28px;
+
+      ::ng-deep mat-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+      }
+    }
+  }
 }

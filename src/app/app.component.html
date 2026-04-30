@@ -53,6 +53,11 @@
           <span matListItemTitle>Contas a receber</span>
         </a>
 
+        <a mat-list-item class="nav-item" (click)="goTo(routes.LISTAR_RECEBIMENTOS); drawer.toggle()">
+          <mat-icon matListItemIcon>payments</mat-icon>
+          <span matListItemTitle>Recebimentos</span>
+        </a>
+
         <a mat-list-item class="nav-item" (click)="goTo(routes.NEW_CLIENT); drawer.toggle()">
           <mat-icon matListItemIcon>person_add</mat-icon>
           <span matListItemTitle>Novo cliente</span>

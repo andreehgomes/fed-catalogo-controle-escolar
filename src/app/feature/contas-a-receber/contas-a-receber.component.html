@@ -74,20 +74,24 @@
       </div>
 
       <div class="card-actions">
-        <button mat-button class="action-edit" (click)="editSale(sale)" [disabled]="sale.status === 'quitado'">
-          Editar
+        <button mat-icon-button (click)="gerarComprovanteSale(sale)" title="Comprovante da venda">
+          <mat-icon class="icon-comprovante">receipt_long</mat-icon>
         </button>
-        <button mat-button class="action-receber" (click)="receberSale(sale)" [disabled]="sale.status === 'quitado'">
-          Receber
+        <button mat-icon-button (click)="editSale(sale)" [disabled]="sale.status === 'quitado'" title="Editar venda">
+          <mat-icon class="icon-edit">edit</mat-icon>
         </button>
-        <button mat-button class="action-delete" (click)="deleteSale(sale)">
-          Excluir
+        <button mat-icon-button (click)="receberSale(sale)" [disabled]="sale.status === 'quitado'" title="Registrar recebimento">
+          <mat-icon class="icon-receber">payments</mat-icon>
+        </button>
+        <button mat-icon-button (click)="deleteSale(sale)" title="Excluir venda">
+          <mat-icon class="icon-delete">delete</mat-icon>
         </button>
       </div>
 
       <app-lista-recebimentos
         [recebimentos]="getRecebimentos(sale)"
-        (excluir)="excluirRecebimento(sale, $event)">
+        (excluir)="excluirRecebimento(sale, $event)"
+        (comprovante)="gerarComprovanteRecebimento(sale, $event)">
       </app-lista-recebimentos>
     </mat-card>
   </div>

@@ -1,0 +1,75 @@
+<div class="page">
+  <div class="header">
+    <span class="page-title">Recebimentos</span>
+  </div>
+
+  <div class="page-content">
+    <div class="filtros">
+      <mat-form-field appearance="outline" color="accent" class="field-full" subscriptSizing="dynamic">
+        <mat-label>Buscar cliente</mat-label>
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput [formControl]="filterControl" autocomplete="off" />
+      </mat-form-field>
+
+      <div class="row-2">
+        <mat-form-field appearance="outline" color="accent" class="field-half" subscriptSizing="dynamic">
+          <mat-label>De</mat-label>
+          <input matInput type="date" [formControl]="dataInicio" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" color="accent" class="field-half" subscriptSizing="dynamic">
+          <mat-label>Até</mat-label>
+          <input matInput type="date" [formControl]="dataFim" />
+        </mat-form-field>
+      </div>
+
+      <button mat-button class="btn-clear" (click)="limparFiltros()">
+        <mat-icon>filter_alt_off</mat-icon> Limpar
+      </button>
+    </div>
+
+    <div class="resumo" *ngIf="filteredRecebimentos.length > 0">
+      <div class="resumo-row">
+        <span>{{ filteredRecebimentos.length }} recebimento(s)</span>
+        <span class="resumo-total">Total: <strong>R$ {{ fmt(totalRecebido) }}</strong></span>
+      </div>
+    </div>
+
+    <p class="empty-msg" *ngIf="filteredRecebimentos.length === 0">
+      <mat-icon>info</mat-icon> Nenhum recebimento encontrado.
+    </p>
+
+    <mat-card *ngFor="let item of filteredRecebimentos" class="rec-card">
+      <div class="card-header">
+        <span class="client-name" (click)="goToClientDetail(item)">{{ item.clienteNome }}</span>
+        <span class="rec-data">{{ item.data | date:'dd/MM/yyyy' }}</span>
+      </div>
+
+      <div class="campaign-info">
+        <mat-icon>campaign</mat-icon>{{ item.campaignNome }}
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="info-label">Valor recebido</span>
+          <span class="info-value valor">R$ {{ fmt(item.valor) }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Total da venda</span>
+          <span class="info-value">R$ {{ fmt(item.valorTotalVenda) }}</span>
+        </div>
+        <div class="info-item full" *ngIf="item.descricao">
+          <span class="info-label">Descrição</span>
+          <span class="info-value">{{ item.descricao }}</span>
+        </div>
+      </div>
+
+      <div class="card-actions">
+        <button mat-button color="primary" (click)="gerarComprovante(item)">
+          <mat-icon>receipt_long</mat-icon>
+          Comprovante
+        </button>
+      </div>
+    </mat-card>
+  </div>
+</div>

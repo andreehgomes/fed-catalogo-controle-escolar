@@ -2,9 +2,10 @@ import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { ClientService } from "src/app/shared/service/client/client.service";
 import { SaleService } from "src/app/shared/service/sale/sale.service";
+import { ComprovanteService } from "src/app/shared/service/comprovante/comprovante.service";
 import { LoaderService } from "src/app/components/loader/loader.service";
 import { Client } from "src/app/shared/model/client";
-import { Sale } from "src/app/shared/model/sale";
+import { Sale, Recebimento } from "src/app/shared/model/sale";
 import { RouterEnum } from "src/app/core/router/router.enum";
 
 @Component({
@@ -22,6 +23,7 @@ export class ClientDetailComponent implements OnInit {
     private router: Router,
     private clientService: ClientService,
     private saleService: SaleService,
+    private comprovanteService: ComprovanteService,
     private loader: LoaderService
   ) {}
 
@@ -81,6 +83,36 @@ export class ClientDetailComponent implements OnInit {
     this.router.navigate([RouterEnum.RECEBIMENTO, s.key], {
       queryParams: { origem: RouterEnum.CLIENT_DETAIL },
     });
+  }
+
+  compartilharResumo(): void {
+    if (!this.client) return;
+    this.comprovanteService
+      .compartilharResumo(this.client, this.sales)
+      .subscribe({ error: (err) => console.error("Erro ao gerar resumo:", err) });
+  }
+
+  gerarComprovanteSale(s: Sale, event: Event): void {
+    event.stopPropagation();
+    if (!this.client) return;
+    this.comprovanteService
+      .compartilharComprovanteSale(this.client, s)
+      .subscribe({ error: (err) => console.error("Erro ao gerar comprovante:", err) });
+  }
+
+  saleRecebimentos(sale: Sale): { key: string; r: Recebimento }[] {
+    if (!sale.recebimentos) return [];
+    return Object.entries(sale.recebimentos)
+      .map(([key, r]) => ({ key, r }))
+      .sort((a, b) => b.r.data.localeCompare(a.r.data));
+  }
+
+  gerarComprovanteRecebimento(sale: Sale, recKey: string, rec: Recebimento, event: Event): void {
+    event.stopPropagation();
+    if (!this.client) return;
+    this.comprovanteService
+      .compartilharComprovante(this.client, sale, recKey, rec)
+      .subscribe({ error: (err) => console.error("Erro ao gerar comprovante:", err) });
   }
 
   get saldoPendente(): number {

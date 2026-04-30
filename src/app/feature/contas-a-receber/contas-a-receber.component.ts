@@ -4,9 +4,11 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { MatDialog } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Observable } from "rxjs";
-import { debounceTime, distinctUntilChanged, map } from "rxjs/operators";
+import { debounceTime, distinctUntilChanged, map, switchMap } from "rxjs/operators";
 import { SaleService } from "src/app/shared/service/sale/sale.service";
 import { CampaignService } from "src/app/shared/service/campaign/campaign.service";
+import { ClientService } from "src/app/shared/service/client/client.service";
+import { ComprovanteService } from "src/app/shared/service/comprovante/comprovante.service";
 import { LoaderService } from "src/app/components/loader/loader.service";
 import { ConfirmDeleteDialogComponent } from "src/app/components/confirm-delete-dialog/confirm-delete-dialog.component";
 import { Sale, Recebimento } from "src/app/shared/model/sale";
@@ -32,6 +34,8 @@ export class ContasAReceberComponent implements OnInit {
   constructor(
     private saleService: SaleService,
     private campaignService: CampaignService,
+    private clientService: ClientService,
+    private comprovanteService: ComprovanteService,
     private loader: LoaderService,
     private router: Router,
     private route: ActivatedRoute,
@@ -111,6 +115,35 @@ export class ContasAReceberComponent implements OnInit {
     return Object.entries(sale.recebimentos)
       .map(([key, r]) => ({ key, ...r }))
       .sort((a, b) => a.data.localeCompare(b.data));
+  }
+
+  gerarComprovanteSale(sale: Sale): void {
+    if (!sale.clienteKey) return;
+    this.clientService
+      .getClientByKey(sale.clienteKey)
+      .pipe(
+        switchMap((client) =>
+          this.comprovanteService.compartilharComprovanteSale(client, sale)
+        )
+      )
+      .subscribe({
+        error: (err) => console.error("Erro ao gerar comprovante:", err),
+      });
+  }
+
+  gerarComprovanteRecebimento(sale: Sale, recKey: string): void {
+    const rec = sale.recebimentos?.[recKey];
+    if (!rec || !sale.clienteKey) return;
+    this.clientService
+      .getClientByKey(sale.clienteKey)
+      .pipe(
+        switchMap((client) =>
+          this.comprovanteService.compartilharComprovante(client, sale, recKey, rec)
+        )
+      )
+      .subscribe({
+        error: (err) => console.error("Erro ao gerar comprovante:", err),
+      });
   }
 
   excluirRecebimento(sale: Sale, recebimentoKey: string): void {

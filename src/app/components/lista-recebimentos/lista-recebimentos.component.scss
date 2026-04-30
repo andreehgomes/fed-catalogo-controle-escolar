@@ -113,10 +113,17 @@
   padding-right: 8px;
 }
 
-// ─── Botão excluir ────────────────────────────────────────────────────────────
+// ─── Ações ────────────────────────────────────────────────────────────────────
 
+.recebimento-actions {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-shrink: 0;
+}
+
+.btn-comprovante,
 .btn-delete {
-  color: $c-red-alert;
   width: 32px;
   height: 32px;
   line-height: 32px;
@@ -127,4 +134,12 @@
     width: 18px;
     height: 18px;
   }
+}
+
+.btn-comprovante {
+  color: $c-primary-dark;
+}
+
+.btn-delete {
+  color: $c-red-alert;
 }

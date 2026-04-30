@@ -117,6 +117,14 @@ const routes: Routes = [
       ),
   },
   {
+    path: "listar-recebimentos",
+    canActivate: [authGuard],
+    loadChildren: () =>
+      import("./feature/listar-recebimentos/listar-recebimentos.module").then(
+        (m) => m.ListarRecebimentosModule
+      ),
+  },
+  {
     path: "dashboard",
     canActivate: [authGuard],
     loadChildren: () =>

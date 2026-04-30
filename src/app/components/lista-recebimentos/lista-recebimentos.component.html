@@ -21,9 +21,14 @@
         </div>
         <div class="recebimento-bottom">
           <span class="recebimento-descricao">{{ r.descricao }}</span>
-          <button mat-icon-button type="button" class="btn-delete" (click)="onExcluir(r.key)">
-            <mat-icon>delete</mat-icon>
-          </button>
+          <div class="recebimento-actions">
+            <button mat-icon-button type="button" class="btn-comprovante" (click)="onComprovante(r.key)" title="Gerar comprovante">
+              <mat-icon>receipt_long</mat-icon>
+            </button>
+            <button mat-icon-button type="button" class="btn-delete" (click)="onExcluir(r.key)" title="Excluir pagamento">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
         </div>
       </div>
 
