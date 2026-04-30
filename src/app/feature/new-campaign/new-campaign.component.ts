@@ -1,11 +1,11 @@
 import { Component, OnInit } from "@angular/core";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Observable } from "rxjs";
 import { CampaignService } from "src/app/shared/service/campaign/campaign.service";
 import { LoaderService } from "src/app/components/loader/loader.service";
-import { Campaign } from "src/app/shared/model/campaign";
+import { Campaign, CampaignDefaultItem } from "src/app/shared/model/campaign";
 import { AlertasType } from "src/app/shared/model/alertas-type.enum";
 import { RouterEnum } from "src/app/core/router/router.enum";
 
@@ -20,6 +20,9 @@ export class NewCampaignComponent implements OnInit {
   editingKey: string | null = null;
   private dataCriacaoOriginal: string | null = null;
 
+  itemDescricaoCtrl = new FormControl<string>("", { nonNullable: true, validators: [Validators.required] });
+  itemValorCtrl = new FormControl<number | null>(null, [Validators.required, Validators.min(0.01)]);
+
   form: FormGroup = this.fb.group({
     nome: ["", Validators.required],
     descricao: [""],
@@ -27,6 +30,7 @@ export class NewCampaignComponent implements OnInit {
     dataFim: [""],
     meta: [null],
     status: ["ativa", Validators.required],
+    itensPadrao: this.fb.array([]),
   });
 
   constructor(
@@ -50,8 +54,36 @@ export class NewCampaignComponent implements OnInit {
         meta: selected.meta ?? null,
         status: selected.status,
       });
+      selected.itensPadrao?.forEach((it) => {
+        this.itensPadraoArray.push(
+          this.fb.group({
+            descricao: [it.descricao],
+            valorUnitario: [it.valorUnitario],
+          })
+        );
+      });
       this.campaignService.selectedCampaign$.next(null);
     }
+  }
+
+  get itensPadraoArray(): FormArray {
+    return this.form.get("itensPadrao") as FormArray;
+  }
+
+  adicionarItemPadrao(): void {
+    if (this.itemDescricaoCtrl.invalid || this.itemValorCtrl.invalid) return;
+    this.itensPadraoArray.push(
+      this.fb.group({
+        descricao: [this.itemDescricaoCtrl.value],
+        valorUnitario: [Number(this.itemValorCtrl.value)],
+      })
+    );
+    this.itemDescricaoCtrl.reset("");
+    this.itemValorCtrl.reset(null);
+  }
+
+  removerItemPadrao(i: number): void {
+    this.itensPadraoArray.removeAt(i);
   }
 
   salvar(): void {
@@ -60,6 +92,11 @@ export class NewCampaignComponent implements OnInit {
     this.loader.openDialog();
 
     const v = this.form.getRawValue();
+    const itensPadrao: CampaignDefaultItem[] = (v.itensPadrao as any[]).map((i) => ({
+      descricao: i.descricao,
+      valorUnitario: i.valorUnitario,
+    }));
+
     const now = new Date().toISOString();
     const campaign: Campaign = {
       nome: v.nome.trim(),
@@ -68,6 +105,7 @@ export class NewCampaignComponent implements OnInit {
       dataFim: v.dataFim || undefined,
       meta: v.meta || undefined,
       status: v.status,
+      itensPadrao: itensPadrao.length > 0 ? itensPadrao : undefined,
       dataCriacao: this.editingKey && this.dataCriacaoOriginal ? this.dataCriacaoOriginal : now,
     };
 
@@ -99,5 +137,12 @@ export class NewCampaignComponent implements OnInit {
 
   cancelar(): void {
     this.router.navigate([RouterEnum.CAMPAIGN_LIST]);
+  }
+
+  fmt(v: number): string {
+    return v.toLocaleString("pt-BR", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
   }
 }

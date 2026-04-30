@@ -75,6 +75,10 @@
               Itens
             </span>
             <span class="itens-count">{{ itensArray.length }} {{ itensArray.length === 1 ? 'item' : 'itens' }}</span>
+            <button mat-button type="button" class="btn-limpar" (click)="limparItens()">
+              <mat-icon>delete_sweep</mat-icon>
+              Limpar
+            </button>
           </div>
           <div class="item-card" *ngFor="let item of itensArray.controls; let i = index">
             <div class="item-card-info">

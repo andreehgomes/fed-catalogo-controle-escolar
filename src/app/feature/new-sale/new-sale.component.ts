@@ -122,6 +122,9 @@ export class NewSaleComponent implements OnInit {
     this.form.get("campaignKey")!.valueChanges.subscribe((key: string) => {
       const c = this.campaigns.find((x) => x.key === key);
       this.form.patchValue({ campaignNome: c?.nome ?? "" }, { emitEvent: false });
+      if (!this.editingKey) {
+        this.aplicarItensPadrao(c);
+      }
     });
 
     this.itensArray.valueChanges.subscribe(() => this.recalcularTotal());
@@ -133,9 +136,34 @@ export class NewSaleComponent implements OnInit {
       const currentKey = this.form.get("campaignKey")!.value;
       if (currentKey) {
         const c = list.find((x) => x.key === currentKey);
-        if (c) this.form.patchValue({ campaignNome: c.nome }, { emitEvent: false });
+        if (c) {
+          this.form.patchValue({ campaignNome: c.nome }, { emitEvent: false });
+          if (!this.editingKey && this.itensArray.length === 0) {
+            this.aplicarItensPadrao(c);
+          }
+        }
       }
     });
+  }
+
+  private aplicarItensPadrao(c?: Campaign): void {
+    this.itensArray.clear();
+    if (!c?.itensPadrao?.length) return;
+    c.itensPadrao.forEach((it) => {
+      const valorSubtotal = +(1 * it.valorUnitario).toFixed(2);
+      this.itensArray.push(
+        this.fb.group({
+          descricao: [it.descricao],
+          quantidade: [1],
+          valorUnitario: [it.valorUnitario],
+          valorSubtotal: [valorSubtotal],
+        })
+      );
+    });
+  }
+
+  limparItens(): void {
+    this.itensArray.clear();
   }
 
   get itensArray(): FormArray {

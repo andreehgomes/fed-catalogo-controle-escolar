@@ -45,6 +45,43 @@
             <mat-option value="encerrada">Encerrada</mat-option>
           </mat-select>
         </mat-form-field>
+
+        <!-- Itens padrão -->
+        <div class="itens-padrao-section">
+          <span class="section-label">Itens padrão</span>
+          <span class="section-hint">Preenchidos automaticamente em cada nova venda desta campanha.</span>
+
+          <div class="item-input-row">
+            <mat-form-field appearance="outline" color="accent" class="field-desc">
+              <mat-label>Descrição</mat-label>
+              <input matInput [formControl]="itemDescricaoCtrl" />
+            </mat-form-field>
+
+            <input-moeda [formControl]="itemValorCtrl" label="Valor" />
+
+            <button mat-mini-fab color="accent" type="button" class="btn-add-item"
+                    [disabled]="itemDescricaoCtrl.invalid || itemValorCtrl.invalid"
+                    (click)="adicionarItemPadrao()">
+              <mat-icon>add</mat-icon>
+            </button>
+          </div>
+
+          <div class="itens-padrao-list" *ngIf="itensPadraoArray.length > 0">
+            <div class="item-card" *ngFor="let item of itensPadraoArray.controls; let i = index">
+              <div class="item-info">
+                <span class="item-desc">{{ item.get('descricao').value }}</span>
+                <span class="item-valor">R$ {{ fmt(item.get('valorUnitario').value) }}</span>
+              </div>
+              <button mat-icon-button type="button" class="btn-remove" (click)="removerItemPadrao(i)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </div>
+
+          <div *ngIf="itensPadraoArray.length === 0" class="empty-mini">
+            Nenhum item padrão. Adicione acima se quiser pré-preenchimento nas vendas.
+          </div>
+        </div>
       </div>
 
       <div class="actions">
