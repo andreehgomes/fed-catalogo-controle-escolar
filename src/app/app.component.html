@@ -12,16 +12,16 @@
       </button>
     </div>
 
-    <mat-nav-list class="sidenav-nav">
+    <ng-container *ngIf="isLogged$ | async as isLogged; else notLogged">
+      <mat-nav-list class="sidenav-nav">
 
-      <a mat-list-item class="nav-item" (click)="goTo(); drawer.toggle()">
-        <mat-icon matListItemIcon>home</mat-icon>
-        <span matListItemTitle>Página inicial</span>
-      </a>
+        <a mat-list-item class="nav-item" (click)="goTo(); drawer.toggle()">
+          <mat-icon matListItemIcon>home</mat-icon>
+          <span matListItemTitle>Página inicial</span>
+        </a>
 
-      <mat-divider></mat-divider>
+        <mat-divider></mat-divider>
 
-      <ng-container *ngIf="state">
         <div class="nav-section-label">Campanhas</div>
 
         <a mat-list-item class="nav-item" (click)="goTo(routes.NEW_CAMPAIGN); drawer.toggle()">
@@ -78,21 +78,24 @@
         </a>
 
         <mat-divider></mat-divider>
-      </ng-container>
 
-      <a *ngIf="!state" mat-list-item class="nav-item nav-item--auth"
-         (click)="drawer.toggle(); logout(routes.LOGIN)">
-        <mat-icon matListItemIcon>login</mat-icon>
-        <span matListItemTitle>Entrar</span>
-      </a>
+        <a mat-list-item class="nav-item nav-item--auth"
+           (click)="drawer.toggle(); logout(routes.LOGIN)">
+          <mat-icon matListItemIcon>logout</mat-icon>
+          <span matListItemTitle>Sair</span>
+        </a>
+      </mat-nav-list>
+    </ng-container>
 
-      <a *ngIf="state" mat-list-item class="nav-item nav-item--auth"
-         (click)="drawer.toggle(); logout(routes.DEFAULT)">
-        <mat-icon matListItemIcon>logout</mat-icon>
-        <span matListItemTitle>Sair</span>
-      </a>
-
-    </mat-nav-list>
+    <ng-template #notLogged>
+      <mat-nav-list class="sidenav-nav">
+        <a mat-list-item class="nav-item nav-item--auth"
+           (click)="drawer.toggle(); goTo(routes.LOGIN)">
+          <mat-icon matListItemIcon>login</mat-icon>
+          <span matListItemTitle>Entrar</span>
+        </a>
+      </mat-nav-list>
+    </ng-template>
 
     <div class="sidenav-footer">
       <span class="footer-label">Controle de Campanhas Escolares</span>

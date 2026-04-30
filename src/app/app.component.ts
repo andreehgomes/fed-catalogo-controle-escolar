@@ -1,7 +1,7 @@
-import { ChangeDetectorRef, Component, NgZone, OnInit, ViewChild } from "@angular/core";
-import { Subscription, Observable, filter } from "rxjs";
+import { Component, OnInit, ViewChild } from "@angular/core";
+import { Observable, filter, map, shareReplay } from "rxjs";
 import { ActivatedRoute, NavigationEnd, Router } from "@angular/router";
-import { Auth, authState } from "@angular/fire/auth";
+import { Auth, authState, User } from "@angular/fire/auth";
 
 import { RouterService } from "./core/router/router.service";
 import { LoginService } from "./feature/login/shared/service/login.service";
@@ -23,11 +23,10 @@ export class AppComponent implements OnInit {
   @ViewChild("drawer") drawer: any;
   title = "fed-catalogo-controle-escolar";
   mensagemRespostaLogin: AlertaModel = new AlertaModel();
-  subscribeLogin: Subscription = new Subscription(null);
-  subscribeMensagem: Subscription = new Subscription(null);
 
   routes = RouterEnum;
-  state: boolean = false;
+  user$!: Observable<User | null>;
+  isLogged$!: Observable<boolean>;
   isMaster: boolean = false;
   showBtnMenu: boolean = true;
 
@@ -42,9 +41,7 @@ export class AppComponent implements OnInit {
     private sidenavService: SidenavService,
     private fireAuth: Auth,
     private accountService: AccountService,
-    private analyticsService: AnalyticsService,
-    private ngZone: NgZone,
-    private cdr: ChangeDetectorRef
+    private analyticsService: AnalyticsService
   ) {
     this.route.events
       .pipe(
@@ -58,32 +55,26 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.sidenavService.toggle.subscribe(() => this.drawer?.toggle());
-    this.initiByStorage();
+    this.user$ = authState(this.fireAuth).pipe(shareReplay({ bufferSize: 1, refCount: false }));
+    this.isLogged$ = this.user$.pipe(map((u) => !!u));
 
-    authState(this.fireAuth).subscribe((user) => {
-      this.ngZone.run(() => {
-        if (user) {
-          this.state = true;
-          this.loadUserProfile();
-        } else {
-          this.state = false;
-          this.isMaster = false;
-        }
-        this.cdr.detectChanges();
-      });
+    this.sidenavService.toggle.subscribe(() => this.drawer?.toggle());
+
+    this.user$.subscribe((user) => {
+      if (user) {
+        this.loadUserProfile(user.uid);
+      } else {
+        this.isMaster = false;
+      }
     });
+
+    this.initiByStorage();
   }
 
-  private loadUserProfile(): void {
-    const uid = this.fireAuth.currentUser?.uid;
-    if (!uid) return;
+  private loadUserProfile(uid: string): void {
     this.accountService.getAccountByUidKey(uid).then((accounts) => {
-      this.ngZone.run(() => {
-        this.isMaster = accounts[0]?.perfil === "master";
-        this.analyticsService.setUserProfile(accounts[0]?.perfil ?? null);
-        this.cdr.detectChanges();
-      });
+      this.isMaster = accounts[0]?.perfil === "master";
+      this.analyticsService.setUserProfile(accounts[0]?.perfil ?? null);
     });
   }
 
@@ -93,52 +84,16 @@ export class AppComponent implements OnInit {
       url.includes(RouterEnum.REDEFINE_PASSWORD) ||
       url.includes(RouterEnum.LOGIN);
     const usuario = this.auth.getToken();
-    if (usuario) {
-      this.autenticarWithEmail({
-        email: usuario.email,
-        senha: usuario.senha,
-      }).subscribe(() => {
-        if (!isPublicRoute) this.goTo();
-      });
-    } else {
+    if (!usuario && !isPublicRoute) {
       this.analyticsService.markProfileReady();
-      if (!isPublicRoute) this.router.navigate(this.router.route.LOGIN);
+      this.router.navigate(this.router.route.LOGIN);
     }
-  }
-
-  autenticarWithEmail(payload: PayloadLogin): Observable<any> {
-    return new Observable((observer) => {
-      this.service.signWithEmail(payload.email, payload.senha).then(
-        () => {
-          this.service.behaviorUsuarioLogado.subscribe((logado) => {
-            if (logado) {
-              localStorage.setItem("usuario", btoa(JSON.stringify(logado)));
-              localStorage.setItem("token", btoa(JSON.stringify(payload)));
-              this.mensagemRespostaLogin = null;
-              this.state = true;
-              this.loadUserProfile();
-            } else {
-              this.service.behaviorLoginMensagem.subscribe((mensagem) => {
-                if (mensagem) {
-                  this.mensagemRespostaLogin = mensagem;
-                }
-              });
-              this.subscribeMensagem?.unsubscribe();
-              this.state = false;
-            }
-            observer.next(logado);
-          });
-          this.subscribeLogin?.unsubscribe();
-        },
-        () => {}
-      );
-    });
   }
 
   logout(rota: string) {
     sessionStorage.setItem("logout", "s");
     localStorage.removeItem("token");
-    this.state = false;
+    localStorage.removeItem("usuario");
     this.isMaster = false;
     this.auth.logout();
     this.router.navigate(rota);

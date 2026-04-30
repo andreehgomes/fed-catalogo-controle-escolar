@@ -76,28 +76,25 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
   }
 
-  autenticarWithEmail(payload: PayloadLogin) {
-    this.service.signWithEmail(payload.email, payload.senha).then(() => {
-      this.service.behaviorUsuarioLogado.subscribe((logado) => {
-        if (logado) {
-          localStorage.setItem("usuario", btoa(JSON.stringify(logado)));
-          localStorage.setItem("token", btoa(JSON.stringify(payload)));
-          this.auth.usuario$.next(payload as Token)
-          this.router.navigate(this.router.route.FEED);
-          this.mensagemRespostaLogin = null;
-        } else {
-          this.service.behaviorLoginMensagem.subscribe((mensagem) => {
-            if (mensagem) {
-              this.mensagemRespostaLogin = mensagem;
-            }
-          });
-          this.subscribeMensagem?.unsubscribe();
-        }
-      });
-      this.subscribeLogin?.unsubscribe();
-    });
-    this.formControlUsuario.reset();
-    this.formControlUsuario.enable();
+  async autenticarWithEmail(payload: PayloadLogin) {
+    await this.service.signWithEmail(payload.email, payload.senha);
+    const logado = this.service.behaviorUsuarioLogado.getValue();
+    if (logado) {
+      localStorage.setItem("usuario", btoa(JSON.stringify(logado)));
+      localStorage.setItem("token", btoa(JSON.stringify(payload)));
+      this.auth.usuario$.next(payload as Token);
+      this.mensagemRespostaLogin = null;
+      this.formControlUsuario.reset();
+      this.formControlUsuario.enable();
+      this.router.navigate(this.router.route.FEED);
+    } else {
+      const mensagem = this.service.behaviorLoginMensagem.getValue();
+      if (mensagem) {
+        this.mensagemRespostaLogin = mensagem;
+      }
+      this.formControlUsuario.reset();
+      this.formControlUsuario.enable();
+    }
   }
 
   newPassword() {
