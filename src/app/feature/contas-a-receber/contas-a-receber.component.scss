@@ -192,17 +192,36 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  gap: 0;
-  padding-top: 4px;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding-top: 8px;
   border-top: 1px solid $c-primary-light-card;
   margin-top: 4px;
 
-  .icon-comprovante { color: $c-primary-dark; }
-  .icon-edit { color: $c-blue-alert; }
-  .icon-receber { color: $c-green-alert; }
-  .icon-delete { color: $c-red-alert; }
+  button {
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    line-height: 32px !important;
+    height: 32px !important;
+    padding: 0 8px !important;
+    min-width: 0 !important;
 
-  button[disabled] mat-icon {
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+      margin-right: 2px;
+    }
+  }
+
+  .action-comprovante { color: $c-primary-dark !important; }
+  .action-edit { color: $c-blue-alert !important; }
+  .action-receber { color: $c-green-alert !important; }
+  .action-delete { color: $c-red-alert !important; }
+
+  button[disabled] {
     color: rgba(0, 0, 0, 0.26) !important;
   }
 }

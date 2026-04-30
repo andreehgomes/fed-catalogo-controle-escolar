@@ -74,17 +74,21 @@
       </div>
 
       <div class="card-actions">
-        <button mat-icon-button (click)="gerarComprovanteSale(sale)" title="Comprovante da venda">
-          <mat-icon class="icon-comprovante">receipt_long</mat-icon>
+        <button mat-button class="action-comprovante" (click)="gerarComprovanteSale(sale)">
+          <mat-icon>receipt_long</mat-icon>
+          Comprovante
         </button>
-        <button mat-icon-button (click)="editSale(sale)" [disabled]="sale.status === 'quitado'" title="Editar venda">
-          <mat-icon class="icon-edit">edit</mat-icon>
+        <button mat-button class="action-edit" (click)="editSale(sale)" [disabled]="sale.status === 'quitado'">
+          <mat-icon>edit</mat-icon>
+          Editar
         </button>
-        <button mat-icon-button (click)="receberSale(sale)" [disabled]="sale.status === 'quitado'" title="Registrar recebimento">
-          <mat-icon class="icon-receber">payments</mat-icon>
+        <button mat-button class="action-receber" (click)="receberSale(sale)" [disabled]="sale.status === 'quitado'">
+          <mat-icon>payments</mat-icon>
+          Receber
         </button>
-        <button mat-icon-button (click)="deleteSale(sale)" title="Excluir venda">
-          <mat-icon class="icon-delete">delete</mat-icon>
+        <button mat-button class="action-delete" (click)="deleteSale(sale)">
+          <mat-icon>delete</mat-icon>
+          Excluir
         </button>
       </div>
 

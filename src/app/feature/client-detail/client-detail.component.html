@@ -62,18 +62,23 @@
           <span *ngIf="s.status === 'pendente'" class="saldo-info">
             Saldo: R$ {{ fmt(s.valorTotal - (s.valorRecebido ?? 0)) }}
           </span>
-          <button *ngIf="s.status === 'pendente'" mat-icon-button class="btn-pagar"
-                  (click)="registrarRecebimento(s, $event)" title="Registrar recebimento">
-            <mat-icon>payments</mat-icon>
-          </button>
-          <button mat-icon-button class="btn-comprovante"
-                  (click)="gerarComprovanteSale(s, $event)" title="Comprovante da venda">
-            <mat-icon>receipt_long</mat-icon>
-          </button>
         </div>
         <div class="sale-bottom" (click)="editarVenda(s)">
           <span class="sale-data">{{ fmtData(s.dataCriacao) }}</span>
           <span class="sale-itens">{{ s.itens.length }} {{ s.itens.length === 1 ? 'item' : 'itens' }}</span>
+        </div>
+
+        <div class="sale-actions">
+          <button mat-button class="action-comprovante"
+                  (click)="gerarComprovanteSale(s, $event)">
+            <mat-icon>receipt_long</mat-icon>
+            Comprovante
+          </button>
+          <button *ngIf="s.status === 'pendente'" mat-button class="action-receber"
+                  (click)="registrarRecebimento(s, $event)">
+            <mat-icon>payments</mat-icon>
+            Receber
+          </button>
         </div>
 
         <div class="recebimentos-section" *ngIf="saleRecebimentos(s).length > 0">
@@ -84,10 +89,13 @@
               <span class="rec-desc" *ngIf="item.r.descricao">— {{ item.r.descricao }}</span>
             </div>
             <span class="rec-valor">R$ {{ fmt(item.r.valor) }}</span>
-            <button mat-icon-button class="btn-comprovante-rec"
-                    (click)="gerarComprovanteRecebimento(s, item.key, item.r, $event)"
-                    title="Comprovante do pagamento">
+          </div>
+          <div class="rec-actions">
+            <button mat-button class="action-comprovante-rec"
+                    *ngFor="let item of saleRecebimentos(s)"
+                    (click)="gerarComprovanteRecebimento(s, item.key, item.r, $event)">
               <mat-icon>receipt_long</mat-icon>
+              {{ fmtData(item.r.data) }}
             </button>
           </div>
         </div>

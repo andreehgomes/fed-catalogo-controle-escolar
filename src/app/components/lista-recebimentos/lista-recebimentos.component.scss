@@ -106,40 +106,47 @@
 .recebimento-descricao {
   font-size: 12px;
   color: rgba(0, 0, 0, 0.45);
-  flex: 1;
+  margin-top: 2px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  padding-right: 8px;
 }
 
 // ─── Ações ────────────────────────────────────────────────────────────────────
 
 .recebimento-actions {
   display: flex;
+  justify-content: flex-end;
   align-items: center;
-  gap: 0;
-  flex-shrink: 0;
-}
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px dashed $c-primary-light-card;
 
-.btn-comprovante,
-.btn-delete {
-  width: 32px;
-  height: 32px;
-  line-height: 32px;
-  flex-shrink: 0;
+  button {
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    line-height: 28px !important;
+    height: 28px !important;
+    padding: 0 8px !important;
+    min-width: 0 !important;
 
-  ::ng-deep mat-icon {
-    font-size: 18px;
-    width: 18px;
-    height: 18px;
+    mat-icon {
+      font-size: 14px;
+      width: 14px;
+      height: 14px;
+      margin-right: 2px;
+    }
   }
 }
 
 .btn-comprovante {
-  color: $c-primary-dark;
+  color: $c-primary-dark !important;
 }
 
 .btn-delete {
-  color: $c-red-alert;
+  color: $c-red-alert !important;
 }

@@ -19,16 +19,16 @@
           </div>
           <span class="recebimento-valor">R$ {{ fmt(r.valor) }}</span>
         </div>
-        <div class="recebimento-bottom">
-          <span class="recebimento-descricao">{{ r.descricao }}</span>
-          <div class="recebimento-actions">
-            <button mat-icon-button type="button" class="btn-comprovante" (click)="onComprovante(r.key)" title="Gerar comprovante">
-              <mat-icon>receipt_long</mat-icon>
-            </button>
-            <button mat-icon-button type="button" class="btn-delete" (click)="onExcluir(r.key)" title="Excluir pagamento">
-              <mat-icon>delete</mat-icon>
-            </button>
-          </div>
+        <div class="recebimento-descricao" *ngIf="r.descricao">{{ r.descricao }}</div>
+        <div class="recebimento-actions">
+          <button mat-button type="button" class="btn-comprovante" (click)="onComprovante(r.key)">
+            <mat-icon>receipt_long</mat-icon>
+            Comprovante
+          </button>
+          <button mat-button type="button" class="btn-delete" (click)="onExcluir(r.key)">
+            <mat-icon>delete</mat-icon>
+            Excluir
+          </button>
         </div>
       </div>
 
