@@ -108,12 +108,16 @@ export class DashboardComponent implements OnInit {
     return this.filteredSales.length;
   }
 
-  get totalArrecadado(): number {
+  get totalVendido(): number {
     return this.filteredSales.reduce((acc, s) => acc + s.valorTotal, 0);
   }
 
-  get ticketMedio(): number {
-    return this.totalVendas > 0 ? this.totalArrecadado / this.totalVendas : 0;
+  get totalRecebido(): number {
+    return this.filteredSales.reduce((acc, s) => acc + (s.valorRecebido ?? 0), 0);
+  }
+
+  get totalAReceber(): number {
+    return this.totalVendido - this.totalRecebido;
   }
 
   get campaignSelecionada(): Campaign | undefined {
@@ -125,7 +129,7 @@ export class DashboardComponent implements OnInit {
   get pctMeta(): number {
     const c = this.campaignSelecionada;
     if (!c?.meta || c.meta <= 0) return 0;
-    return Math.min(100, Math.round((this.totalArrecadado / c.meta) * 100));
+    return Math.min(100, Math.round((this.totalVendido / c.meta) * 100));
   }
 
   fmt(v: number): string {

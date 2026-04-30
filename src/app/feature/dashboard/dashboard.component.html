@@ -41,28 +41,36 @@
       <mat-card class="kpi-card kpi-blue">
         <div class="kpi-icon"><mat-icon>receipt_long</mat-icon></div>
         <div class="kpi-body">
-          <span class="kpi-label">Vendas</span>
+          <span class="kpi-label">Vendas realizadas</span>
           <span class="kpi-value">{{ totalVendas }}</span>
+        </div>
+      </mat-card>
+
+      <mat-card class="kpi-card kpi-blue">
+        <div class="kpi-icon"><mat-icon>shopping_cart</mat-icon></div>
+        <div class="kpi-body">
+          <span class="kpi-label">Total vendido</span>
+          <span class="kpi-value">R$ {{ fmt(totalVendido) }}</span>
         </div>
       </mat-card>
 
       <mat-card class="kpi-card kpi-green">
         <div class="kpi-icon"><mat-icon>payments</mat-icon></div>
         <div class="kpi-body">
-          <span class="kpi-label">Arrecadado</span>
-          <span class="kpi-value">R$ {{ fmt(totalArrecadado) }}</span>
+          <span class="kpi-label">Total recebido</span>
+          <span class="kpi-value">R$ {{ fmt(totalRecebido) }}</span>
         </div>
       </mat-card>
 
       <mat-card class="kpi-card kpi-orange">
-        <div class="kpi-icon"><mat-icon>trending_up</mat-icon></div>
+        <div class="kpi-icon"><mat-icon>pending_actions</mat-icon></div>
         <div class="kpi-body">
-          <span class="kpi-label">Ticket médio</span>
-          <span class="kpi-value">R$ {{ fmt(ticketMedio) }}</span>
+          <span class="kpi-label">Falta receber</span>
+          <span class="kpi-value">R$ {{ fmt(totalAReceber) }}</span>
         </div>
       </mat-card>
 
-      <mat-card class="kpi-card kpi-purple" *ngIf="campaignSelecionada?.meta">
+      <mat-card class="kpi-card kpi-purple kpi-full" *ngIf="campaignSelecionada?.meta">
         <div class="kpi-icon"><mat-icon>flag</mat-icon></div>
         <div class="kpi-body">
           <span class="kpi-label">Meta atingida</span>
@@ -78,7 +86,7 @@
       </div>
       <mat-progress-bar mode="determinate" color="accent" [value]="pctMeta"></mat-progress-bar>
       <div class="meta-legend">
-        <span>Arrecadado: R$ {{ fmt(totalArrecadado) }}</span>
+        <span>Vendido: R$ {{ fmt(totalVendido) }}</span>
         <span>Meta: R$ {{ fmt(campaignSelecionada.meta) }}</span>
       </div>
     </mat-card>

@@ -69,6 +69,10 @@
   gap: 10px;
 }
 
+.kpi-full {
+  grid-column: 1 / -1;
+}
+
 .kpi-card {
   display: flex;
   align-items: center;
