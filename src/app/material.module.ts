@@ -3,6 +3,8 @@ import { CommonModule } from "@angular/common";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatDialogModule } from "@angular/material/dialog";
 import { MatButtonModule } from "@angular/material/button";
+import { MatButtonToggleModule } from "@angular/material/button-toggle";
+import { MatChipsModule } from "@angular/material/chips";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatSidenavModule } from "@angular/material/sidenav";
 import { MatToolbarModule } from "@angular/material/toolbar";
@@ -42,6 +44,8 @@ const MY_FORMATS = {
     MatProgressSpinnerModule,
     MatDialogModule,
     MatButtonModule,
+    MatButtonToggleModule,
+    MatChipsModule,
     MatExpansionModule,
     MatSidenavModule,
     MatToolbarModule,
