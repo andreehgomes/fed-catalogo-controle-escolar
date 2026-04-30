@@ -86,6 +86,17 @@ export class ContasAReceberComponent implements OnInit {
 
   deleteSale(sale: Sale): void {
     if (!sale.key) return;
+
+    const recCount = sale.recebimentos ? Object.keys(sale.recebimentos).length : 0;
+    if (recCount > 0) {
+      this.snackBar.open(
+        `Esta venda tem ${recCount} ${recCount === 1 ? 'pagamento registrado' : 'pagamentos registrados'} e não pode ser excluída. Exclua os pagamentos primeiro.`,
+        "Fechar",
+        { duration: 6000, verticalPosition: "top" }
+      );
+      return;
+    }
+
     const ref = this.dialog.open(ConfirmDeleteDialogComponent, {
       data: {
         titulo: "Excluir venda",

@@ -89,10 +89,30 @@ export class CampaignListComponent implements OnInit {
   excluir(c: Campaign, event: Event): void {
     event.stopPropagation();
     if (!c.key) return;
+
+    this.loader.openDialog();
+    this.saleService.getSalesByCampaign(c.key).subscribe({
+      next: (sales) => {
+        this.loader.closeDialog();
+        if (sales.length > 0) {
+          this.snackBar.open(
+            `Esta campanha tem ${sales.length} ${sales.length === 1 ? 'venda' : 'vendas'} registrada(s) e não pode ser excluída. Encerre a campanha ou exclua as vendas primeiro.`,
+            "Fechar",
+            { duration: 6000, verticalPosition: "top" }
+          );
+          return;
+        }
+        this.confirmarExclusao(c);
+      },
+      error: () => this.loader.closeDialog(),
+    });
+  }
+
+  private confirmarExclusao(c: Campaign): void {
     const ref = this.dialog.open(ConfirmDeleteDialogComponent, {
       data: {
         titulo: "Excluir campanha",
-        mensagem: `Deseja excluir a campanha "${c.nome}"? As vendas associadas NÃO serão removidas.`,
+        mensagem: `Deseja excluir a campanha "${c.nome}"?`,
       },
     });
     ref.afterClosed().subscribe((confirm) => {
