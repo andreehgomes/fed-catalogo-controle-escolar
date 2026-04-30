@@ -74,14 +74,14 @@
       </div>
 
       <div class="card-actions">
-        <button mat-icon-button (click)="editSale(sale)" [disabled]="sale.status === 'quitado'" title="Editar venda">
-          <mat-icon class="icon-edit">edit</mat-icon>
+        <button mat-button class="action-edit" (click)="editSale(sale)" [disabled]="sale.status === 'quitado'">
+          Editar
         </button>
-        <button mat-icon-button (click)="receberSale(sale)" [disabled]="sale.status === 'quitado'" title="Registrar recebimento">
-          <mat-icon class="icon-receber">payments</mat-icon>
+        <button mat-button class="action-receber" (click)="receberSale(sale)" [disabled]="sale.status === 'quitado'">
+          Receber
         </button>
-        <button mat-icon-button (click)="deleteSale(sale)" title="Excluir venda">
-          <mat-icon class="icon-delete">delete</mat-icon>
+        <button mat-button class="action-delete" (click)="deleteSale(sale)">
+          Excluir
         </button>
       </div>
 
