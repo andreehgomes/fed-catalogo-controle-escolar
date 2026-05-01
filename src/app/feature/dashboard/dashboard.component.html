@@ -160,6 +160,33 @@
       </div>
     </mat-expansion-panel>
 
+    <mat-expansion-panel class="section-panel" *ngIf="filteredExpenses.length > 0">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon>receipt</mat-icon>
+          Despesas
+        </mat-panel-title>
+        <mat-panel-description>
+          <span>R$ {{ fmt(totalDespesas) }}</span>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <div class="expense-row" *ngFor="let e of filteredExpenses">
+        <div class="expense-info">
+          <span class="expense-desc">{{ e.descricao }}</span>
+          <span class="expense-meta">{{ e.campaignNome }} · {{ fmtData(e.data) }}</span>
+        </div>
+        <div class="expense-right">
+          <span class="expense-valor">R$ {{ fmt(e.valor) }}</span>
+          <button mat-button class="action-comprovante"
+                  *ngIf="e.comprovanteUrl"
+                  (click)="abrirComprovante(e.comprovanteUrl)">
+            <mat-icon>receipt</mat-icon>
+            Comprovante
+          </button>
+        </div>
+      </div>
+    </mat-expansion-panel>
+
     <mat-expansion-panel class="section-panel">
       <mat-expansion-panel-header>
         <mat-panel-title>Últimas vendas</mat-panel-title>
