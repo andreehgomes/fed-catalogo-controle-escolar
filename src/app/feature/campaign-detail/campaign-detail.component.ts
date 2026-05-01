@@ -71,7 +71,11 @@ export class CampaignDetailComponent implements OnInit {
         this.expenses = e;
         this.loader.closeDialog();
       },
-      error: () => this.loader.closeDialog(),
+      error: (err) => {
+        console.error("Erro ao carregar despesas:", err);
+        this.expenses = [];
+        this.loader.closeDialog();
+      },
     });
   }
 

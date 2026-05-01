@@ -3,7 +3,8 @@ import { FormControl } from "@angular/forms";
 import { Router } from "@angular/router";
 import { MatDialog } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { combineLatest } from "rxjs";
+import { combineLatest, of } from "rxjs";
+import { catchError } from "rxjs/operators";
 import { ExpenseService } from "src/app/shared/service/expense/expense.service";
 import { CampaignService } from "src/app/shared/service/campaign/campaign.service";
 import { FileService } from "src/app/shared/service/file/file.service";
@@ -40,8 +41,18 @@ export class ExpenseListComponent implements OnInit {
   ngOnInit(): void {
     this.loader.openDialog();
     combineLatest([
-      this.expenseService.getAllExpenses(),
-      this.campaignService.getAllCampaigns(),
+      this.expenseService.getAllExpenses().pipe(
+        catchError((err) => {
+          console.error("Erro ao carregar despesas:", err);
+          return of([] as Expense[]);
+        })
+      ),
+      this.campaignService.getAllCampaigns().pipe(
+        catchError((err) => {
+          console.error("Erro ao carregar campanhas:", err);
+          return of([] as Campaign[]);
+        })
+      ),
     ]).subscribe({
       next: ([expenses, campaigns]) => {
         this.allExpenses = expenses;

@@ -8,10 +8,12 @@ import { CampaignService } from "src/app/shared/service/campaign/campaign.servic
 import { SaleService } from "src/app/shared/service/sale/sale.service";
 import { ExpenseService } from "src/app/shared/service/expense/expense.service";
 import { LoaderService } from "src/app/components/loader/loader.service";
-import { forkJoin } from "rxjs";
+import { forkJoin, of } from "rxjs";
+import { catchError } from "rxjs/operators";
 import { ConfirmDeleteDialogComponent } from "src/app/components/confirm-delete-dialog/confirm-delete-dialog.component";
 import { Campaign } from "src/app/shared/model/campaign";
 import { Sale } from "src/app/shared/model/sale";
+import { Expense } from "src/app/shared/model/expense";
 import { RouterEnum } from "src/app/core/router/router.enum";
 
 @Component({
@@ -95,8 +97,12 @@ export class CampaignListComponent implements OnInit {
 
     this.loader.openDialog();
     forkJoin({
-      sales: this.saleService.getSalesByCampaign(c.key),
-      expenses: this.expenseService.getExpensesByCampaign(c.key),
+      sales: this.saleService.getSalesByCampaign(c.key).pipe(
+        catchError(() => of([] as Sale[]))
+      ),
+      expenses: this.expenseService.getExpensesByCampaign(c.key).pipe(
+        catchError(() => of([] as Expense[]))
+      ),
     }).subscribe({
       next: ({ sales, expenses }) => {
         this.loader.closeDialog();

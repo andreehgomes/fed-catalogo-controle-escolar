@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { FormControl } from "@angular/forms";
-import { combineLatest } from "rxjs";
+import { combineLatest, of } from "rxjs";
+import { catchError } from "rxjs/operators";
 import { CampaignService } from "src/app/shared/service/campaign/campaign.service";
 import { SaleService } from "src/app/shared/service/sale/sale.service";
 import { ExpenseService } from "src/app/shared/service/expense/expense.service";
@@ -50,9 +51,24 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     this.loader.openDialog();
     combineLatest([
-      this.saleService.getAllSales(),
-      this.campaignService.getAllCampaigns(),
-      this.expenseService.getAllExpenses(),
+      this.saleService.getAllSales().pipe(
+        catchError((err) => {
+          console.error("Erro ao carregar vendas:", err);
+          return of([] as Sale[]);
+        })
+      ),
+      this.campaignService.getAllCampaigns().pipe(
+        catchError((err) => {
+          console.error("Erro ao carregar campanhas:", err);
+          return of([] as Campaign[]);
+        })
+      ),
+      this.expenseService.getAllExpenses().pipe(
+        catchError((err) => {
+          console.error("Erro ao carregar despesas:", err);
+          return of([] as Expense[]);
+        })
+      ),
     ]).subscribe({
       next: ([sales, campaigns, expenses]) => {
         this.allSales = sales;
