@@ -147,7 +147,15 @@
           <span class="expense-desc">{{ e.descricao }}</span>
           <span class="expense-data">{{ fmtDataData(e.data) }}</span>
         </div>
-        <span class="expense-valor">R$ {{ fmt(e.valor) }}</span>
+        <div class="expense-right">
+          <span class="expense-valor">R$ {{ fmt(e.valor) }}</span>
+          <button mat-button class="action-comprovante"
+                  *ngIf="e.comprovanteUrl"
+                  (click)="abrirComprovante(e.comprovanteUrl)">
+            <mat-icon>receipt</mat-icon>
+            Comprovante
+          </button>
+        </div>
       </div>
     </mat-expansion-panel>
 

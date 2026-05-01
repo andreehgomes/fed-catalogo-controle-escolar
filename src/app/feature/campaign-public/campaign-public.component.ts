@@ -132,6 +132,10 @@ export class CampaignPublicComponent implements OnInit {
     return Math.min(100, Math.round((this.totalVendido / this.campaign.meta) * 100));
   }
 
+  abrirComprovante(url: string): void {
+    window.open(url, "_blank");
+  }
+
   fmt(v: number): string {
     return v.toLocaleString("pt-BR", {
       minimumFractionDigits: 2,

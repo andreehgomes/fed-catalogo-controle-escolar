@@ -326,9 +326,36 @@
     color: #888;
   }
 
+  .expense-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
   .expense-valor {
     font-weight: 700;
     color: $c-red-alert;
+  }
+
+  .action-comprovante {
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    line-height: 26px !important;
+    height: 26px !important;
+    padding: 0 6px !important;
+    min-width: 0 !important;
+    color: $c-blue-alert !important;
+
+    mat-icon {
+      font-size: 14px;
+      width: 14px;
+      height: 14px;
+      margin-right: 2px;
+    }
   }
 }
 
