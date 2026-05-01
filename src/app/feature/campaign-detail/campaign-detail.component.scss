@@ -93,17 +93,24 @@
   gap: 10px;
 }
 
+.stat-full {
+  grid-column: 1 / -1;
+}
+
 .stat-card {
   background: #fff;
   border-radius: 12px;
-  padding: 12px 14px;
+  padding: 14px 12px;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
   gap: 4px;
+  text-align: center;
 }
 
 .stat-label {
-  font-size: 12px;
+  font-size: 11px;
   color: #777;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -113,14 +120,34 @@
   font-size: 20px;
   font-weight: 700;
   color: $c-primary-dark;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.stat-card.stat-recebido .stat-value {
+  color: $c-green-alert;
+}
+
+.stat-card.stat-areceber .stat-value {
+  color: #ef6c00;
 }
 
 .stat-card.stat-despesa .stat-value {
   color: $c-red-alert;
 }
 
+.stat-card.stat-patrocinio .stat-value {
+  color: #c2185b;
+}
+
 .stat-card.stat-saldo .stat-value {
   color: $c-green-alert;
+
+  &.negativo {
+    color: $c-red-alert;
+  }
 }
 
 .meta-card {
@@ -162,24 +189,12 @@
   }
 }
 
-.sales-section {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-
-  h3 {
-    color: #fff;
-    margin: 8px 0 0;
-    font-size: 16px;
-  }
-}
-
 .empty {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(255, 255, 255, 0.07);
-  color: rgba(255, 255, 255, 0.85);
+  background: #f5f5f5;
+  color: #555;
   border-radius: 10px;
   padding: 14px;
   font-size: 14px;
@@ -215,33 +230,51 @@
   margin-top: 4px;
 }
 
-.patrocinio-card {
+.section-panel {
   background: #fff !important;
   border-radius: 12px !important;
-  padding: 14px !important;
-  display: flex !important;
-  flex-direction: column;
-  gap: 10px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1) !important;
+  margin: 0 !important;
 
-  .patrocinio-header {
+  &.mat-expanded {
+    margin: 0 !important;
+  }
+
+  ::ng-deep .mat-expansion-panel-header {
+    padding: 0 14px;
+    height: 52px;
+    border-radius: 12px !important;
+  }
+
+  ::ng-deep .mat-expansion-panel-header-title {
+    font-weight: 600;
+    font-size: 15px;
+    color: $c-primary-dark;
     display: flex;
     align-items: center;
     gap: 6px;
-    color: $c-primary-dark;
-    font-weight: 700;
-    font-size: 14px;
 
     mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
       color: $c-primary;
     }
+  }
 
-    .pat-total {
-      flex: 1;
-      text-align: right;
-      font-size: 12px;
-      font-weight: 600;
-      color: $c-green-alert;
-    }
+  ::ng-deep .mat-expansion-panel-header-description {
+    flex-grow: 0;
+    flex-shrink: 0;
+    font-weight: 600;
+    font-size: 13px;
+    color: $c-green-alert;
+    margin-right: 8px;
+    justify-content: flex-end;
+    white-space: nowrap;
+  }
+
+  ::ng-deep .mat-expansion-panel-body {
+    padding: 0 14px 14px;
   }
 }
 
@@ -317,8 +350,9 @@
 }
 
 .btn-add-pat {
-  align-self: stretch;
-  margin-top: 4px;
+  display: block;
+  width: 100%;
+  margin-top: 8px;
 
   mat-icon {
     margin-right: 4px;
@@ -338,38 +372,16 @@
   }
 }
 
-.expenses-section {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.btn-add-expense {
+  display: block;
+  width: 100%;
+  margin-bottom: 12px;
 
-  .expenses-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 8px 0 0;
-
-    h3 {
-      color: #fff;
-      margin: 0;
-      font-size: 16px;
-    }
-
-    .btn-add-expense {
-      color: #fff !important;
-      border-color: rgba(255, 255, 255, 0.4) !important;
-      font-size: 12px !important;
-      line-height: 30px !important;
-      height: 30px !important;
-      padding: 0 10px !important;
-
-      mat-icon {
-        font-size: 16px;
-        width: 16px;
-        height: 16px;
-        margin-right: 4px;
-      }
-    }
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    margin-right: 4px;
   }
 }
 

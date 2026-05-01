@@ -183,33 +183,51 @@
   }
 }
 
-.patrocinio-card {
+.section-panel {
   background: #fff !important;
   border-radius: 12px !important;
-  padding: 14px !important;
-  display: flex !important;
-  flex-direction: column;
-  gap: 10px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1) !important;
+  margin: 0 !important;
 
-  .patrocinio-header {
+  &.mat-expanded {
+    margin: 0 !important;
+  }
+
+  ::ng-deep .mat-expansion-panel-header {
+    padding: 0 14px;
+    height: 52px;
+    border-radius: 12px !important;
+  }
+
+  ::ng-deep .mat-expansion-panel-header-title {
+    font-weight: 600;
+    font-size: 15px;
+    color: $c-primary-dark;
     display: flex;
     align-items: center;
     gap: 6px;
-    color: $c-primary-dark;
-    font-weight: 700;
-    font-size: 14px;
 
     mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
       color: $c-primary;
     }
+  }
 
-    .pat-total {
-      flex: 1;
-      text-align: right;
-      font-size: 12px;
-      font-weight: 600;
-      color: $c-green-alert;
-    }
+  ::ng-deep .mat-expansion-panel-header-description {
+    flex-grow: 0;
+    flex-shrink: 0;
+    font-weight: 600;
+    font-size: 13px;
+    color: $c-green-alert;
+    margin-right: 8px;
+    justify-content: flex-end;
+    white-space: nowrap;
+  }
+
+  ::ng-deep .mat-expansion-panel-body {
+    padding: 0 14px 14px;
   }
 }
 
@@ -277,35 +295,6 @@
   }
 }
 
-.section-card {
-  background: #fff !important;
-  border-radius: 12px !important;
-  padding: 14px !important;
-
-  h3 {
-    margin: 0 0 10px;
-    font-size: 15px;
-    color: $c-primary-dark;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-
-    mat-icon {
-      font-size: 18px;
-      width: 18px;
-      height: 18px;
-      color: $c-red-alert;
-    }
-
-    .despesas-total {
-      flex: 1;
-      text-align: right;
-      font-size: 13px;
-      font-weight: 700;
-      color: $c-red-alert;
-    }
-  }
-}
 
 .expense-row {
   display: flex;

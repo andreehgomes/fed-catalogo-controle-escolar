@@ -122,8 +122,10 @@
       </div>
     </mat-card>
 
-    <mat-card class="section-card">
-      <h3>Top 10 itens vendidos</h3>
+    <mat-expansion-panel class="section-panel">
+      <mat-expansion-panel-header>
+        <mat-panel-title>Top 10 itens vendidos</mat-panel-title>
+      </mat-expansion-panel-header>
       <div *ngIf="topItens.length === 0" class="empty-mini">Nenhum item vendido no período.</div>
       <div class="top-row" *ngFor="let it of topItens; let i = index">
         <span class="top-rank">{{ i + 1 }}</span>
@@ -131,13 +133,18 @@
         <span class="top-qtd">{{ it.qtdTotal }} un</span>
         <span class="top-valor">R$ {{ fmt(it.valorTotal) }}</span>
       </div>
-    </mat-card>
+    </mat-expansion-panel>
 
-    <mat-card class="section-card" *ngIf="patrociniosFiltrados.length > 0">
-      <h3>
-        <mat-icon>volunteer_activism</mat-icon>
-        Patrocinadores
-      </h3>
+    <mat-expansion-panel class="section-panel" *ngIf="patrociniosFiltrados.length > 0">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon>volunteer_activism</mat-icon>
+          Patrocinadores
+        </mat-panel-title>
+        <mat-panel-description>
+          <span *ngIf="totalPatrocinioValor > 0">R$ {{ fmt(totalPatrocinioValor) }}</span>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
       <div class="pat-row" *ngFor="let p of patrociniosFiltrados">
         <div class="pat-info">
           <span class="pat-nome">{{ p.sponsor.nome }}</span>
@@ -151,10 +158,12 @@
           {{ p.sponsor.tipo === 'valor' ? 'R$' : 'Produto' }}
         </span>
       </div>
-    </mat-card>
+    </mat-expansion-panel>
 
-    <mat-card class="section-card">
-      <h3>Últimas vendas</h3>
+    <mat-expansion-panel class="section-panel">
+      <mat-expansion-panel-header>
+        <mat-panel-title>Últimas vendas</mat-panel-title>
+      </mat-expansion-panel-header>
       <div *ngIf="ultimasVendas.length === 0" class="empty-mini">Nenhuma venda no período.</div>
       <div class="last-row" *ngFor="let s of ultimasVendas">
         <div class="last-info">
@@ -163,7 +172,7 @@
         </div>
         <span class="last-valor">R$ {{ fmt(s.valorTotal) }}</span>
       </div>
-    </mat-card>
+    </mat-expansion-panel>
 
   </div>
 </div>

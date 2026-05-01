@@ -24,16 +24,28 @@
         <span class="stat-value">{{ sales.length }}</span>
       </mat-card>
       <mat-card class="stat-card">
-        <span class="stat-label">Arrecadado</span>
+        <span class="stat-label">Total vendido</span>
         <span class="stat-value">R$ {{ fmt(totalArrecadado) }}</span>
+      </mat-card>
+      <mat-card class="stat-card stat-recebido">
+        <span class="stat-label">Recebido</span>
+        <span class="stat-value">R$ {{ fmt(totalRecebido) }}</span>
+      </mat-card>
+      <mat-card class="stat-card stat-areceber">
+        <span class="stat-label">A receber</span>
+        <span class="stat-value">R$ {{ fmt(totalAReceber) }}</span>
       </mat-card>
       <mat-card class="stat-card stat-despesa">
         <span class="stat-label">Despesas</span>
         <span class="stat-value">R$ {{ fmt(totalDespesas) }}</span>
       </mat-card>
-      <mat-card class="stat-card stat-saldo">
-        <span class="stat-label">Saldo líquido</span>
-        <span class="stat-value">R$ {{ fmt(saldoLiquido) }}</span>
+      <mat-card class="stat-card stat-patrocinio" *ngIf="totalPatrocinioValor > 0">
+        <span class="stat-label">Patrocínio (R$)</span>
+        <span class="stat-value">R$ {{ fmt(totalPatrocinioValor) }}</span>
+      </mat-card>
+      <mat-card class="stat-card stat-saldo stat-full">
+        <span class="stat-label">Saldo líquido (recebido + patrocínios − despesas)</span>
+        <span class="stat-value" [class.negativo]="saldoLiquido < 0">R$ {{ fmt(saldoLiquido) }}</span>
       </mat-card>
     </div>
 
@@ -45,14 +57,16 @@
       <mat-progress-bar mode="determinate" color="accent" [value]="pctMeta"></mat-progress-bar>
     </mat-card>
 
-    <mat-card class="patrocinio-card">
-      <div class="patrocinio-header">
-        <mat-icon>volunteer_activism</mat-icon>
-        <span>Patrocinadores</span>
-        <span class="pat-total" *ngIf="totalPatrocinioValor > 0">
-          R$ {{ fmt(totalPatrocinioValor) }}
-        </span>
-      </div>
+    <mat-expansion-panel class="section-panel">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon>volunteer_activism</mat-icon>
+          Patrocinadores
+        </mat-panel-title>
+        <mat-panel-description>
+          <span *ngIf="totalPatrocinioValor > 0">R$ {{ fmt(totalPatrocinioValor) }}</span>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
 
       <div class="pat-list" *ngIf="campaign.patrocinadores?.length">
         <div class="pat-item" *ngFor="let p of campaign.patrocinadores; let i = index">
@@ -83,7 +97,7 @@
         <mat-icon>add</mat-icon>
         Adicionar patrocínio
       </button>
-    </mat-card>
+    </mat-expansion-panel>
 
     <button mat-flat-button color="accent" class="btn-nova-venda" (click)="novaVenda()">
       <mat-icon>add</mat-icon>
@@ -95,8 +109,13 @@
       Compartilhar dashboard público
     </button>
 
-    <div class="sales-section">
-      <h3>Vendas</h3>
+    <mat-expansion-panel class="section-panel">
+      <mat-expansion-panel-header>
+        <mat-panel-title>Vendas</mat-panel-title>
+        <mat-panel-description>
+          {{ sales.length }} {{ sales.length === 1 ? 'venda' : 'vendas' }}
+        </mat-panel-description>
+      </mat-expansion-panel-header>
 
       <div *ngIf="sales.length === 0" class="empty">
         <mat-icon>info</mat-icon>
@@ -113,16 +132,23 @@
           <span class="sale-itens">{{ s.itens.length }} {{ s.itens.length === 1 ? 'item' : 'itens' }}</span>
         </div>
       </div>
-    </div>
+    </mat-expansion-panel>
 
-    <div class="expenses-section">
-      <div class="expenses-header">
-        <h3>Despesas</h3>
-        <button mat-stroked-button color="accent" class="btn-add-expense" (click)="novaDespesa()">
-          <mat-icon>add</mat-icon>
-          Nova despesa
-        </button>
-      </div>
+    <mat-expansion-panel class="section-panel">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon>receipt</mat-icon>
+          Despesas
+        </mat-panel-title>
+        <mat-panel-description>
+          <span *ngIf="totalDespesas > 0">R$ {{ fmt(totalDespesas) }}</span>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <button mat-stroked-button color="accent" class="btn-add-expense" (click)="novaDespesa()">
+        <mat-icon>add</mat-icon>
+        Nova despesa
+      </button>
 
       <div *ngIf="expenses.length === 0" class="empty">
         <mat-icon>info</mat-icon>
@@ -150,6 +176,6 @@
           </button>
         </div>
       </div>
-    </div>
+    </mat-expansion-panel>
   </div>
 </div>

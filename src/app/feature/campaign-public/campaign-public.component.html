@@ -91,14 +91,16 @@
       </div>
     </mat-card>
 
-    <mat-card class="patrocinio-card" *ngIf="campaign.patrocinadores?.length">
-      <div class="patrocinio-header">
-        <mat-icon>volunteer_activism</mat-icon>
-        <span>Patrocinadores</span>
-        <span class="pat-total" *ngIf="totalPatrocinioValor > 0">
-          R$ {{ fmt(totalPatrocinioValor) }}
-        </span>
-      </div>
+    <mat-expansion-panel class="section-panel" *ngIf="campaign.patrocinadores?.length">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon>volunteer_activism</mat-icon>
+          Patrocinadores
+        </mat-panel-title>
+        <mat-panel-description>
+          <span *ngIf="totalPatrocinioValor > 0">R$ {{ fmt(totalPatrocinioValor) }}</span>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
       <div class="pat-list">
         <div class="pat-item" *ngFor="let p of campaign.patrocinadores">
           <div class="pat-info">
@@ -116,24 +118,30 @@
           </span>
         </div>
       </div>
-    </mat-card>
+    </mat-expansion-panel>
 
-    <mat-card class="section-card" *ngIf="topItens.length > 0">
-      <h3>Top itens vendidos</h3>
+    <mat-expansion-panel class="section-panel" *ngIf="topItens.length > 0">
+      <mat-expansion-panel-header>
+        <mat-panel-title>Top itens vendidos</mat-panel-title>
+      </mat-expansion-panel-header>
       <div class="top-row" *ngFor="let it of topItens; let i = index">
         <span class="top-rank">{{ i + 1 }}</span>
         <span class="top-desc">{{ it.descricao }}</span>
         <span class="top-qtd">{{ it.qtdTotal }} un</span>
         <span class="top-valor">R$ {{ fmt(it.valorTotal) }}</span>
       </div>
-    </mat-card>
+    </mat-expansion-panel>
 
-    <mat-card class="section-card despesas-card" *ngIf="expenses.length > 0">
-      <h3>
-        <mat-icon>receipt</mat-icon>
-        Despesas
-        <span class="despesas-total">R$ {{ fmt(totalDespesas) }}</span>
-      </h3>
+    <mat-expansion-panel class="section-panel" *ngIf="expenses.length > 0">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon>receipt</mat-icon>
+          Despesas
+        </mat-panel-title>
+        <mat-panel-description>
+          <span>R$ {{ fmt(totalDespesas) }}</span>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
       <div class="expense-row" *ngFor="let e of expenses">
         <div class="expense-info">
           <span class="expense-desc">{{ e.descricao }}</span>
@@ -141,7 +149,7 @@
         </div>
         <span class="expense-valor">R$ {{ fmt(e.valor) }}</span>
       </div>
-    </mat-card>
+    </mat-expansion-panel>
 
     <p class="footer-info">
       <mat-icon>info</mat-icon>

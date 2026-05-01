@@ -212,12 +212,20 @@ export class CampaignDetailComponent implements OnInit {
     return this.sales.reduce((acc, s) => acc + s.valorTotal, 0);
   }
 
+  get totalRecebido(): number {
+    return this.sales.reduce((acc, s) => acc + (s.valorRecebido ?? 0), 0);
+  }
+
+  get totalAReceber(): number {
+    return this.totalArrecadado - this.totalRecebido;
+  }
+
   get totalDespesas(): number {
     return this.expenses.reduce((acc, e) => acc + e.valor, 0);
   }
 
   get saldoLiquido(): number {
-    return this.totalArrecadado - this.totalDespesas;
+    return this.totalRecebido + this.totalPatrocinioValor - this.totalDespesas;
   }
 
   get totalPatrocinioValor(): number {
