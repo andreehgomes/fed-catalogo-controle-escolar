@@ -46,6 +46,22 @@
         </div>
       </mat-card>
 
+      <mat-card class="kpi-card kpi-red">
+        <div class="kpi-icon"><mat-icon>receipt</mat-icon></div>
+        <div class="kpi-body">
+          <span class="kpi-label">Despesas</span>
+          <span class="kpi-value">R$ {{ fmt(totalDespesas) }}</span>
+        </div>
+      </mat-card>
+
+      <mat-card class="kpi-card kpi-saldo kpi-full">
+        <div class="kpi-icon"><mat-icon>account_balance</mat-icon></div>
+        <div class="kpi-body">
+          <span class="kpi-label">Saldo líquido (recebido − despesas)</span>
+          <span class="kpi-value" [class.negativo]="saldoLiquido < 0">R$ {{ fmt(saldoLiquido) }}</span>
+        </div>
+      </mat-card>
+
       <mat-card class="kpi-card kpi-purple kpi-full" *ngIf="campaign.meta">
         <div class="kpi-icon"><mat-icon>flag</mat-icon></div>
         <div class="kpi-body">
@@ -101,6 +117,21 @@
         <span class="top-desc">{{ it.descricao }}</span>
         <span class="top-qtd">{{ it.qtdTotal }} un</span>
         <span class="top-valor">R$ {{ fmt(it.valorTotal) }}</span>
+      </div>
+    </mat-card>
+
+    <mat-card class="section-card despesas-card" *ngIf="expenses.length > 0">
+      <h3>
+        <mat-icon>receipt</mat-icon>
+        Despesas
+        <span class="despesas-total">R$ {{ fmt(totalDespesas) }}</span>
+      </h3>
+      <div class="expense-row" *ngFor="let e of expenses">
+        <div class="expense-info">
+          <span class="expense-desc">{{ e.descricao }}</span>
+          <span class="expense-data">{{ fmtDataData(e.data) }}</span>
+        </div>
+        <span class="expense-valor">R$ {{ fmt(e.valor) }}</span>
       </div>
     </mat-card>
 

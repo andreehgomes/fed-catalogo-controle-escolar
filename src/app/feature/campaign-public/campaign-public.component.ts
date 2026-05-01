@@ -5,8 +5,10 @@ import { firstValueFrom } from "rxjs";
 import { filter, take } from "rxjs/operators";
 import { CampaignService } from "src/app/shared/service/campaign/campaign.service";
 import { SaleService } from "src/app/shared/service/sale/sale.service";
+import { ExpenseService } from "src/app/shared/service/expense/expense.service";
 import { Campaign } from "src/app/shared/model/campaign";
 import { Sale } from "src/app/shared/model/sale";
+import { Expense } from "src/app/shared/model/expense";
 
 interface TopItem {
   descricao: string;
@@ -23,6 +25,7 @@ interface TopItem {
 export class CampaignPublicComponent implements OnInit {
   campaign?: Campaign;
   sales: Sale[] = [];
+  expenses: Expense[] = [];
   loading = true;
   notFound = false;
   topItens: TopItem[] = [];
@@ -31,7 +34,8 @@ export class CampaignPublicComponent implements OnInit {
     private route: ActivatedRoute,
     private fireAuth: Auth,
     private campaignService: CampaignService,
-    private saleService: SaleService
+    private saleService: SaleService,
+    private expenseService: ExpenseService
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -46,6 +50,14 @@ export class CampaignPublicComponent implements OnInit {
       await this.ensureAnonymousAuth();
       this.campaign = await firstValueFrom(this.campaignService.getCampaignByKey(key));
       this.sales = await firstValueFrom(this.saleService.getSalesByCampaign(key));
+      try {
+        this.expenses = await firstValueFrom(
+          this.expenseService.getExpensesByCampaign(key)
+        );
+      } catch (err) {
+        console.error("Erro ao carregar despesas:", err);
+        this.expenses = [];
+      }
       this.calcularTopItens();
     } catch {
       this.notFound = true;
@@ -100,6 +112,14 @@ export class CampaignPublicComponent implements OnInit {
     return this.totalVendido - this.totalRecebido;
   }
 
+  get totalDespesas(): number {
+    return this.expenses.reduce((acc, e) => acc + e.valor, 0);
+  }
+
+  get saldoLiquido(): number {
+    return this.totalRecebido - this.totalDespesas;
+  }
+
   get totalPatrocinioValor(): number {
     if (!this.campaign?.patrocinadores) return 0;
     return this.campaign.patrocinadores
@@ -125,6 +145,11 @@ export class CampaignPublicComponent implements OnInit {
   }
 
   fmtDataInicio(iso?: string): string {
+    if (!iso) return "";
+    return new Date(iso + "T00:00:00").toLocaleDateString("pt-BR");
+  }
+
+  fmtDataData(iso: string): string {
     if (!iso) return "";
     return new Date(iso + "T00:00:00").toLocaleDateString("pt-BR");
   }
