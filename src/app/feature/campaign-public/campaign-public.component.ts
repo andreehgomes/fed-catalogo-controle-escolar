@@ -117,7 +117,7 @@ export class CampaignPublicComponent implements OnInit {
   }
 
   get saldoLiquido(): number {
-    return this.totalRecebido - this.totalDespesas;
+    return this.totalRecebido + this.totalPatrocinioValor - this.totalDespesas;
   }
 
   get totalPatrocinioValor(): number {

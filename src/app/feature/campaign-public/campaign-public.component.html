@@ -54,10 +54,18 @@
         </div>
       </mat-card>
 
+      <mat-card class="kpi-card kpi-pink" *ngIf="totalPatrocinioValor > 0">
+        <div class="kpi-icon"><mat-icon>volunteer_activism</mat-icon></div>
+        <div class="kpi-body">
+          <span class="kpi-label">Patrocínio (R$)</span>
+          <span class="kpi-value">R$ {{ fmt(totalPatrocinioValor) }}</span>
+        </div>
+      </mat-card>
+
       <mat-card class="kpi-card kpi-saldo kpi-full">
         <div class="kpi-icon"><mat-icon>account_balance</mat-icon></div>
         <div class="kpi-body">
-          <span class="kpi-label">Saldo líquido (recebido − despesas)</span>
+          <span class="kpi-label">Saldo líquido (recebido + patrocínios − despesas)</span>
           <span class="kpi-value" [class.negativo]="saldoLiquido < 0">R$ {{ fmt(saldoLiquido) }}</span>
         </div>
       </mat-card>

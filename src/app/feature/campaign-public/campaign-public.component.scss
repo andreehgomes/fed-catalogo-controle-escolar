@@ -96,11 +96,14 @@
 
 .kpi-card {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 10px;
-  padding: 14px 12px !important;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 12px !important;
   border-radius: 14px !important;
   background: #fff;
+  text-align: center;
 
   .kpi-icon {
     width: 44px;
@@ -118,7 +121,9 @@
   .kpi-body {
     display: flex;
     flex-direction: column;
+    align-items: center;
     min-width: 0;
+    width: 100%;
   }
 
   .kpi-label {
@@ -135,6 +140,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    max-width: 100%;
   }
 
   &.kpi-blue .kpi-icon { background: linear-gradient(135deg, $c-primary 0%, $c-primary-dark 100%); }
@@ -142,6 +148,7 @@
   &.kpi-orange .kpi-icon { background: linear-gradient(135deg, #ef6c00 0%, #e65100 100%); }
   &.kpi-purple .kpi-icon { background: linear-gradient(135deg, #6a1b9a 0%, #4a148c 100%); }
   &.kpi-red .kpi-icon { background: linear-gradient(135deg, #c62828 0%, #8e0000 100%); }
+  &.kpi-pink .kpi-icon { background: linear-gradient(135deg, #c2185b 0%, #880e4f 100%); }
   &.kpi-saldo .kpi-icon { background: linear-gradient(135deg, #00838f 0%, #005662 100%); }
 
   &.kpi-saldo .kpi-value.negativo {

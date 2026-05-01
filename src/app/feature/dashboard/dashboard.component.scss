@@ -75,11 +75,14 @@
 
 .kpi-card {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 10px;
-  padding: 14px 12px !important;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 12px !important;
   border-radius: 14px !important;
   background: #fff;
+  text-align: center;
 
   .kpi-icon {
     width: 44px;
@@ -97,7 +100,9 @@
   .kpi-body {
     display: flex;
     flex-direction: column;
+    align-items: center;
     min-width: 0;
+    width: 100%;
   }
 
   .kpi-label {
@@ -114,6 +119,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    max-width: 100%;
   }
 
   &.kpi-blue .kpi-icon { background: linear-gradient(135deg, $c-primary 0%, $c-primary-dark 100%); }

@@ -162,7 +162,7 @@ export class DashboardComponent implements OnInit {
   }
 
   get saldoLiquido(): number {
-    return this.totalRecebido - this.totalDespesas;
+    return this.totalRecebido + this.totalPatrocinioValor - this.totalDespesas;
   }
 
   get campaignSelecionada(): Campaign | undefined {
