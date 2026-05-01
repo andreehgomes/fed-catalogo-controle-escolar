@@ -3,9 +3,11 @@ import { FormControl } from "@angular/forms";
 import { combineLatest } from "rxjs";
 import { CampaignService } from "src/app/shared/service/campaign/campaign.service";
 import { SaleService } from "src/app/shared/service/sale/sale.service";
+import { ExpenseService } from "src/app/shared/service/expense/expense.service";
 import { LoaderService } from "src/app/components/loader/loader.service";
 import { Campaign, CampaignSponsor } from "src/app/shared/model/campaign";
 import { Sale } from "src/app/shared/model/sale";
+import { Expense } from "src/app/shared/model/expense";
 
 interface TopItem {
   descricao: string;
@@ -28,6 +30,8 @@ export class DashboardComponent implements OnInit {
   campaigns: Campaign[] = [];
   allSales: Sale[] = [];
   filteredSales: Sale[] = [];
+  allExpenses: Expense[] = [];
+  filteredExpenses: Expense[] = [];
 
   campaignCtrl = new FormControl<string>("");
   dataDeCtrl = new FormControl<string>("");
@@ -39,6 +43,7 @@ export class DashboardComponent implements OnInit {
   constructor(
     private campaignService: CampaignService,
     private saleService: SaleService,
+    private expenseService: ExpenseService,
     private loader: LoaderService
   ) {}
 
@@ -47,10 +52,12 @@ export class DashboardComponent implements OnInit {
     combineLatest([
       this.saleService.getAllSales(),
       this.campaignService.getAllCampaigns(),
+      this.expenseService.getAllExpenses(),
     ]).subscribe({
-      next: ([sales, campaigns]) => {
+      next: ([sales, campaigns, expenses]) => {
         this.allSales = sales;
         this.campaigns = campaigns;
+        this.allExpenses = expenses;
         this.aplicarFiltros();
         this.loader.closeDialog();
       },
@@ -71,6 +78,15 @@ export class DashboardComponent implements OnInit {
       if (campKey && s.campaignKey !== campKey) return false;
       if (de && s.dataCriacao < de) return false;
       if (ate && s.dataCriacao > ate) return false;
+      return true;
+    });
+
+    const deDate = this.dataDeCtrl.value ?? "";
+    const ateDate = this.dataAteCtrl.value ?? "";
+    this.filteredExpenses = this.allExpenses.filter((e) => {
+      if (campKey && e.campaignKey !== campKey) return false;
+      if (deDate && (e.data ?? "") < deDate) return false;
+      if (ateDate && (e.data ?? "") > ateDate) return false;
       return true;
     });
 
@@ -123,6 +139,14 @@ export class DashboardComponent implements OnInit {
 
   get totalAReceber(): number {
     return this.totalVendido - this.totalRecebido;
+  }
+
+  get totalDespesas(): number {
+    return this.filteredExpenses.reduce((acc, e) => acc + e.valor, 0);
+  }
+
+  get saldoLiquido(): number {
+    return this.totalRecebido - this.totalDespesas;
   }
 
   get campaignSelecionada(): Campaign | undefined {

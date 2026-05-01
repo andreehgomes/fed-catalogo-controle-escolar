@@ -1,0 +1,75 @@
+<div class="page">
+  <div class="header">
+    <span class="page-title">Despesas</span>
+    <button mat-mini-fab color="accent" class="btn-add" (click)="novaDespesa()">
+      <mat-icon>add</mat-icon>
+    </button>
+  </div>
+
+  <div class="page-content">
+    <div class="filtros">
+      <mat-form-field appearance="outline" color="accent" class="field-full" subscriptSizing="dynamic">
+        <mat-label>Buscar descrição</mat-label>
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput [formControl]="searchCtrl" autocomplete="off" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" color="accent" class="field-full" subscriptSizing="dynamic">
+        <mat-label>Campanha</mat-label>
+        <mat-icon matPrefix>campaign</mat-icon>
+        <mat-select [formControl]="campaignCtrl">
+          <mat-option [value]="">Todas</mat-option>
+          <mat-option *ngFor="let c of campaigns" [value]="c.key">{{ c.nome }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <button mat-button class="btn-clear"
+              *ngIf="campaignCtrl.value || searchCtrl.value"
+              (click)="limparFiltros()">
+        <mat-icon>filter_alt_off</mat-icon> Limpar
+      </button>
+    </div>
+
+    <div class="totais" *ngIf="filtered.length > 0">
+      <div class="totais-row">
+        <span>{{ filtered.length }} {{ filtered.length === 1 ? 'despesa' : 'despesas' }}</span>
+        <span class="totais-valor">Total: <strong>R$ {{ fmt(totalDespesas) }}</strong></span>
+      </div>
+    </div>
+
+    <p class="empty-msg" *ngIf="filtered.length === 0">
+      <mat-icon>info</mat-icon> Nenhuma despesa encontrada.
+    </p>
+
+    <mat-card class="expense-card" *ngFor="let e of filtered" (click)="editar(e)">
+      <div class="expense-top">
+        <span class="expense-desc">{{ e.descricao }}</span>
+        <span class="expense-valor">R$ {{ fmt(e.valor) }}</span>
+      </div>
+
+      <div class="expense-mid">
+        <span class="expense-campaign">
+          <mat-icon>campaign</mat-icon>{{ e.campaignNome }}
+        </span>
+        <span class="expense-data">{{ fmtData(e.data) }}</span>
+      </div>
+
+      <div class="expense-actions">
+        <button mat-button class="action-comprovante"
+                *ngIf="e.comprovanteUrl"
+                (click)="abrirComprovante(e.comprovanteUrl, $event)">
+          <mat-icon>receipt</mat-icon>
+          Comprovante
+        </button>
+        <span class="no-comprovante" *ngIf="!e.comprovanteUrl">
+          <mat-icon>image_not_supported</mat-icon>
+          Sem comprovante
+        </span>
+        <button mat-button class="action-delete" (click)="excluir(e, $event)">
+          <mat-icon>delete</mat-icon>
+          Excluir
+        </button>
+      </div>
+    </mat-card>
+  </div>
+</div>

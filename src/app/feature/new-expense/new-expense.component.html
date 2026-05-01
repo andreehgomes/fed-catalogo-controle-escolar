@@ -1,0 +1,79 @@
+<div class="page">
+  <div class="header">
+    <button mat-icon-button class="btn-back" (click)="cancelar()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <span class="page-title">{{ editingKey ? 'Editar despesa' : 'Nova despesa' }}</span>
+  </div>
+
+  <div class="page-content">
+    <form [formGroup]="form" class="form-card">
+      <card-alert
+        *ngIf="alerta?.codigo != null"
+        tipo="{{ alerta.tipo }}"
+        codigo="{{ alerta.codigo }}"
+        mensagem="{{ alerta.mensagem }}"
+      ></card-alert>
+
+      <!-- Comprovante -->
+      <div class="comprovante-section">
+        <span class="section-label">Comprovante</span>
+
+        <div class="comprovante-preview" [class.empty]="!comprovantePreview">
+          <img *ngIf="comprovantePreview" [src]="comprovantePreview" alt="Comprovante" />
+          <button mat-fab color="accent" type="button" class="btn-upload"
+                  (click)="clickInputImage()" *ngIf="!comprovantePreview">
+            <mat-icon>add_a_photo</mat-icon>
+          </button>
+          <div class="comprovante-actions" *ngIf="comprovantePreview">
+            <button mat-mini-fab color="accent" type="button" (click)="clickInputImage()" title="Trocar">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-mini-fab type="button" class="btn-remove" (click)="removerComprovante()" title="Remover">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        <input
+          #inputImage
+          type="file"
+          accept="image/*"
+          style="display: none"
+          (change)="selectFile($event)"
+        />
+      </div>
+
+      <div class="fields">
+        <mat-form-field appearance="outline" color="accent" class="field-full">
+          <mat-label>Campanha</mat-label>
+          <mat-icon matPrefix>campaign</mat-icon>
+          <mat-select formControlName="campaignKey">
+            <mat-option *ngFor="let c of campaigns" [value]="c.key">{{ c.nome }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" color="accent" class="field-full">
+          <mat-label>Descrição</mat-label>
+          <input matInput formControlName="descricao" autocomplete="off" />
+        </mat-form-field>
+
+        <input-moeda formControlName="valor" label="Valor" />
+
+        <mat-form-field appearance="outline" color="accent" class="field-full">
+          <mat-label>Data</mat-label>
+          <mat-icon matPrefix>calendar_today</mat-icon>
+          <input matInput type="date" formControlName="data" />
+        </mat-form-field>
+      </div>
+
+      <div class="actions">
+        <button mat-stroked-button type="button" (click)="cancelar()">Cancelar</button>
+        <button mat-flat-button color="accent" type="button"
+                [disabled]="form.invalid" (click)="salvar()">
+          Salvar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -115,6 +115,14 @@
   color: $c-primary-dark;
 }
 
+.stat-card.stat-despesa .stat-value {
+  color: $c-red-alert;
+}
+
+.stat-card.stat-saldo .stat-value {
+  color: $c-green-alert;
+}
+
 .meta-card {
   background: #fff;
   border-radius: 12px;
@@ -327,5 +335,104 @@
     font-size: 16px;
     width: 16px;
     height: 16px;
+  }
+}
+
+.expenses-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  .expenses-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 8px 0 0;
+
+    h3 {
+      color: #fff;
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .btn-add-expense {
+      color: #fff !important;
+      border-color: rgba(255, 255, 255, 0.4) !important;
+      font-size: 12px !important;
+      line-height: 30px !important;
+      height: 30px !important;
+      padding: 0 10px !important;
+
+      mat-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+        margin-right: 4px;
+      }
+    }
+  }
+}
+
+.expense-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.18s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.14);
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 14px rgba(0, 0, 0, 0.22);
+  }
+
+  .expense-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+    color: #1a1a1a;
+
+    .expense-valor {
+      color: $c-red-alert;
+      font-weight: 700;
+    }
+  }
+
+  .expense-bottom {
+    font-size: 12px;
+    color: #777;
+    margin-top: 2px;
+  }
+
+  .expense-actions {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding-top: 6px;
+    margin-top: 6px;
+    border-top: 1px solid #f0f0f0;
+
+    button {
+      font-size: 11px !important;
+      font-weight: 600 !important;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      line-height: 28px !important;
+      height: 28px !important;
+      padding: 0 8px !important;
+      min-width: 0 !important;
+
+      mat-icon {
+        font-size: 14px;
+        width: 14px;
+        height: 14px;
+        margin-right: 2px;
+      }
+    }
+
+    .action-comprovante { color: $c-blue-alert !important; }
+    .action-delete { color: $c-red-alert !important; }
   }
 }

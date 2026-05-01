@@ -4,10 +4,13 @@ import { MatDialog } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { CampaignService } from "src/app/shared/service/campaign/campaign.service";
 import { SaleService } from "src/app/shared/service/sale/sale.service";
+import { ExpenseService } from "src/app/shared/service/expense/expense.service";
+import { FileService } from "src/app/shared/service/file/file.service";
 import { LoaderService } from "src/app/components/loader/loader.service";
 import { ConfirmDeleteDialogComponent } from "src/app/components/confirm-delete-dialog/confirm-delete-dialog.component";
 import { Campaign } from "src/app/shared/model/campaign";
 import { Sale } from "src/app/shared/model/sale";
+import { Expense } from "src/app/shared/model/expense";
 import { RouterEnum } from "src/app/core/router/router.enum";
 
 @Component({
@@ -19,12 +22,15 @@ import { RouterEnum } from "src/app/core/router/router.enum";
 export class CampaignDetailComponent implements OnInit {
   campaign?: Campaign;
   sales: Sale[] = [];
+  expenses: Expense[] = [];
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private campaignService: CampaignService,
     private saleService: SaleService,
+    private expenseService: ExpenseService,
+    private fileService: FileService,
     private loader: LoaderService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar
@@ -53,10 +59,68 @@ export class CampaignDetailComponent implements OnInit {
     this.saleService.getSalesByCampaign(key).subscribe({
       next: (s) => {
         this.sales = s;
+        this.carregarDespesas(key);
+      },
+      error: () => this.loader.closeDialog(),
+    });
+  }
+
+  private carregarDespesas(key: string): void {
+    this.expenseService.getExpensesByCampaign(key).subscribe({
+      next: (e) => {
+        this.expenses = e;
         this.loader.closeDialog();
       },
       error: () => this.loader.closeDialog(),
     });
+  }
+
+  novaDespesa(): void {
+    if (!this.campaign?.key) return;
+    this.router.navigate([RouterEnum.NEW_EXPENSE], {
+      queryParams: { campaignKey: this.campaign.key },
+    });
+  }
+
+  editarDespesa(e: Expense): void {
+    this.expenseService.selectedExpense$.next(e);
+    this.router.navigate([RouterEnum.NEW_EXPENSE]);
+  }
+
+  excluirDespesa(e: Expense, event: Event): void {
+    event.stopPropagation();
+    if (!e.key) return;
+    const ref = this.dialog.open(ConfirmDeleteDialogComponent, {
+      data: {
+        titulo: "Excluir despesa",
+        mensagem: `Excluir a despesa "${e.descricao}" no valor de R$ ${this.fmt(e.valor)}?`,
+      },
+    });
+    ref.afterClosed().subscribe(async (confirm) => {
+      if (!confirm) return;
+      this.loader.openDialog();
+      try {
+        if (e.comprovanteFileName) {
+          await new Promise((resolve) =>
+            this.fileService.deleteFileStorage(e.comprovanteFileName!).subscribe(resolve)
+          );
+        }
+        await this.expenseService.deleteExpense(e.key!);
+        this.expenses = this.expenses.filter((x) => x.key !== e.key);
+        this.snackBar.open("Despesa excluída.", "", {
+          duration: 2500,
+          panelClass: ["snack-sucesso"],
+          verticalPosition: "top",
+        });
+      } finally {
+        this.loader.closeDialog();
+      }
+    });
+  }
+
+  abrirComprovante(url: string, event: Event): void {
+    event.stopPropagation();
+    window.open(url, "_blank");
   }
 
   novaVenda(): void {
@@ -142,6 +206,14 @@ export class CampaignDetailComponent implements OnInit {
 
   get totalArrecadado(): number {
     return this.sales.reduce((acc, s) => acc + s.valorTotal, 0);
+  }
+
+  get totalDespesas(): number {
+    return this.expenses.reduce((acc, e) => acc + e.valor, 0);
+  }
+
+  get saldoLiquido(): number {
+    return this.totalArrecadado - this.totalDespesas;
   }
 
   get totalPatrocinioValor(): number {

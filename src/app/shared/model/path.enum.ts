@@ -3,6 +3,7 @@ export enum Path {
   CAMPAIGN = "campaigns",
   CLIENT = "clients",
   SALES = "sales",
+  EXPENSES = "expenses",
   ANALYTICS = "analytics",
   TOKEN = "token",
 }

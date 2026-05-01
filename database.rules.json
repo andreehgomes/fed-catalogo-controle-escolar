@@ -13,6 +13,9 @@
     },
     "sales": {
       ".indexOn": ["campaignKey", "clienteKey", "clienteNomeLower", "dataCriacao", "status"]
+    },
+    "expenses": {
+      ".indexOn": ["campaignKey", "data", "dataCriacao"]
     }
   }
 }

@@ -6,7 +6,9 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { debounceTime, distinctUntilChanged } from "rxjs/operators";
 import { CampaignService } from "src/app/shared/service/campaign/campaign.service";
 import { SaleService } from "src/app/shared/service/sale/sale.service";
+import { ExpenseService } from "src/app/shared/service/expense/expense.service";
 import { LoaderService } from "src/app/components/loader/loader.service";
+import { forkJoin } from "rxjs";
 import { ConfirmDeleteDialogComponent } from "src/app/components/confirm-delete-dialog/confirm-delete-dialog.component";
 import { Campaign } from "src/app/shared/model/campaign";
 import { Sale } from "src/app/shared/model/sale";
@@ -26,6 +28,7 @@ export class CampaignListComponent implements OnInit {
   constructor(
     private campaignService: CampaignService,
     private saleService: SaleService,
+    private expenseService: ExpenseService,
     private router: Router,
     private loader: LoaderService,
     private dialog: MatDialog,
@@ -91,12 +94,23 @@ export class CampaignListComponent implements OnInit {
     if (!c.key) return;
 
     this.loader.openDialog();
-    this.saleService.getSalesByCampaign(c.key).subscribe({
-      next: (sales) => {
+    forkJoin({
+      sales: this.saleService.getSalesByCampaign(c.key),
+      expenses: this.expenseService.getExpensesByCampaign(c.key),
+    }).subscribe({
+      next: ({ sales, expenses }) => {
         this.loader.closeDialog();
         if (sales.length > 0) {
           this.snackBar.open(
             `Esta campanha tem ${sales.length} ${sales.length === 1 ? 'venda' : 'vendas'} registrada(s) e não pode ser excluída. Encerre a campanha ou exclua as vendas primeiro.`,
+            "Fechar",
+            { duration: 6000, verticalPosition: "top" }
+          );
+          return;
+        }
+        if (expenses.length > 0) {
+          this.snackBar.open(
+            `Esta campanha tem ${expenses.length} ${expenses.length === 1 ? 'despesa' : 'despesas'} registrada(s) e não pode ser excluída. Exclua as despesas primeiro.`,
             "Fechar",
             { duration: 6000, verticalPosition: "top" }
           );

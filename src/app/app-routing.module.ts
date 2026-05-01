@@ -140,6 +140,22 @@ const routes: Routes = [
       ),
   },
   {
+    path: "expense-list",
+    canActivate: [authGuard],
+    loadChildren: () =>
+      import("./feature/expense-list/expense-list.module").then(
+        (m) => m.ExpenseListModule
+      ),
+  },
+  {
+    path: "new-expense",
+    canActivate: [authGuard],
+    loadChildren: () =>
+      import("./feature/new-expense/new-expense.module").then(
+        (m) => m.NewExpenseModule
+      ),
+  },
+  {
     path: "dashboard",
     canActivate: [authGuard],
     loadChildren: () =>

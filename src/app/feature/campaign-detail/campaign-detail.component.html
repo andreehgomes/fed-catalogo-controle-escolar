@@ -27,6 +27,14 @@
         <span class="stat-label">Arrecadado</span>
         <span class="stat-value">R$ {{ fmt(totalArrecadado) }}</span>
       </mat-card>
+      <mat-card class="stat-card stat-despesa">
+        <span class="stat-label">Despesas</span>
+        <span class="stat-value">R$ {{ fmt(totalDespesas) }}</span>
+      </mat-card>
+      <mat-card class="stat-card stat-saldo">
+        <span class="stat-label">Saldo líquido</span>
+        <span class="stat-value">R$ {{ fmt(saldoLiquido) }}</span>
+      </mat-card>
     </div>
 
     <mat-card class="meta-card" *ngIf="campaign.meta && campaign.meta > 0">
@@ -103,6 +111,43 @@
         <div class="sale-bottom">
           <span class="sale-data">{{ fmtData(s.dataCriacao) }}</span>
           <span class="sale-itens">{{ s.itens.length }} {{ s.itens.length === 1 ? 'item' : 'itens' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="expenses-section">
+      <div class="expenses-header">
+        <h3>Despesas</h3>
+        <button mat-stroked-button color="accent" class="btn-add-expense" (click)="novaDespesa()">
+          <mat-icon>add</mat-icon>
+          Nova despesa
+        </button>
+      </div>
+
+      <div *ngIf="expenses.length === 0" class="empty">
+        <mat-icon>info</mat-icon>
+        <span>Nenhuma despesa registrada nesta campanha.</span>
+      </div>
+
+      <div class="expense-card" *ngFor="let e of expenses" (click)="editarDespesa(e)">
+        <div class="expense-top">
+          <span class="expense-desc">{{ e.descricao }}</span>
+          <span class="expense-valor">R$ {{ fmt(e.valor) }}</span>
+        </div>
+        <div class="expense-bottom">
+          <span class="expense-data">{{ fmtDataInicio(e.data) }}</span>
+        </div>
+        <div class="expense-actions">
+          <button mat-button class="action-comprovante"
+                  *ngIf="e.comprovanteUrl"
+                  (click)="abrirComprovante(e.comprovanteUrl, $event)">
+            <mat-icon>receipt</mat-icon>
+            Comprovante
+          </button>
+          <button mat-button class="action-delete" (click)="excluirDespesa(e, $event)">
+            <mat-icon>delete</mat-icon>
+            Excluir
+          </button>
         </div>
       </div>
     </div>

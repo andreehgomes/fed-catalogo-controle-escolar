@@ -34,6 +34,16 @@
           <span matListItemTitle>Listar campanhas</span>
         </a>
 
+        <a mat-list-item class="nav-item" (click)="goTo(routes.NEW_EXPENSE); drawer.toggle()">
+          <mat-icon matListItemIcon>add_card</mat-icon>
+          <span matListItemTitle>Nova despesa</span>
+        </a>
+
+        <a mat-list-item class="nav-item" (click)="goTo(routes.EXPENSE_LIST); drawer.toggle()">
+          <mat-icon matListItemIcon>receipt</mat-icon>
+          <span matListItemTitle>Despesas</span>
+        </a>
+
         <mat-divider></mat-divider>
 
         <div class="nav-section-label">Vendas & Clientes</div>
