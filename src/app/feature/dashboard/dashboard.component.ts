@@ -214,6 +214,7 @@ export class DashboardComponent implements OnInit {
 
   fmtData(iso: string): string {
     if (!iso) return "";
-    return new Date(iso).toLocaleDateString("pt-BR");
+    const normalized = iso.includes("T") ? iso : iso + "T00:00:00";
+    return new Date(normalized).toLocaleDateString("pt-BR");
   }
 }
