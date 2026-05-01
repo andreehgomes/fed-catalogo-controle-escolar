@@ -181,11 +181,12 @@
 
 .item-row-2 {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   align-items: flex-start;
 
   .field-qtd {
-    width: 80px;
+    width: 100%;
   }
 
   input-moeda {
