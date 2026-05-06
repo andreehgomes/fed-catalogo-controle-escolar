@@ -23,6 +23,7 @@ export class FeedComponent {
     { label: "A receber", icon: "request_quote", route: RouterEnum.CONTAS_A_RECEBER, color: "warn" },
     { label: "Despesas", icon: "receipt", route: RouterEnum.EXPENSE_LIST, color: "warn" },
     { label: "Clientes", icon: "people", route: RouterEnum.CLIENT_LIST, color: "primary" },
+    { label: "Patrocínios", icon: "volunteer_activism", route: RouterEnum.SPONSOR_LIST, color: "accent" },
     { label: "Dashboard", icon: "dashboard", route: RouterEnum.DASHBOARD, color: "accent" },
   ];
 

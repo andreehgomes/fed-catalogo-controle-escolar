@@ -135,28 +135,39 @@
       </div>
     </mat-expansion-panel>
 
-    <mat-expansion-panel class="section-panel" *ngIf="patrociniosFiltrados.length > 0">
+    <mat-expansion-panel class="section-panel">
       <mat-expansion-panel-header>
         <mat-panel-title>
           <mat-icon>volunteer_activism</mat-icon>
-          Patrocinadores
+          Patrocínios
         </mat-panel-title>
         <mat-panel-description>
           <span *ngIf="totalPatrocinioValor > 0">R$ {{ fmt(totalPatrocinioValor) }}</span>
+          <span *ngIf="qtdPatrocinioProduto > 0">
+            {{ totalPatrocinioValor > 0 ? ' · ' : '' }}{{ qtdPatrocinioProduto }} produto{{ qtdPatrocinioProduto > 1 ? 's' : '' }}
+          </span>
         </mat-panel-description>
       </mat-expansion-panel-header>
+
+      <div *ngIf="patrociniosFiltrados.length === 0" class="empty-mini">Nenhum patrocínio no período.</div>
+
       <div class="pat-row" *ngFor="let p of patrociniosFiltrados">
         <div class="pat-info">
           <span class="pat-nome">{{ p.sponsor.nome }}</span>
-          <span class="pat-meta" *ngIf="!campaignSelecionada">{{ p.campaignNome }}</span>
-          <span class="pat-detalhe pat-detalhe-produto" *ngIf="p.sponsor.tipo === 'produto'">
-            {{ p.sponsor.produto }}
+          <span class="pat-meta">
+            {{ !campaignSelecionada ? p.campaignNome : '' }}
+            <ng-container *ngIf="p.sponsor.tipo === 'produto' && p.sponsor.produto">
+              {{ !campaignSelecionada ? ' · ' : '' }}{{ p.sponsor.produto }}
+            </ng-container>
+          </span>
+          <span class="pat-obs" *ngIf="p.sponsor.observacao">{{ p.sponsor.observacao }}</span>
+        </div>
+        <div class="pat-right">
+          <span class="pat-valor" *ngIf="p.sponsor.tipo === 'valor'">R$ {{ fmt(p.sponsor.valor || 0) }}</span>
+          <span class="pat-tipo-pill" [class.produto]="p.sponsor.tipo === 'produto'">
+            {{ p.sponsor.tipo === 'valor' ? 'R$' : 'Produto' }}
           </span>
         </div>
-        <span class="pat-valor" *ngIf="p.sponsor.tipo === 'valor'">R$ {{ fmt(p.sponsor.valor || 0) }}</span>
-        <span class="pat-tipo-pill" [class.produto]="p.sponsor.tipo === 'produto'">
-          {{ p.sponsor.tipo === 'valor' ? 'R$' : 'Produto' }}
-        </span>
       </div>
     </mat-expansion-panel>
 

@@ -156,6 +156,14 @@ const routes: Routes = [
       ),
   },
   {
+    path: "sponsor-list",
+    canActivate: [authGuard],
+    loadChildren: () =>
+      import("./feature/sponsor-list/sponsor-list.module").then(
+        (m) => m.SponsorListModule
+      ),
+  },
+  {
     path: "dashboard",
     canActivate: [authGuard],
     loadChildren: () =>

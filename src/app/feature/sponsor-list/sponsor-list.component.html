@@ -1,0 +1,81 @@
+<div class="page">
+  <div class="header">
+    <span class="page-title">Patrocínios</span>
+  </div>
+
+  <div class="page-content">
+    <div class="filtros">
+      <mat-form-field appearance="outline" color="accent" class="field-full" subscriptSizing="dynamic">
+        <mat-label>Buscar patrocinador</mat-label>
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput [formControl]="searchCtrl" autocomplete="off" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" color="accent" class="field-full" subscriptSizing="dynamic">
+        <mat-label>Campanha</mat-label>
+        <mat-icon matPrefix>campaign</mat-icon>
+        <mat-select [formControl]="campaignCtrl">
+          <mat-option [value]="">Todas</mat-option>
+          <mat-option *ngFor="let c of campaigns" [value]="c.key">{{ c.nome }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <button mat-button class="btn-clear"
+              *ngIf="campaignCtrl.value || searchCtrl.value"
+              (click)="limparFiltros()">
+        <mat-icon>filter_alt_off</mat-icon> Limpar
+      </button>
+    </div>
+
+    <div class="totais" *ngIf="filtered.length > 0">
+      <div class="totais-row">
+        <span>{{ filtered.length }} {{ filtered.length === 1 ? 'patrocínio' : 'patrocínios' }}</span>
+        <div class="totais-right">
+          <span class="totais-valor" *ngIf="totalValor > 0">R$ <strong>{{ fmt(totalValor) }}</strong></span>
+          <span class="totais-produto" *ngIf="qtdProduto > 0">{{ qtdProduto }} produto{{ qtdProduto > 1 ? 's' : '' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="empty-msg" *ngIf="filtered.length === 0">
+      <mat-icon>info</mat-icon> Nenhum patrocínio encontrado.
+    </p>
+
+    <mat-card class="sponsor-card" *ngFor="let e of filtered">
+      <div class="sponsor-top">
+        <span class="sponsor-nome">{{ e.sponsor.nome }}</span>
+        <span class="sponsor-tipo-pill" [class.produto]="e.sponsor.tipo === 'produto'">
+          {{ e.sponsor.tipo === 'valor' ? 'R$' : 'Produto' }}
+        </span>
+      </div>
+
+      <div class="sponsor-mid">
+        <span class="sponsor-detalhe" *ngIf="e.sponsor.tipo === 'valor'">
+          R$ {{ fmt(e.sponsor.valor || 0) }}
+        </span>
+        <span class="sponsor-detalhe sponsor-produto" *ngIf="e.sponsor.tipo === 'produto'">
+          {{ e.sponsor.produto }}
+        </span>
+      </div>
+
+      <div class="sponsor-campaign">
+        <mat-icon>campaign</mat-icon>{{ e.campaignNome }}
+      </div>
+
+      <div class="sponsor-obs" *ngIf="e.sponsor.observacao">
+        <mat-icon>notes</mat-icon>{{ e.sponsor.observacao }}
+      </div>
+
+      <div class="sponsor-actions">
+        <button mat-button class="action-campaign" (click)="irParaCampanha(e.campaignKey, $event)">
+          <mat-icon>open_in_new</mat-icon>
+          Ver campanha
+        </button>
+        <button mat-button class="action-delete" (click)="excluir(e, $event)">
+          <mat-icon>delete</mat-icon>
+          Excluir
+        </button>
+      </div>
+    </mat-card>
+  </div>
+</div>
