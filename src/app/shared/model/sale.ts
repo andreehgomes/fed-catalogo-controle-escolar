@@ -11,6 +11,7 @@ export interface Recebimento {
   data: string;        // ISO date YYYY-MM-DD
   valor: number;
   descricao: string;
+  entregaKey?: string;
 }
 
 export type SaleStatus = 'pendente' | 'quitado';

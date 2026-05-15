@@ -16,7 +16,7 @@
     <mat-tab>
       <ng-template mat-tab-label>
         Pendentes
-        <mat-chip class="tab-chip tab-chip--pendente">{{ pendentes.length }}</mat-chip>
+        <span class="tab-count-pill tab-count-pill--pendente">{{ pendentes.length }}</span>
       </ng-template>
 
       <div class="tab-content">
@@ -32,9 +32,9 @@
           <mat-card-content>
             <div class="card-header">
               <span class="card-cliente">{{ sale.clienteNome }}</span>
-              <mat-chip [ngClass]="'status-chip status-chip--' + chipColor(sale)">
+              <span [ngClass]="'status-pill entrega-pill--' + chipColor(sale)">
                 {{ chipLabel(sale) }}
-              </mat-chip>
+              </span>
             </div>
             <div class="card-info">
               <span class="card-campanha">{{ sale.campaignNome }}</span>
@@ -48,7 +48,7 @@
     <mat-tab>
       <ng-template mat-tab-label>
         Entregues
-        <mat-chip class="tab-chip tab-chip--entregue">{{ entregues.length }}</mat-chip>
+        <span class="tab-count-pill tab-count-pill--entregue">{{ entregues.length }}</span>
       </ng-template>
 
       <div class="tab-content">
@@ -64,11 +64,17 @@
           <mat-card-content>
             <div class="card-header">
               <span class="card-cliente">{{ sale.clienteNome }}</span>
-              <mat-chip class="status-chip status-chip--entregue">Entregue</mat-chip>
+              <span class="status-pill entrega-pill--entregue">Entregue</span>
             </div>
             <div class="card-info">
               <span class="card-campanha">{{ sale.campaignNome }}</span>
               <span class="card-data">{{ fmtDate(sale.dataCriacao) }}</span>
+            </div>
+            <div class="card-actions">
+              <button mat-stroked-button class="btn-comprovante" (click)="gerarComprovante(sale, $event)">
+                <mat-icon>receipt_long</mat-icon>
+                Comprovante
+              </button>
             </div>
           </mat-card-content>
         </mat-card>

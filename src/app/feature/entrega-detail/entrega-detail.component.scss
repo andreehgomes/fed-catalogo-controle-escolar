@@ -11,6 +11,11 @@
   width: 100%;
 }
 
+::ng-deep .section-card .mat-mdc-card-title {
+  font-size: 15px !important;
+  font-weight: 600;
+}
+
 .cliente-nome {
   margin: 0 0 8px 0;
   font-size: 20px;
@@ -37,23 +42,28 @@
   height: 16px;
 }
 
-.status-chip {
-  font-size: 12px;
+.status-pill {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-::ng-deep .status-chip--pendente {
-  background-color: #e3f2fd !important;
-  .mdc-evolution-chip__text-label { color: #1565c0 !important; }
+.entrega-pill--pendente {
+  background: #e3f2fd;
+  color: #1565c0;
 }
 
-::ng-deep .status-chip--parcial {
-  background-color: #fff3e0 !important;
-  .mdc-evolution-chip__text-label { color: #c04000 !important; }
+.entrega-pill--parcial {
+  background: #fff3e0;
+  color: #c04000;
 }
 
-::ng-deep .status-chip--entregue {
-  background-color: #e8f5e9 !important;
-  .mdc-evolution-chip__text-label { color: #2e7d32 !important; }
+.entrega-pill--entregue {
+  background: #e8f5e9;
+  color: #2e7d32;
 }
 
 .item-progresso {
@@ -89,13 +99,13 @@
 .acoes-btns {
   display: flex;
   gap: 8px;
-  flex-wrap: wrap;
   margin-top: 8px;
+}
 
-  button {
-    font-weight: 500;
-    letter-spacing: 0.3px;
-  }
+.acoes-btn {
+  flex: 1;
+  font-weight: 500;
+  letter-spacing: 0.3px;
 }
 
 .item-form-row {
@@ -155,18 +165,14 @@
   font-weight: 500;
 }
 
-.tipo-chip {
-  font-size: 11px;
+.tipo-pill--total {
+  background: #e8f5e9;
+  color: #2e7d32;
 }
 
-::ng-deep .tipo-chip--total {
-  background-color: #e8f5e9 !important;
-  .mdc-evolution-chip__text-label { color: #2e7d32 !important; }
-}
-
-::ng-deep .tipo-chip--parcial {
-  background-color: #fff3e0 !important;
-  .mdc-evolution-chip__text-label { color: #c04000 !important; }
+.tipo-pill--parcial {
+  background: #fff3e0;
+  color: #c04000;
 }
 
 .historico-itens {
@@ -206,4 +212,94 @@
   text-align: center;
   color: #999;
   padding: 24px 0;
+}
+
+// ─── Pagamento ──────────────────────────────────────────────────────────────
+
+.status-pills-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 6px 0;
+}
+
+.saldo-financeiro {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: #555;
+}
+
+.valor-recebido {
+  color: #2e7d32;
+}
+
+.valor-saldo {
+  color: #c62828;
+}
+
+.pagamento-pill--nao-pago {
+  background: #fce4ec;
+  color: #c62828;
+}
+
+.pagamento-pill--parcial {
+  background: #fff3e0;
+  color: #c04000;
+}
+
+.pagamento-pill--quitado {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.btn-recebimento-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.btn-recebimento {
+  width: 100%;
+}
+
+.form-recebimento {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 12px;
+
+  mat-form-field {
+    width: 100%;
+  }
+}
+
+// ─── Recebimentos da entrega ─────────────────────────────────────────────────
+
+.recebimento-item {
+  padding: 12px 0;
+  border-bottom: 1px solid #e0e0e0;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.recebimento-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.recebimento-data {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.recebimento-valor {
+  font-weight: 600;
+  font-size: 14px;
+  color: #2e7d32;
 }

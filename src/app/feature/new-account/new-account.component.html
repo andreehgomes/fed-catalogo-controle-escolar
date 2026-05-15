@@ -47,6 +47,14 @@
         </mat-form-field>
 
         <mat-form-field color="accent" class="field-full" appearance="outline">
+          <mat-label>Perfil</mat-label>
+          <mat-select formControlName="perfil">
+            <mat-option value="admin">Admin</mat-option>
+            <mat-option value="estagiario">Estagiário</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field color="accent" class="field-full" appearance="outline">
           <mat-label>Nova senha</mat-label>
           <input formControlName="novaSenha" [type]="hide ? 'password' : 'text'" matInput />
           <mat-hint>Mínimo 6 dígitos</mat-hint>

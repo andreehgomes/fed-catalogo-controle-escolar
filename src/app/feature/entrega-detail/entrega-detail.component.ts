@@ -1,14 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Auth } from '@angular/fire/auth';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { SaleService } from 'src/app/shared/service/sale/sale.service';
 import { ComprovanteService } from 'src/app/shared/service/comprovante/comprovante.service';
 import { LoaderService } from 'src/app/components/loader/loader.service';
 import { ConfirmDeleteDialogComponent } from 'src/app/components/confirm-delete-dialog/confirm-delete-dialog.component';
-import { Sale } from 'src/app/shared/model/sale';
+import { Sale, Recebimento } from 'src/app/shared/model/sale';
 import { Entrega, EntregaItem } from 'src/app/shared/model/entrega';
+import { Client } from 'src/app/shared/model/client';
 import { RouterEnum } from 'src/app/core/router/router.enum';
 
 @Component({
@@ -23,7 +25,11 @@ export class EntregaDetailComponent implements OnInit {
   carregando = true;
   showFormParcial = false;
   showFormTotal = false;
+  showFormRecebimento = false;
+  editandoRecKey: string | null = null;
   formParcial!: FormGroup;
+  formRecebimento!: FormGroup;
+  formEditarRec!: FormGroup;
   obsTotalCtrl = new FormControl('');
   editandoKey: string | null = null;
   formEditar!: FormGroup;
@@ -37,7 +43,8 @@ export class EntregaDetailComponent implements OnInit {
     private loader: LoaderService,
     private snackBar: MatSnackBar,
     private fb: FormBuilder,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private fireAuth: Auth
   ) {}
 
   ngOnInit(): void {
@@ -72,6 +79,23 @@ export class EntregaDetailComponent implements OnInit {
     return Object.entries(raw).map(([key, entrega]) => ({ key, entrega }));
   }
 
+  get statusPagamento(): 'nao-pago' | 'parcial' | 'quitado' {
+    if (this.sale?.status === 'quitado') return 'quitado';
+    if ((this.sale?.valorRecebido ?? 0) > 0) return 'parcial';
+    return 'nao-pago';
+  }
+
+  get saldoDevedor(): number {
+    return (this.sale?.valorTotal ?? 0) - (this.sale?.valorRecebido ?? 0);
+  }
+
+  get recebimentosDaEntrega(): { key: string; r: Recebimento }[] {
+    const recs = this.sale?.recebimentos ?? {};
+    return Object.entries(recs)
+      .filter(([, r]) => r.entregaKey === this.saleKey)
+      .map(([key, r]) => ({ key, r }));
+  }
+
   saldoRestante(indice: number): number {
     return (this.sale?.itens[indice]?.quantidade ?? 0) - (this.quantidadesEntregues[indice] ?? 0);
   }
@@ -93,6 +117,10 @@ export class EntregaDetailComponent implements OnInit {
   }
 
   trackByEntregaKey(_: number, item: { key: string }): string {
+    return item.key;
+  }
+
+  trackByRecebimentoKey(_: number, item: { key: string }): string {
     return item.key;
   }
 
@@ -319,6 +347,127 @@ export class EntregaDetailComponent implements OnInit {
         this.recarregarVenda();
       })
       .catch(() => this.loader.closeDialog());
+  }
+
+  // ─── Recebimento ─────────────────────────────────────────────────────────
+
+  abrirFormRecebimento(): void {
+    this.formRecebimento = this.fb.group({
+      data: [new Date().toISOString().split('T')[0], Validators.required],
+      valor: [this.saldoDevedor, [Validators.required, Validators.min(0.01), Validators.max(this.saldoDevedor)]],
+      descricao: [''],
+    });
+    this.showFormRecebimento = true;
+    this.showFormTotal = false;
+    this.showFormParcial = false;
+    this.editandoKey = null;
+  }
+
+  cancelarRecebimento(): void {
+    this.showFormRecebimento = false;
+  }
+
+  salvarRecebimento(): void {
+    if (!this.sale || this.formRecebimento.invalid) return;
+    const { data, valor, descricao } = this.formRecebimento.value;
+    const recebimento: Recebimento = {
+      data,
+      valor: Number(valor),
+      descricao: descricao?.trim() ?? '',
+      entregaKey: this.saleKey,
+    };
+    const novoValorRecebido = (this.sale.valorRecebido ?? 0) + recebimento.valor;
+    const quitar = novoValorRecebido >= this.sale.valorTotal;
+    this.loader.openDialog();
+    this.saleService
+      .addRecebimento(this.saleKey, recebimento, novoValorRecebido, quitar)
+      .then(() => {
+        this.showFormRecebimento = false;
+        this.snackBar.open('Recebimento registrado!', 'Ok', {
+          duration: 3000,
+          panelClass: ['snack-sucesso'],
+          verticalPosition: 'top',
+        });
+        this.recarregarVenda();
+      })
+      .catch(() => this.loader.closeDialog());
+  }
+
+  gerarComprovanteRecebimento(recKey: string, rec: Recebimento): void {
+    if (!this.sale) return;
+    const client: Client = { key: this.sale.clienteKey, nome: this.sale.clienteNome };
+    this.comprovanteService.compartilharComprovante(client, this.sale, recKey, rec).subscribe({
+      error: (err) => console.error('Erro ao gerar comprovante:', err),
+    });
+  }
+
+  abrirEditarRec(key: string, rec: Recebimento): void {
+    const maxValor = this.saldoDevedor + rec.valor;
+    this.formEditarRec = this.fb.group({
+      data: [rec.data, Validators.required],
+      valor: [rec.valor, [Validators.required, Validators.min(0.01), Validators.max(maxValor)]],
+      descricao: [rec.descricao ?? ''],
+    });
+    this.editandoRecKey = key;
+    this.showFormRecebimento = false;
+  }
+
+  cancelarEditarRec(): void {
+    this.editandoRecKey = null;
+  }
+
+  salvarEditarRec(recKey: string, recOriginal: Recebimento): void {
+    if (!this.sale || this.formEditarRec.invalid) return;
+    const { data, valor, descricao } = this.formEditarRec.value;
+    const recebimento: Recebimento = {
+      data,
+      valor: Number(valor),
+      descricao: descricao?.trim() ?? '',
+      entregaKey: recOriginal.entregaKey,
+    };
+    this.loader.openDialog();
+    this.saleService
+      .updateRecebimento(this.saleKey, recKey, recebimento, this.sale.recebimentos ?? {}, this.sale.valorTotal)
+      .then(() => {
+        this.editandoRecKey = null;
+        this.snackBar.open('Recebimento atualizado!', 'Ok', {
+          duration: 3000,
+          panelClass: ['snack-sucesso'],
+          verticalPosition: 'top',
+        });
+        this.recarregarVenda();
+      })
+      .catch(() => this.loader.closeDialog());
+  }
+
+  excluirRecebimento(recKey: string): void {
+    if (!this.sale?.recebimentos) return;
+    const dialogRef = this.dialog.open(ConfirmDeleteDialogComponent, {
+      data: { titulo: 'Excluir recebimento', mensagem: 'Deseja excluir este recebimento? Esta ação não pode ser desfeita.' },
+    });
+    dialogRef.afterClosed().subscribe((confirmado) => {
+      if (!confirmado || !this.sale?.recebimentos) return;
+      const rec = this.sale.recebimentos[recKey];
+      const remaining = Object.entries(this.sale.recebimentos)
+        .filter(([k]) => k !== recKey)
+        .reduce((acc, [k, v]) => { acc[k] = v; return acc; }, {} as { [key: string]: Recebimento });
+      const logEntry = {
+        dataHora: new Date().toISOString(),
+        clienteNome: this.sale.clienteNome,
+        valor: rec?.valor ?? 0,
+        email: this.fireAuth.currentUser?.email ?? '',
+        saleKey: this.saleKey,
+        recKey,
+      };
+      this.loader.openDialog();
+      this.saleService
+        .deleteRecebimento(this.saleKey, recKey, remaining, this.sale.valorTotal, logEntry)
+        .then(() => {
+          this.snackBar.open('Recebimento excluído.', 'Ok', { duration: 3000, verticalPosition: 'top' });
+          this.recarregarVenda();
+        })
+        .catch(() => this.loader.closeDialog());
+    });
   }
 
   // ─── Comprovante ──────────────────────────────────────────────────────────

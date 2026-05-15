@@ -306,11 +306,33 @@ export class SaleService {
     );
   }
 
+  updateRecebimento(
+    saleKey: string,
+    recKey: string,
+    recebimento: Recebimento,
+    todosRecebimentos: { [key: string]: Recebimento },
+    valorTotal: number
+  ): Promise<void> {
+    const novoValorRecebido = Object.entries(todosRecebimentos).reduce(
+      (sum, [k, r]) => sum + (k === recKey ? recebimento.valor : r.valor),
+      0
+    );
+    const novoStatus: SaleStatus = novoValorRecebido >= valorTotal ? 'quitado' : 'pendente';
+    const updates: { [path: string]: any } = {};
+    updates[`${Path.SALES}/${saleKey}/recebimentos/${recKey}`] = recebimento;
+    updates[`${Path.SALES}/${saleKey}/valorRecebido`] = novoValorRecebido;
+    updates[`${Path.SALES}/${saleKey}/status`] = novoStatus;
+    return runInInjectionContext(this.injector, () =>
+      update(ref(this.database), updates)
+    );
+  }
+
   deleteRecebimento(
     saleKey: string,
     recebimentoKey: string,
     remainingRecebimentos: { [key: string]: Recebimento },
-    valorTotal: number
+    valorTotal: number,
+    logEntry?: { dataHora: string; clienteNome: string; valor: number; email: string; saleKey: string; recKey: string }
   ): Promise<void> {
     const novoValorRecebido = Object.values(remainingRecebimentos).reduce(
       (sum, r) => sum + r.valor,
@@ -321,6 +343,10 @@ export class SaleService {
     updates[`${Path.SALES}/${saleKey}/recebimentos/${recebimentoKey}`] = null;
     updates[`${Path.SALES}/${saleKey}/valorRecebido`] = novoValorRecebido;
     updates[`${Path.SALES}/${saleKey}/status`] = novoStatus;
+    if (logEntry) {
+      const logId = push(ref(this.database, Path.AUDIT_LOG)).key!;
+      updates[`${Path.AUDIT_LOG}/${logId}`] = logEntry;
+    }
     return runInInjectionContext(this.injector, () =>
       update(ref(this.database), updates)
     );

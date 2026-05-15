@@ -6,4 +6,5 @@ export enum Path {
   EXPENSES = "expenses",
   ANALYTICS = "analytics",
   TOKEN = "token",
+  AUDIT_LOG = "auditLog",
 }

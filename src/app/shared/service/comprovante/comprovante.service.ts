@@ -89,6 +89,21 @@ export class ComprovanteService {
     );
   }
 
+  // ─── Comprovante completo de entrega (venda + pagamento + entrega) ──────────
+
+  compartilharComprovanteCompleto(sale: Sale): Observable<void> {
+    const el = this.criarElementoComprovanteCompleto(sale);
+    const slug = sale.clienteNome.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    const data = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+
+    return this.capturarECompartilhar(
+      el,
+      `comprovante-entrega-${slug}-${data}.png`,
+      `Comprovante — ${sale.clienteNome}`,
+      `Entrega completa — ${sale.campaignNome}`,
+    );
+  }
+
   // ─── Comprovante de entrega ───────────────────────────────────────────────
 
   compartilharComprovanteEntrega(sale: Sale, entrega: Entrega): Observable<void> {
@@ -463,6 +478,155 @@ export class ComprovanteService {
       obsWrap.appendChild(this.span(entrega.observacao, { fontSize: '13px', color: '#444' }));
       root.appendChild(obsWrap);
     }
+
+    const assinaturaWrap = this.div({
+      marginTop: '32px', paddingTop: '8px',
+      borderTop: '1px solid #333', fontSize: '12px', color: '#555', textAlign: 'center',
+    });
+    assinaturaWrap.textContent = 'Assinatura do cliente';
+    root.appendChild(assinaturaWrap);
+
+    root.appendChild(this.footer(`Gerado em ${horaGeracao}`));
+    return root;
+  }
+
+  // ─── Builder: comprovante completo (venda + pagamento + entrega) ────────────
+
+  private criarElementoComprovanteCompleto(sale: Sale): HTMLElement {
+    const horaGeracao = new Date().toLocaleString('pt-BR');
+    const dataGeracao = new Date().toLocaleDateString('pt-BR');
+    const saldoAtual = this.saldo(sale);
+    const isQuitado = sale.status === 'quitado';
+
+    const entregasArray = sale.entregas
+      ? Object.entries(sale.entregas)
+          .map(([key, e]) => ({ key, e }))
+          .sort((a, b) => a.e.data.localeCompare(b.e.data))
+      : [];
+
+    const qtdsEntregues: number[] = sale.quantidadesEntregues
+      ? Object.values(sale.quantidadesEntregues as unknown as { [k: string]: number }).map(Number)
+      : sale.itens.map(() => 0);
+
+    const root = this.div({
+      position: 'fixed', left: '-9999px', top: '0', width: '400px',
+      backgroundColor: '#ffffff', fontFamily: 'Arial, sans-serif',
+      fontSize: '14px', color: '#1a1a1a', padding: '16px', boxSizing: 'border-box',
+    });
+    root.className = 'comprovante-completo-snapshot';
+
+    // Header
+    const header = this.div({ padding: '0 0 12px 0', borderBottom: '2px solid #e0e0e0', marginBottom: '12px' });
+    const titulo = document.createElement('strong');
+    titulo.textContent = 'Comprovante de Entrega';
+    titulo.style.cssText = 'display: block; font-size: 17px; margin-bottom: 4px;';
+    header.appendChild(titulo);
+    header.appendChild(this.span(sale.clienteNome, { display: 'block', fontSize: '14px', color: '#444', marginBottom: '2px' }));
+    header.appendChild(this.span(`Campanha: ${sale.campaignNome}`, { display: 'block', fontSize: '12px', color: '#666', marginBottom: '2px' }));
+    header.appendChild(this.span(`Emitido em ${dataGeracao}`, { fontSize: '12px', color: '#666' }));
+    root.appendChild(header);
+
+    // Seção: Venda
+    root.appendChild(this.sectionLabel('Venda'));
+    root.appendChild(this.row('Data da venda', this.fmtDate(sale.dataCriacao)));
+    root.appendChild(this.row('Total da venda', `R$ ${this.fmt(sale.valorTotal)}`));
+
+    if (sale.itens && sale.itens.length > 0) {
+      const itensWrap = this.div({ marginTop: '10px' });
+      itensWrap.appendChild(this.sectionLabel('Itens', '0 0 4px 0'));
+      for (const item of sale.itens) {
+        itensWrap.appendChild(this.itemRow(item));
+      }
+      root.appendChild(itensWrap);
+    }
+
+    // Seção: Pagamento
+    const pagWrap = this.div({ marginTop: '14px' });
+    pagWrap.appendChild(this.sectionLabel('Pagamento'));
+    pagWrap.appendChild(this.row('Total recebido', `R$ ${this.fmt(sale.valorRecebido ?? 0)}`, { color: '#2e7d32' }));
+    pagWrap.appendChild(this.row(
+      'Saldo restante',
+      `R$ ${this.fmt(saldoAtual)}`,
+      saldoAtual > 0 ? { color: '#c62828' } : { color: '#2e7d32' },
+    ));
+    const statusVal = isQuitado
+      ? { label: 'Quitado', bg: '#e8f5e9', color: '#2e7d32' }
+      : { label: 'Pendente', bg: '#fce4ec', color: '#c62828' };
+    const statusRow = this.div({
+      display: 'flex', justifyContent: 'space-between', padding: '4px 0',
+      borderBottom: '1px solid #e0e0e0', fontSize: '13px', color: '#1a1a1a',
+    });
+    statusRow.appendChild(this.span('Status'));
+    statusRow.appendChild(this.badge(statusVal.label, statusVal.bg, statusVal.color));
+    pagWrap.appendChild(statusRow);
+
+    const recs = this.saleRecebimentos(sale);
+    if (recs.length > 0) {
+      pagWrap.appendChild(this.sectionLabel('Histórico de pagamentos', '10px 0 4px 0'));
+      for (const { r } of recs) {
+        pagWrap.appendChild(this.row(
+          `${this.fmtDate(r.data)}${r.descricao ? ' — ' + r.descricao : ''}`,
+          `R$ ${this.fmt(r.valor)}`,
+          { color: '#2e7d32' },
+        ));
+      }
+    }
+    root.appendChild(pagWrap);
+
+    // Seção: Entrega
+    const entWrap = this.div({ marginTop: '14px' });
+    entWrap.appendChild(this.sectionLabel('Entrega'));
+
+    if (entregasArray.length > 0) {
+      entWrap.appendChild(this.sectionLabel('Itens entregues', '6px 0 4px 0'));
+      for (let i = 0; i < sale.itens.length; i++) {
+        const item = sale.itens[i];
+        const qtd = qtdsEntregues[i] ?? 0;
+        const r = this.div({
+          display: 'flex', justifyContent: 'space-between', padding: '4px 0',
+          borderBottom: '1px solid #e0e0e0', fontSize: '13px', color: '#1a1a1a',
+        });
+        r.appendChild(this.span(item.descricao, { fontWeight: '500' }));
+        r.appendChild(this.span(`${qtd} / ${item.quantidade}`, { fontWeight: '600' }));
+        entWrap.appendChild(r);
+      }
+
+      entWrap.appendChild(this.sectionLabel('Registros de entrega', '10px 0 4px 0'));
+      for (const { e } of entregasArray) {
+        const tipoLabel = e.tipo === 'total' ? 'Total' : 'Parcial';
+        const itensEntrega: EntregaItem[] = e.itens
+          ? Object.values(e.itens as unknown as { [k: string]: EntregaItem })
+          : [];
+
+        const bloco = this.div({
+          padding: '6px 0 4px 0', borderBottom: '1px solid #e0e0e0', marginBottom: '2px',
+        });
+
+        const cabecalho = this.div({ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' });
+        const dataObs = this.div({ display: 'flex', flexDirection: 'column', gap: '1px' });
+        dataObs.appendChild(this.span(this.fmtDate(e.data), { fontSize: '13px', fontWeight: '600' }));
+        if (e.observacao) {
+          dataObs.appendChild(this.span(e.observacao, { fontSize: '11px', color: '#777' }));
+        }
+        cabecalho.appendChild(dataObs);
+        cabecalho.appendChild(this.badge(tipoLabel, '#e3f2fd', '#1565c0'));
+        bloco.appendChild(cabecalho);
+
+        for (const item of itensEntrega) {
+          const itemRow = this.div({
+            display: 'flex', justifyContent: 'space-between',
+            fontSize: '12px', color: '#444', padding: '2px 0 2px 8px',
+          });
+          itemRow.appendChild(this.span(item.descricao));
+          itemRow.appendChild(this.span(String(item.quantidadeEntregue), { fontWeight: '600', color: '#1a1a1a' }));
+          bloco.appendChild(itemRow);
+        }
+
+        entWrap.appendChild(bloco);
+      }
+    }
+
+    root.appendChild(entWrap);
 
     const assinaturaWrap = this.div({
       marginTop: '32px', paddingTop: '8px',

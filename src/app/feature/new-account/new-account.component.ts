@@ -42,6 +42,7 @@ export class NewAccountComponent implements OnInit {
     novaSenha: new UntypedFormControl(null, [Validators.required, Validators.minLength(6)]),
     celular: new UntypedFormControl(null, [Validators.required]),
     email: new UntypedFormControl(null, [Validators.required]),
+    perfil: new UntypedFormControl(null, [Validators.required]),
   });
 
   ngOnInit(): void {
@@ -49,7 +50,7 @@ export class NewAccountComponent implements OnInit {
   }
 
   onSubmit() {
-    const { nome, dataNascimento, novaSenha, celular, email } =
+    const { nome, dataNascimento, novaSenha, celular, email, perfil } =
       this.formControlNewAccount.controls;
 
     this.newAccount = {
@@ -61,6 +62,7 @@ export class NewAccountComponent implements OnInit {
       celular: celular.value,
       senha: (novaSenha.value),
       email: email.value,
+      perfil: perfil.value,
     };
 
     this.accountService
@@ -96,6 +98,7 @@ export class NewAccountComponent implements OnInit {
       novaSenha: new UntypedFormControl(null, [Validators.required, Validators.minLength(6)]),
       celular: new UntypedFormControl(null, [Validators.required]),
       email: new UntypedFormControl(null, [Validators.required]),
+      perfil: new UntypedFormControl(null, [Validators.required]),
     });
   }
 }

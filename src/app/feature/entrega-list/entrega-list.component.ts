@@ -3,6 +3,7 @@ import { FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { SaleService } from 'src/app/shared/service/sale/sale.service';
+import { ComprovanteService } from 'src/app/shared/service/comprovante/comprovante.service';
 import { LoaderService } from 'src/app/components/loader/loader.service';
 import { Sale } from 'src/app/shared/model/sale';
 import { RouterEnum } from 'src/app/core/router/router.enum';
@@ -24,6 +25,7 @@ export class EntregaListComponent implements OnInit {
 
   constructor(
     private saleService: SaleService,
+    private comprovanteService: ComprovanteService,
     private loader: LoaderService,
     private router: Router
   ) {}
@@ -80,6 +82,13 @@ export class EntregaListComponent implements OnInit {
 
   trackBySaleKey(_: number, sale: Sale): string {
     return sale.key ?? '';
+  }
+
+  gerarComprovante(sale: Sale, event: Event): void {
+    event.stopPropagation();
+    this.comprovanteService.compartilharComprovanteCompleto(sale).subscribe({
+      error: (err) => console.error('Erro ao gerar comprovante:', err),
+    });
   }
 
   fmtDate(iso: string): string {

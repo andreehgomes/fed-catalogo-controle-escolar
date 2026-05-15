@@ -8,9 +8,48 @@
         <span><mat-icon class="info-icon">campaign</mat-icon>{{ sale.campaignNome }}</span>
         <span><mat-icon class="info-icon">calendar_today</mat-icon>{{ fmtDate(sale.dataCriacao) }}</span>
       </div>
-      <mat-chip [ngClass]="'status-chip status-chip--' + (sale.entregaStatus ?? 'pendente')">
-        {{ sale.entregaStatus === 'entregue' ? 'Entregue' : sale.entregaStatus === 'parcial' ? 'Parcial' : 'Pendente' }}
-      </mat-chip>
+      <!-- Pills de status -->
+      <div class="status-pills-row">
+        <span [ngClass]="'status-pill entrega-pill--' + (sale.entregaStatus ?? 'pendente')">
+          {{ sale.entregaStatus === 'entregue' ? 'Entregue' : sale.entregaStatus === 'parcial' ? 'Parcial' : 'Pendente' }}
+        </span>
+        <span [ngClass]="'status-pill pagamento-pill--' + statusPagamento">
+          {{ statusPagamento === 'quitado' ? 'Quitado' : statusPagamento === 'parcial' ? 'Parcial' : 'A receber' }}
+        </span>
+      </div>
+
+      <!-- Saldo financeiro -->
+      <div class="saldo-financeiro">
+        <span>Total: <strong>{{ sale.valorTotal | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</strong></span>
+        <span>Recebido: <strong class="valor-recebido">{{ (sale.valorRecebido ?? 0) | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</strong></span>
+        <span *ngIf="statusPagamento !== 'quitado'">
+          Saldo: <strong class="valor-saldo">{{ saldoDevedor | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</strong>
+        </span>
+      </div>
+
+      <!-- Botão registrar recebimento -->
+      <div *ngIf="statusPagamento !== 'quitado' && !showFormRecebimento" class="btn-recebimento-wrap">
+        <button mat-stroked-button color="accent" class="btn-recebimento" (click)="abrirFormRecebimento()">
+          <mat-icon>payments</mat-icon> Receber
+        </button>
+      </div>
+
+      <!-- Formulário inline de recebimento -->
+      <form *ngIf="showFormRecebimento" [formGroup]="formRecebimento" (ngSubmit)="salvarRecebimento()" class="form-recebimento">
+        <mat-form-field appearance="outline">
+          <mat-label>Data</mat-label>
+          <input matInput type="date" formControlName="data" />
+        </mat-form-field>
+        <input-moeda formControlName="valor" label="Valor recebido" />
+        <mat-form-field appearance="outline" class="obs-field">
+          <mat-label>Descrição (opcional)</mat-label>
+          <input matInput formControlName="descricao" />
+        </mat-form-field>
+        <div class="form-acoes">
+          <button mat-flat-button color="primary" type="submit" [disabled]="formRecebimento.invalid">Salvar</button>
+          <button mat-button type="button" (click)="cancelarRecebimento()">Cancelar</button>
+        </div>
+      </form>
     </mat-card-content>
   </mat-card>
 
@@ -48,10 +87,10 @@
       <!-- Botões principais -->
       <ng-container *ngIf="!showFormParcial && !showFormTotal && !editandoKey">
         <div class="acoes-btns">
-          <button mat-flat-button color="primary" (click)="abrirFormTotal()">
+          <button mat-flat-button color="primary" class="acoes-btn" (click)="abrirFormTotal()">
             <mat-icon>check_circle</mat-icon> Entrega Total
           </button>
-          <button mat-stroked-button color="primary" (click)="abrirFormParcial()">
+          <button mat-stroked-button color="primary" class="acoes-btn" (click)="abrirFormParcial()">
             <mat-icon>splitscreen</mat-icon> Entrega Parcial
           </button>
         </div>
@@ -134,9 +173,9 @@
         <ng-container *ngIf="editandoKey !== item.key">
           <div class="historico-header">
             <span class="historico-data">{{ fmtDate(item.entrega.data) }}</span>
-            <mat-chip [ngClass]="'tipo-chip tipo-chip--' + item.entrega.tipo">
+            <span [ngClass]="'status-pill tipo-pill--' + item.entrega.tipo">
               {{ item.entrega.tipo === 'total' ? 'Total' : 'Parcial' }}
-            </mat-chip>
+            </span>
           </div>
 
           <div class="historico-itens">
@@ -208,6 +247,61 @@
 
       </div>
 
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Recebimentos desta entrega -->
+  <mat-card class="section-card" *ngIf="recebimentosDaEntrega.length > 0">
+    <mat-card-header>
+      <mat-card-title>Recebimentos desta entrega</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div
+        *ngFor="let item of recebimentosDaEntrega; trackBy: trackByRecebimentoKey"
+        class="recebimento-item"
+      >
+
+        <!-- Visualização normal -->
+        <ng-container *ngIf="editandoRecKey !== item.key">
+          <div class="recebimento-header">
+            <span class="recebimento-data">{{ fmtDate(item.r.data) }}</span>
+            <span class="recebimento-valor">{{ item.r.valor | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</span>
+          </div>
+          <p *ngIf="item.r.descricao" class="historico-obs">{{ item.r.descricao }}</p>
+          <div class="historico-acoes">
+            <button mat-stroked-button color="primary" (click)="gerarComprovanteRecebimento(item.key, item.r)">
+              <mat-icon>receipt</mat-icon> Comprovante
+            </button>
+            <button mat-button (click)="abrirEditarRec(item.key, item.r)">
+              <mat-icon>edit</mat-icon> Editar
+            </button>
+            <button mat-button color="warn" (click)="excluirRecebimento(item.key)">
+              <mat-icon>delete</mat-icon> Excluir
+            </button>
+          </div>
+        </ng-container>
+
+        <!-- Formulário de edição inline -->
+        <ng-container *ngIf="editandoRecKey === item.key">
+          <p class="editar-titulo">Editando recebimento de {{ fmtDate(item.r.data) }}</p>
+          <form [formGroup]="formEditarRec" (ngSubmit)="salvarEditarRec(item.key, item.r)">
+            <mat-form-field appearance="outline">
+              <mat-label>Data</mat-label>
+              <input matInput type="date" formControlName="data" />
+            </mat-form-field>
+            <input-moeda formControlName="valor" label="Valor recebido" />
+            <mat-form-field appearance="outline" class="obs-field">
+              <mat-label>Descrição (opcional)</mat-label>
+              <input matInput formControlName="descricao" />
+            </mat-form-field>
+            <div class="form-acoes">
+              <button mat-flat-button color="primary" type="submit" [disabled]="formEditarRec.invalid">Salvar</button>
+              <button mat-button type="button" (click)="cancelarEditarRec()">Cancelar</button>
+            </div>
+          </form>
+        </ng-container>
+
+      </div>
     </mat-card-content>
   </mat-card>
 
