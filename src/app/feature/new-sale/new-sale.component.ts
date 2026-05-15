@@ -124,9 +124,7 @@ export class NewSaleComponent implements OnInit {
     this.form.get("campaignKey")!.valueChanges.subscribe((key: string) => {
       const c = this.campaigns.find((x) => x.key === key);
       this.form.patchValue({ campaignNome: c?.nome ?? "" }, { emitEvent: false });
-      if (!this.editingKey) {
-        this.aplicarItensPadrao(c);
-      }
+      this.aplicarItensPadrao(c, !this.editingKey);
     });
 
     this.itensArray.valueChanges.subscribe(() => this.recalcularTotal());
@@ -140,9 +138,7 @@ export class NewSaleComponent implements OnInit {
         const c = list.find((x) => x.key === currentKey);
         if (c) {
           this.form.patchValue({ campaignNome: c.nome }, { emitEvent: false });
-          if (!this.editingKey) {
-            this.aplicarItensPadrao(c);
-          }
+          this.aplicarItensPadrao(c, !this.editingKey);
         }
       }
     });
@@ -150,8 +146,9 @@ export class NewSaleComponent implements OnInit {
 
   itensPadrao: { descricao: string; valorUnitario: number }[] = [];
 
-  private aplicarItensPadrao(c?: Campaign): void {
+  private aplicarItensPadrao(c?: Campaign, autoFill = true): void {
     this.itensPadrao = c?.itensPadrao ?? [];
+    if (!autoFill) return;
     if (this.itensPadrao.length === 0) {
       this.itemDescricaoCtrl.reset("");
       this.itemValorUnitarioCtrl.reset(null);
@@ -209,6 +206,14 @@ export class NewSaleComponent implements OnInit {
   }
 
   removerItem(i: number): void {
+    this.itensArray.removeAt(i);
+  }
+
+  editarItem(i: number): void {
+    const item = this.itensArray.at(i).value;
+    this.itemDescricaoCtrl.setValue(item.descricao);
+    this.itemQuantidadeCtrl.setValue(item.quantidade);
+    this.itemValorUnitarioCtrl.setValue(item.valorUnitario);
     this.itensArray.removeAt(i);
   }
 

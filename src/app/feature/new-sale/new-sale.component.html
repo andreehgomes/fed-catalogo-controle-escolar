@@ -106,6 +106,9 @@
                 = <strong>R$ {{ fmt(item.get('valorSubtotal').value) }}</strong>
               </span>
             </div>
+            <button mat-icon-button type="button" class="btn-edit" (click)="editarItem(i)">
+              <mat-icon>edit</mat-icon>
+            </button>
             <button mat-icon-button type="button" class="btn-remove" (click)="removerItem(i)">
               <mat-icon>delete</mat-icon>
             </button>
