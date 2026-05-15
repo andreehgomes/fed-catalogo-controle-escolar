@@ -5,6 +5,7 @@ import {
 } from "@angular/fire/database";
 import { BehaviorSubject, Observable } from "rxjs";
 import { Sale, Recebimento, SaleStatus } from "../../model/sale";
+import { Entrega, EntregaStatus } from "../../model/entrega";
 import { Path } from "../../model/path.enum";
 
 @Injectable({ providedIn: "root" })
@@ -256,6 +257,53 @@ export class SaleService {
       updates[`${Path.SALES}/${saleKey}/status`] = quitar ? "quitado" : "pendente";
       return update(ref(this.database), updates);
     });
+  }
+
+  updateEntrega(
+    saleKey: string,
+    entregaKey: string,
+    entrega: Entrega,
+    quantidadesEntregues: number[],
+    novoStatus: EntregaStatus
+  ): Promise<void> {
+    return runInInjectionContext(this.injector, () => {
+      const updates: { [path: string]: unknown } = {};
+      updates[`${Path.SALES}/${saleKey}/entregas/${entregaKey}`] = entrega;
+      updates[`${Path.SALES}/${saleKey}/quantidadesEntregues`] = quantidadesEntregues;
+      updates[`${Path.SALES}/${saleKey}/entregaStatus`] = novoStatus;
+      return update(ref(this.database), updates);
+    });
+  }
+
+  addEntrega(
+    saleKey: string,
+    entrega: Entrega,
+    quantidadesEntregues: number[],
+    novoStatus: EntregaStatus
+  ): Promise<void> {
+    return runInInjectionContext(this.injector, () => {
+      const novoId = push(ref(this.database, `${Path.SALES}/${saleKey}/entregas`)).key!;
+      const updates: { [path: string]: unknown } = {};
+      updates[`${Path.SALES}/${saleKey}/entregas/${novoId}`] = entrega;
+      updates[`${Path.SALES}/${saleKey}/quantidadesEntregues`] = quantidadesEntregues;
+      updates[`${Path.SALES}/${saleKey}/entregaStatus`] = novoStatus;
+      return update(ref(this.database), updates);
+    });
+  }
+
+  deleteEntrega(
+    saleKey: string,
+    entregaKey: string,
+    novasQuantidades: number[],
+    novoStatus: EntregaStatus
+  ): Promise<void> {
+    const updates: { [path: string]: unknown } = {};
+    updates[`${Path.SALES}/${saleKey}/entregas/${entregaKey}`] = null;
+    updates[`${Path.SALES}/${saleKey}/quantidadesEntregues`] = novasQuantidades;
+    updates[`${Path.SALES}/${saleKey}/entregaStatus`] = novoStatus;
+    return runInInjectionContext(this.injector, () =>
+      update(ref(this.database), updates)
+    );
   }
 
   deleteRecebimento(

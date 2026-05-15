@@ -25,6 +25,7 @@ export class FeedComponent {
     { label: "Clientes", icon: "people", route: RouterEnum.CLIENT_LIST, color: "primary" },
     { label: "Patrocínios", icon: "volunteer_activism", route: RouterEnum.SPONSOR_LIST, color: "accent" },
     { label: "Dashboard", icon: "dashboard", route: RouterEnum.DASHBOARD, color: "accent" },
+    { label: "Entregas", icon: "local_shipping", route: RouterEnum.ENTREGA_LIST, color: "success" },
   ];
 
   constructor(private router: Router) {}

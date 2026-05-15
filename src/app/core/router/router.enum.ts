@@ -30,4 +30,7 @@ export enum RouterEnum {
   SPONSOR_LIST = "sponsor-list",
 
   DASHBOARD = "dashboard",
+
+  ENTREGA_LIST = "entrega-list",
+  ENTREGA_DETAIL = "entrega-detail",
 }

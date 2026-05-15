@@ -1,0 +1,218 @@
+<div class="entrega-detail-container" *ngIf="!carregando && sale">
+
+  <!-- Cabeçalho da venda -->
+  <mat-card class="section-card">
+    <mat-card-content>
+      <h2 class="cliente-nome">{{ sale.clienteNome }}</h2>
+      <div class="venda-info">
+        <span><mat-icon class="info-icon">campaign</mat-icon>{{ sale.campaignNome }}</span>
+        <span><mat-icon class="info-icon">calendar_today</mat-icon>{{ fmtDate(sale.dataCriacao) }}</span>
+      </div>
+      <mat-chip [ngClass]="'status-chip status-chip--' + (sale.entregaStatus ?? 'pendente')">
+        {{ sale.entregaStatus === 'entregue' ? 'Entregue' : sale.entregaStatus === 'parcial' ? 'Parcial' : 'Pendente' }}
+      </mat-chip>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Itens com progresso -->
+  <mat-card class="section-card">
+    <mat-card-header>
+      <mat-card-title>Progresso de entrega</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div
+        *ngFor="let item of sale.itens; let i = index; trackBy: trackByIndex"
+        class="item-progresso"
+      >
+        <div class="item-header">
+          <span class="item-descricao">{{ item.descricao }}</span>
+          <span class="item-qtd">{{ quantidadesEntregues[i] ?? 0 }} / {{ item.quantidade }}</span>
+        </div>
+        <mat-progress-bar
+          mode="determinate"
+          [value]="progressoPct(i)"
+          [color]="progressoPct(i) === 100 ? 'primary' : 'accent'"
+        ></mat-progress-bar>
+        <span class="item-pct">{{ progressoPct(i) }}%</span>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Ações (ocultas se já entregue) -->
+  <mat-card class="section-card" *ngIf="sale.entregaStatus !== 'entregue'">
+    <mat-card-header>
+      <mat-card-title>Ações de entrega</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+
+      <!-- Botões principais -->
+      <ng-container *ngIf="!showFormParcial && !showFormTotal && !editandoKey">
+        <div class="acoes-btns">
+          <button mat-flat-button color="primary" (click)="abrirFormTotal()">
+            <mat-icon>check_circle</mat-icon> Entrega Total
+          </button>
+          <button mat-stroked-button color="primary" (click)="abrirFormParcial()">
+            <mat-icon>splitscreen</mat-icon> Entrega Parcial
+          </button>
+        </div>
+      </ng-container>
+
+      <!-- Confirmação de entrega total -->
+      <ng-container *ngIf="showFormTotal">
+        <mat-form-field appearance="outline" class="obs-field">
+          <mat-label>Observação (opcional)</mat-label>
+          <textarea matInput [formControl]="obsTotalCtrl" rows="2"></textarea>
+        </mat-form-field>
+        <div class="form-acoes">
+          <button mat-flat-button color="primary" (click)="entregarTotal()">
+            <mat-icon>check_circle</mat-icon> Confirmar entrega total
+          </button>
+          <button mat-button type="button" (click)="cancelarTotal()">Cancelar</button>
+        </div>
+      </ng-container>
+
+      <!-- Formulário de entrega parcial -->
+      <form *ngIf="showFormParcial" [formGroup]="formParcial" (ngSubmit)="salvarParcial()">
+        <div formArrayName="quantidades">
+          <div
+            *ngFor="let item of sale.itens; let i = index; trackBy: trackByIndex"
+            class="item-form-row"
+          >
+            <div class="item-form-info">
+              <span class="item-form-label">{{ item.descricao }}</span>
+              <span class="item-saldo">Saldo: {{ saldoRestante(i) }}</span>
+            </div>
+            <mat-form-field appearance="outline" class="item-form-field">
+              <mat-label>Qtd a entregar</mat-label>
+              <input
+                matInput
+                type="number"
+                [formControlName]="i"
+                min="0"
+                [max]="saldoRestante(i)"
+              />
+              <mat-error *ngIf="quantidadesControles.at(i).hasError('max')">
+                Máximo: {{ saldoRestante(i) }}
+              </mat-error>
+              <mat-error *ngIf="quantidadesControles.at(i).hasError('min')">
+                Mínimo: 0
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+        <mat-form-field appearance="outline" class="obs-field">
+          <mat-label>Observação (opcional)</mat-label>
+          <textarea matInput formControlName="observacao" rows="2"></textarea>
+        </mat-form-field>
+        <div class="form-acoes">
+          <button mat-flat-button color="primary" type="submit" [disabled]="formParcial.invalid">
+            Salvar entrega parcial
+          </button>
+          <button mat-button type="button" (click)="cancelarParcial()">Cancelar</button>
+        </div>
+      </form>
+
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Histórico de entregas -->
+  <mat-card class="section-card">
+    <mat-card-header>
+      <mat-card-title>Histórico de entregas</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+
+      <p *ngIf="entregasArray.length === 0" class="empty-msg">
+        Nenhuma entrega registrada ainda.
+      </p>
+
+      <div
+        *ngFor="let item of entregasArray; trackBy: trackByEntregaKey"
+        class="historico-item"
+      >
+        <!-- Visualização normal -->
+        <ng-container *ngIf="editandoKey !== item.key">
+          <div class="historico-header">
+            <span class="historico-data">{{ fmtDate(item.entrega.data) }}</span>
+            <mat-chip [ngClass]="'tipo-chip tipo-chip--' + item.entrega.tipo">
+              {{ item.entrega.tipo === 'total' ? 'Total' : 'Parcial' }}
+            </mat-chip>
+          </div>
+
+          <div class="historico-itens">
+            <span
+              *ngFor="let ei of item.entrega.itens; trackBy: trackByIndex"
+              class="historico-item-line"
+            >
+              {{ ei.descricao }}: {{ ei.quantidadeEntregue }}
+            </span>
+          </div>
+
+          <p *ngIf="item.entrega.observacao" class="historico-obs">
+            {{ item.entrega.observacao }}
+          </p>
+
+          <div class="historico-acoes">
+            <button mat-stroked-button color="primary" (click)="gerarComprovante(item.entrega)">
+              <mat-icon>receipt</mat-icon> Comprovante
+            </button>
+            <button mat-button (click)="abrirEditar(item.key, item.entrega)">
+              <mat-icon>edit</mat-icon> Editar
+            </button>
+            <button mat-button color="warn" (click)="excluirEntrega(item.key, item.entrega)">
+              <mat-icon>delete</mat-icon> Excluir
+            </button>
+          </div>
+        </ng-container>
+
+        <!-- Formulário de edição inline -->
+        <ng-container *ngIf="editandoKey === item.key">
+          <p class="editar-titulo">Editando entrega de {{ fmtDate(item.entrega.data) }}</p>
+          <form [formGroup]="formEditar" (ngSubmit)="salvarEditar(item.entrega)">
+            <div formArrayName="quantidades">
+              <div
+                *ngFor="let si of sale.itens; let i = index; trackBy: trackByIndex"
+                class="item-form-row"
+              >
+                <div class="item-form-info">
+                  <span class="item-form-label">{{ si.descricao }}</span>
+                  <span class="item-saldo">Máx: {{ maxParaEditar(item.entrega, i) }}</span>
+                </div>
+                <mat-form-field appearance="outline" class="item-form-field">
+                  <mat-label>Qtd entregue</mat-label>
+                  <input
+                    matInput
+                    type="number"
+                    [formControlName]="i"
+                    min="0"
+                    [max]="maxParaEditar(item.entrega, i)"
+                  />
+                  <mat-error *ngIf="quantidadesEditarControles.at(i).hasError('max')">
+                    Máximo: {{ maxParaEditar(item.entrega, i) }}
+                  </mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+            <mat-form-field appearance="outline" class="obs-field">
+              <mat-label>Observação (opcional)</mat-label>
+              <textarea matInput formControlName="observacao" rows="2"></textarea>
+            </mat-form-field>
+            <div class="form-acoes">
+              <button mat-flat-button color="primary" type="submit" [disabled]="formEditar.invalid">
+                Salvar alterações
+              </button>
+              <button mat-button type="button" (click)="cancelarEditar()">Cancelar</button>
+            </div>
+          </form>
+        </ng-container>
+
+      </div>
+
+    </mat-card-content>
+  </mat-card>
+
+</div>
+
+<div *ngIf="!carregando && !sale" class="empty-msg">
+  Venda não encontrada.
+</div>

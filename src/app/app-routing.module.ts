@@ -172,6 +172,22 @@ const routes: Routes = [
       ),
   },
   {
+    path: "entrega-list",
+    canActivate: [authGuard],
+    loadChildren: () =>
+      import("./feature/entrega-list/entrega-list.module").then(
+        (m) => m.EntregaListModule
+      ),
+  },
+  {
+    path: "entrega-detail/:saleKey",
+    canActivate: [authGuard],
+    loadChildren: () =>
+      import("./feature/entrega-detail/entrega-detail.module").then(
+        (m) => m.EntregaDetailModule
+      ),
+  },
+  {
     path: "",
     canActivate: [authGuard],
     loadChildren: () =>

@@ -1,3 +1,5 @@
+import { EntregaStatus, Entrega } from './entrega';
+
 export interface SaleItem {
   descricao: string;
   quantidade: number;
@@ -28,4 +30,7 @@ export interface Sale {
   recebimentos?: { [key: string]: Recebimento };
   dataCriacao: string;
   dataAlteracao?: string;
+  entregaStatus?: EntregaStatus;
+  entregas?: { [key: string]: Entrega };
+  quantidadesEntregues?: number[];
 }

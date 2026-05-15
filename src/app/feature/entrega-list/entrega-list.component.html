@@ -1,0 +1,79 @@
+<div class="entrega-list-container">
+
+  <div class="filtros busca-wrap">
+    <mat-form-field appearance="outline" class="busca-field">
+      <mat-label>Buscar por cliente</mat-label>
+      <mat-icon matPrefix>search</mat-icon>
+      <input matInput [formControl]="filtroCtrl" autocomplete="off" />
+      <button *ngIf="filtroCtrl.value" matSuffix mat-icon-button (click)="filtroCtrl.setValue('')">
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-form-field>
+  </div>
+
+  <mat-tab-group animationDuration="200ms">
+
+    <mat-tab>
+      <ng-template mat-tab-label>
+        Pendentes
+        <mat-chip class="tab-chip tab-chip--pendente">{{ pendentes.length }}</mat-chip>
+      </ng-template>
+
+      <div class="tab-content">
+        <p *ngIf="!carregando && pendentes.length === 0" class="empty-msg">
+          Nenhuma venda pendente de entrega.
+        </p>
+
+        <mat-card
+          *ngFor="let sale of pendentes; trackBy: trackBySaleKey"
+          class="sale-card"
+          (click)="irParaDetalhe(sale)"
+        >
+          <mat-card-content>
+            <div class="card-header">
+              <span class="card-cliente">{{ sale.clienteNome }}</span>
+              <mat-chip [ngClass]="'status-chip status-chip--' + chipColor(sale)">
+                {{ chipLabel(sale) }}
+              </mat-chip>
+            </div>
+            <div class="card-info">
+              <span class="card-campanha">{{ sale.campaignNome }}</span>
+              <span class="card-data">{{ fmtDate(sale.dataCriacao) }}</span>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </mat-tab>
+
+    <mat-tab>
+      <ng-template mat-tab-label>
+        Entregues
+        <mat-chip class="tab-chip tab-chip--entregue">{{ entregues.length }}</mat-chip>
+      </ng-template>
+
+      <div class="tab-content">
+        <p *ngIf="!carregando && entregues.length === 0" class="empty-msg">
+          Nenhuma venda entregue ainda.
+        </p>
+
+        <mat-card
+          *ngFor="let sale of entregues; trackBy: trackBySaleKey"
+          class="sale-card"
+          (click)="irParaDetalhe(sale)"
+        >
+          <mat-card-content>
+            <div class="card-header">
+              <span class="card-cliente">{{ sale.clienteNome }}</span>
+              <mat-chip class="status-chip status-chip--entregue">Entregue</mat-chip>
+            </div>
+            <div class="card-info">
+              <span class="card-campanha">{{ sale.campaignNome }}</span>
+              <span class="card-data">{{ fmtDate(sale.dataCriacao) }}</span>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </mat-tab>
+
+  </mat-tab-group>
+</div>

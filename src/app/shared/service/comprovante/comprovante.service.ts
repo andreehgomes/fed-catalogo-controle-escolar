@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, from, of, switchMap, finalize, map } from 'rxjs';
 import { Client } from '../../model/client';
 import { Sale, SaleItem, Recebimento } from '../../model/sale';
+import { Entrega, EntregaItem } from '../../model/entrega';
 import { LoaderService } from '../../../components/loader/loader.service';
 
 @Injectable({ providedIn: 'root' })
@@ -85,6 +86,21 @@ export class ComprovanteService {
       `comprovante-${slug}-${recData}.png`,
       `Comprovante — ${client.nome}`,
       `Pagamento de R$ ${this.fmt(rec.valor)} em ${this.fmtDate(rec.data)}`,
+    );
+  }
+
+  // ─── Comprovante de entrega ───────────────────────────────────────────────
+
+  compartilharComprovanteEntrega(sale: Sale, entrega: Entrega): Observable<void> {
+    const el = this.criarElementoComprovanteEntrega(sale, entrega);
+    const slug = sale.clienteNome.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    const data = entrega.data.replace(/-/g, '');
+
+    return this.capturarECompartilhar(
+      el,
+      `entrega-${slug}-${data}.png`,
+      `Entrega — ${sale.clienteNome}`,
+      `Entrega ${entrega.tipo === 'total' ? 'total' : 'parcial'} em ${this.fmtDate(entrega.data)}`,
     );
   }
 
@@ -389,6 +405,71 @@ export class ComprovanteService {
       }
       root.appendChild(recsWrap);
     }
+
+    root.appendChild(this.footer(`Gerado em ${horaGeracao}`));
+    return root;
+  }
+
+  // ─── Builder: comprovante de entrega ─────────────────────────────────────
+
+  private criarElementoComprovanteEntrega(sale: Sale, entrega: Entrega): HTMLElement {
+    const horaGeracao = new Date().toLocaleString('pt-BR');
+    const dataGeracao = new Date().toLocaleDateString('pt-BR');
+    const tipoLabel = entrega.tipo === 'total' ? 'Total' : 'Parcial';
+
+    const root = this.div({
+      position: 'fixed', left: '-9999px', top: '0', width: '400px',
+      backgroundColor: '#ffffff', fontFamily: 'Arial, sans-serif',
+      fontSize: '14px', color: '#1a1a1a', padding: '16px', boxSizing: 'border-box',
+    });
+    root.className = 'comprovante-entrega-snapshot';
+
+    const header = this.div({ padding: '0 0 12px 0', borderBottom: '2px solid #e0e0e0', marginBottom: '12px' });
+    const titulo = document.createElement('strong');
+    titulo.textContent = 'Comprovante de Entrega';
+    titulo.style.cssText = 'display: block; font-size: 17px; margin-bottom: 4px;';
+    header.appendChild(titulo);
+    header.appendChild(this.span(sale.clienteNome, { display: 'block', fontSize: '14px', color: '#444', marginBottom: '2px' }));
+    header.appendChild(this.span(`Campanha: ${sale.campaignNome}`, { display: 'block', fontSize: '12px', color: '#666', marginBottom: '2px' }));
+    header.appendChild(this.span(`Emitido em ${dataGeracao}`, { fontSize: '12px', color: '#666' }));
+    root.appendChild(header);
+
+    root.appendChild(this.sectionLabel('Dados da entrega'));
+    root.appendChild(this.row('Data da entrega', this.fmtDate(entrega.data)));
+    root.appendChild(this.row('Tipo', tipoLabel));
+
+    const itensRaw: EntregaItem[] = entrega.itens
+      ? Object.values(entrega.itens as unknown as { [k: string]: EntregaItem })
+      : [];
+
+    if (itensRaw.length > 0) {
+      const itensWrap = this.div({ marginTop: '14px' });
+      itensWrap.appendChild(this.sectionLabel('Itens entregues'));
+      for (const item of itensRaw) {
+        const r = this.div({
+          display: 'flex', justifyContent: 'space-between', padding: '4px 0',
+          borderBottom: '1px solid #e0e0e0', fontSize: '13px', color: '#1a1a1a',
+        });
+        r.appendChild(this.span(item.descricao, { fontWeight: '500' }));
+        r.appendChild(this.span(String(item.quantidadeEntregue), { fontWeight: '600' }));
+        itensWrap.appendChild(r);
+      }
+      root.appendChild(itensWrap);
+    }
+
+    if (entrega.observacao) {
+      const obsWrap = this.div({ marginTop: '14px' });
+      obsWrap.appendChild(this.sectionLabel('Observação'));
+      obsWrap.appendChild(this.span(entrega.observacao, { fontSize: '13px', color: '#444' }));
+      root.appendChild(obsWrap);
+    }
+
+    const assinaturaWrap = this.div({
+      marginTop: '32px', paddingTop: '8px',
+      borderTop: '1px solid #333', fontSize: '12px', color: '#555', textAlign: 'center',
+    });
+    assinaturaWrap.textContent = 'Assinatura do cliente';
+    root.appendChild(assinaturaWrap);
 
     root.appendChild(this.footer(`Gerado em ${horaGeracao}`));
     return root;
