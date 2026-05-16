@@ -125,6 +125,9 @@
     <mat-expansion-panel class="section-panel">
       <mat-expansion-panel-header>
         <mat-panel-title>Top 10 itens vendidos</mat-panel-title>
+        <mat-panel-description>
+          <span *ngIf="totalItensQtd > 0">{{ totalItensQtd }} un · R$ {{ fmt(totalItensValor) }}</span>
+        </mat-panel-description>
       </mat-expansion-panel-header>
       <div *ngIf="topItens.length === 0" class="empty-mini">Nenhum item vendido no período.</div>
       <div class="top-row" *ngFor="let it of topItens; let i = index">
@@ -132,6 +135,12 @@
         <span class="top-desc">{{ it.descricao }}</span>
         <span class="top-qtd">{{ it.qtdTotal }} un</span>
         <span class="top-valor">R$ {{ fmt(it.valorTotal) }}</span>
+      </div>
+      <div class="top-row top-total" *ngIf="topItens.length > 0">
+        <span class="top-rank"></span>
+        <span class="top-desc">Total geral</span>
+        <span class="top-qtd">{{ totalItensQtd }} un</span>
+        <span class="top-valor">R$ {{ fmt(totalItensValor) }}</span>
       </div>
     </mat-expansion-panel>
 

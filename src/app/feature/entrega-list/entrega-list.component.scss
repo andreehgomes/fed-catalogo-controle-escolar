@@ -147,6 +147,39 @@
   color: #2e7d32;
 }
 
+.pag-pill--quitado {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.pag-pill--parcial {
+  background: #fff3e0;
+  color: #c04000;
+}
+
+.pag-pill--nao-pago {
+  background: #fce4ec;
+  color: #c62828;
+}
+
+.pills-wrap {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+
+  .pills-wrap {
+    margin-top: 0;
+  }
+}
+
 .empty-msg {
   text-align: center;
   color: #999;

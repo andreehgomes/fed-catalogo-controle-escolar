@@ -383,6 +383,27 @@
     font-weight: 600;
     color: #1b5e20;
   }
+
+  &.top-total {
+    border-top: 1px solid #d0d0d0;
+    border-bottom: 0;
+    margin-top: 4px;
+    padding-top: 8px;
+
+    .top-desc {
+      font-weight: 700;
+      color: #1a1a1a;
+    }
+
+    .top-qtd {
+      font-weight: 700;
+      color: #444;
+    }
+
+    .top-valor {
+      font-weight: 700;
+    }
+  }
 }
 
 .last-row {

@@ -12,6 +12,8 @@ import { RouterEnum } from "./core/router/router.enum";
 import { SidenavService } from "./shared/service/sidenav/sidenav.service";
 import { AccountService } from "./shared/service/account/account.service";
 import { AnalyticsService } from "./shared/service/analytics/analytics.service";
+import { UserProfileService } from "./shared/service/user-profile/user-profile.service";
+import { PerfilEnum } from "./shared/model/accout.enum";
 
 @Component({
   selector: "app-root",
@@ -28,6 +30,7 @@ export class AppComponent implements OnInit {
   user$!: Observable<User | null>;
   isLogged$!: Observable<boolean>;
   isMaster: boolean = false;
+  isEstagiario: boolean = false;
   showBtnMenu: boolean = true;
   isPublicView: boolean = false;
 
@@ -43,7 +46,8 @@ export class AppComponent implements OnInit {
     private sidenavService: SidenavService,
     private fireAuth: Auth,
     private accountService: AccountService,
-    private analyticsService: AnalyticsService
+    private analyticsService: AnalyticsService,
+    private userProfileService: UserProfileService
   ) {
     this.route.events
       .pipe(
@@ -77,8 +81,11 @@ export class AppComponent implements OnInit {
 
   private loadUserProfile(uid: string): void {
     this.accountService.getAccountByUidKey(uid).then((accounts) => {
-      this.isMaster = accounts[0]?.perfil === "master";
-      this.analyticsService.setUserProfile(accounts[0]?.perfil ?? null);
+      const perfil = accounts[0]?.perfil ?? null;
+      this.userProfileService.setPerfil(perfil);
+      this.isMaster = this.userProfileService.getPerfil() === PerfilEnum.MASTER;
+      this.isEstagiario = this.userProfileService.isEstagiario();
+      this.analyticsService.setUserProfile(perfil);
     });
   }
 
@@ -102,6 +109,8 @@ export class AppComponent implements OnInit {
     localStorage.removeItem("token");
     localStorage.removeItem("usuario");
     this.isMaster = false;
+    this.isEstagiario = false;
+    this.userProfileService.setPerfil(null);
     this.auth.logout();
     this.router.navigate(rota);
   }

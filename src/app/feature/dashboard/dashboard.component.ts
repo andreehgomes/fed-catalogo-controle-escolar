@@ -141,6 +141,20 @@ export class DashboardComponent implements OnInit {
     this.dataAteCtrl.setValue("");
   }
 
+  get totalItensQtd(): number {
+    return this.filteredSales.reduce(
+      (acc, s) => acc + s.itens.reduce((a, it) => a + it.quantidade, 0),
+      0
+    );
+  }
+
+  get totalItensValor(): number {
+    return this.filteredSales.reduce(
+      (acc, s) => acc + s.itens.reduce((a, it) => a + it.valorSubtotal, 0),
+      0
+    );
+  }
+
   get totalVendas(): number {
     return this.filteredSales.length;
   }

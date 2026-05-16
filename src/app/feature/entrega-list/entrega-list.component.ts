@@ -75,9 +75,21 @@ export class EntregaListComponent implements OnInit {
   chipLabel(sale: Sale): string {
     switch (sale.entregaStatus) {
       case 'entregue': return 'Entregue';
-      case 'parcial': return 'Parcial';
-      default: return 'Pendente';
+      case 'parcial': return 'Entregue parcial';
+      default: return 'Entrega pendente';
     }
+  }
+
+  pagColor(sale: Sale): string {
+    if (sale.status === 'quitado') return 'quitado';
+    if ((sale.valorRecebido ?? 0) > 0) return 'parcial';
+    return 'nao-pago';
+  }
+
+  pagLabel(sale: Sale): string {
+    if (sale.status === 'quitado') return 'Quitado';
+    if ((sale.valorRecebido ?? 0) > 0) return 'Pagamento parcial';
+    return 'Pagamento pendente';
   }
 
   trackBySaleKey(_: number, sale: Sale): string {

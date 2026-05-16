@@ -8,3 +8,9 @@ export interface AccountModel {
     uid?: string;
     perfil?: string;
 }
+
+export enum PerfilEnum {
+  MASTER     = 'master',
+  ADMIN      = 'admin',
+  ESTAGIARIO = 'estagiario',
+}

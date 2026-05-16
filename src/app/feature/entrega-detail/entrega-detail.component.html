@@ -11,10 +11,10 @@
       <!-- Pills de status -->
       <div class="status-pills-row">
         <span [ngClass]="'status-pill entrega-pill--' + (sale.entregaStatus ?? 'pendente')">
-          {{ sale.entregaStatus === 'entregue' ? 'Entregue' : sale.entregaStatus === 'parcial' ? 'Parcial' : 'Pendente' }}
+          {{ sale.entregaStatus === 'entregue' ? 'Entregue' : sale.entregaStatus === 'parcial' ? 'Entregue parcial' : 'Entrega pendente' }}
         </span>
         <span [ngClass]="'status-pill pagamento-pill--' + statusPagamento">
-          {{ statusPagamento === 'quitado' ? 'Quitado' : statusPagamento === 'parcial' ? 'Parcial' : 'A receber' }}
+          {{ statusPagamento === 'quitado' ? 'Quitado' : statusPagamento === 'parcial' ? 'Pagamento parcial' : 'Pagamento pendente' }}
         </span>
       </div>
 

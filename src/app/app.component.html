@@ -20,82 +20,90 @@
           <span matListItemTitle>Página inicial</span>
         </a>
 
-        <mat-divider></mat-divider>
+        <ng-container *ngIf="!isEstagiario">
+          <mat-divider></mat-divider>
 
-        <div class="nav-section-label">Campanhas</div>
+          <div class="nav-section-label">Campanhas</div>
 
-        <a mat-list-item class="nav-item" (click)="goTo(routes.NEW_CAMPAIGN); drawer.toggle()">
-          <mat-icon matListItemIcon>campaign</mat-icon>
-          <span matListItemTitle>Nova campanha</span>
-        </a>
+          <a mat-list-item class="nav-item" (click)="goTo(routes.NEW_CAMPAIGN); drawer.toggle()">
+            <mat-icon matListItemIcon>campaign</mat-icon>
+            <span matListItemTitle>Nova campanha</span>
+          </a>
 
-        <a mat-list-item class="nav-item" (click)="goTo(routes.CAMPAIGN_LIST); drawer.toggle()">
-          <mat-icon matListItemIcon>list_alt</mat-icon>
-          <span matListItemTitle>Listar campanhas</span>
-        </a>
+          <a mat-list-item class="nav-item" (click)="goTo(routes.CAMPAIGN_LIST); drawer.toggle()">
+            <mat-icon matListItemIcon>list_alt</mat-icon>
+            <span matListItemTitle>Listar campanhas</span>
+          </a>
 
-        <a mat-list-item class="nav-item" (click)="goTo(routes.NEW_EXPENSE); drawer.toggle()">
-          <mat-icon matListItemIcon>add_card</mat-icon>
-          <span matListItemTitle>Nova despesa</span>
-        </a>
+          <a mat-list-item class="nav-item" (click)="goTo(routes.NEW_EXPENSE); drawer.toggle()">
+            <mat-icon matListItemIcon>add_card</mat-icon>
+            <span matListItemTitle>Nova despesa</span>
+          </a>
 
-        <a mat-list-item class="nav-item" (click)="goTo(routes.EXPENSE_LIST); drawer.toggle()">
-          <mat-icon matListItemIcon>receipt</mat-icon>
-          <span matListItemTitle>Despesas</span>
-        </a>
+          <a mat-list-item class="nav-item" (click)="goTo(routes.EXPENSE_LIST); drawer.toggle()">
+            <mat-icon matListItemIcon>receipt</mat-icon>
+            <span matListItemTitle>Despesas</span>
+          </a>
+        </ng-container>
 
         <mat-divider></mat-divider>
 
         <div class="nav-section-label">Vendas & Clientes</div>
 
-        <a mat-list-item class="nav-item" (click)="goTo(routes.NEW_SALE); drawer.toggle()">
-          <mat-icon matListItemIcon>point_of_sale</mat-icon>
-          <span matListItemTitle>Nova venda</span>
-        </a>
+        <ng-container *ngIf="!isEstagiario">
+          <a mat-list-item class="nav-item" (click)="goTo(routes.NEW_SALE); drawer.toggle()">
+            <mat-icon matListItemIcon>point_of_sale</mat-icon>
+            <span matListItemTitle>Nova venda</span>
+          </a>
 
-        <a mat-list-item class="nav-item" (click)="goTo(routes.SALE_LIST); drawer.toggle()">
-          <mat-icon matListItemIcon>receipt_long</mat-icon>
-          <span matListItemTitle>Listar vendas</span>
-        </a>
+          <a mat-list-item class="nav-item" (click)="goTo(routes.SALE_LIST); drawer.toggle()">
+            <mat-icon matListItemIcon>receipt_long</mat-icon>
+            <span matListItemTitle>Listar vendas</span>
+          </a>
 
-        <a mat-list-item class="nav-item" (click)="goTo(routes.CONTAS_A_RECEBER); drawer.toggle()">
-          <mat-icon matListItemIcon>request_quote</mat-icon>
-          <span matListItemTitle>Contas a receber</span>
-        </a>
+          <a mat-list-item class="nav-item" (click)="goTo(routes.CONTAS_A_RECEBER); drawer.toggle()">
+            <mat-icon matListItemIcon>request_quote</mat-icon>
+            <span matListItemTitle>Contas a receber</span>
+          </a>
 
-        <a mat-list-item class="nav-item" (click)="goTo(routes.LISTAR_RECEBIMENTOS); drawer.toggle()">
-          <mat-icon matListItemIcon>payments</mat-icon>
-          <span matListItemTitle>Recebimentos</span>
-        </a>
+          <a mat-list-item class="nav-item" (click)="goTo(routes.LISTAR_RECEBIMENTOS); drawer.toggle()">
+            <mat-icon matListItemIcon>payments</mat-icon>
+            <span matListItemTitle>Recebimentos</span>
+          </a>
+        </ng-container>
 
         <a mat-list-item class="nav-item" (click)="goTo(routes.ENTREGA_LIST); drawer.toggle()">
           <mat-icon matListItemIcon>local_shipping</mat-icon>
           <span matListItemTitle>Entregas</span>
         </a>
 
-        <a mat-list-item class="nav-item" (click)="goTo(routes.NEW_CLIENT); drawer.toggle()">
-          <mat-icon matListItemIcon>person_add</mat-icon>
-          <span matListItemTitle>Novo cliente</span>
-        </a>
+        <ng-container *ngIf="!isEstagiario">
+          <a mat-list-item class="nav-item" (click)="goTo(routes.NEW_CLIENT); drawer.toggle()">
+            <mat-icon matListItemIcon>person_add</mat-icon>
+            <span matListItemTitle>Novo cliente</span>
+          </a>
 
-        <a mat-list-item class="nav-item" (click)="goTo(routes.CLIENT_LIST); drawer.toggle()">
-          <mat-icon matListItemIcon>people</mat-icon>
-          <span matListItemTitle>Clientes</span>
-        </a>
+          <a mat-list-item class="nav-item" (click)="goTo(routes.CLIENT_LIST); drawer.toggle()">
+            <mat-icon matListItemIcon>people</mat-icon>
+            <span matListItemTitle>Clientes</span>
+          </a>
+        </ng-container>
 
-        <mat-divider></mat-divider>
+        <ng-container *ngIf="!isEstagiario">
+          <mat-divider></mat-divider>
 
-        <div class="nav-section-label">Gestão</div>
+          <div class="nav-section-label">Gestão</div>
 
-        <a mat-list-item class="nav-item" (click)="goTo(routes.DASHBOARD); drawer.toggle()">
-          <mat-icon matListItemIcon>dashboard</mat-icon>
-          <span matListItemTitle>Dashboard</span>
-        </a>
+          <a mat-list-item class="nav-item" (click)="goTo(routes.DASHBOARD); drawer.toggle()">
+            <mat-icon matListItemIcon>dashboard</mat-icon>
+            <span matListItemTitle>Dashboard</span>
+          </a>
 
-        <a mat-list-item class="nav-item" (click)="goTo(routes.NEW_ACCOUNT); drawer.toggle()">
-          <mat-icon matListItemIcon>manage_accounts</mat-icon>
-          <span matListItemTitle>Cadastro de usuário</span>
-        </a>
+          <a mat-list-item class="nav-item" (click)="goTo(routes.NEW_ACCOUNT); drawer.toggle()">
+            <mat-icon matListItemIcon>manage_accounts</mat-icon>
+            <span matListItemTitle>Cadastro de usuário</span>
+          </a>
+        </ng-container>
 
         <a *ngIf="isMaster"
            mat-list-item class="nav-item"

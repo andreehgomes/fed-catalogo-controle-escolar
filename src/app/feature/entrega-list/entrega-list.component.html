@@ -32,13 +32,14 @@
           <mat-card-content>
             <div class="card-header">
               <span class="card-cliente">{{ sale.clienteNome }}</span>
-              <span [ngClass]="'status-pill entrega-pill--' + chipColor(sale)">
-                {{ chipLabel(sale) }}
-              </span>
             </div>
             <div class="card-info">
               <span class="card-campanha">{{ sale.campaignNome }}</span>
               <span class="card-data">{{ fmtDate(sale.dataCriacao) }}</span>
+            </div>
+            <div class="pills-wrap">
+              <span [ngClass]="'status-pill pag-pill--' + pagColor(sale)">{{ pagLabel(sale) }}</span>
+              <span [ngClass]="'status-pill entrega-pill--' + chipColor(sale)">{{ chipLabel(sale) }}</span>
             </div>
           </mat-card-content>
         </mat-card>
@@ -64,13 +65,16 @@
           <mat-card-content>
             <div class="card-header">
               <span class="card-cliente">{{ sale.clienteNome }}</span>
-              <span class="status-pill entrega-pill--entregue">Entregue</span>
             </div>
             <div class="card-info">
               <span class="card-campanha">{{ sale.campaignNome }}</span>
               <span class="card-data">{{ fmtDate(sale.dataCriacao) }}</span>
             </div>
-            <div class="card-actions">
+            <div class="card-footer">
+              <div class="pills-wrap">
+                <span [ngClass]="'status-pill pag-pill--' + pagColor(sale)">{{ pagLabel(sale) }}</span>
+                <span [ngClass]="'status-pill entrega-pill--' + chipColor(sale)">{{ chipLabel(sale) }}</span>
+              </div>
               <button mat-stroked-button class="btn-comprovante" (click)="gerarComprovante(sale, $event)">
                 <mat-icon>receipt_long</mat-icon>
                 Comprovante

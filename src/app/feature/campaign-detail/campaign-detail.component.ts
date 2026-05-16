@@ -13,6 +13,12 @@ import { Sale } from "src/app/shared/model/sale";
 import { Expense } from "src/app/shared/model/expense";
 import { RouterEnum } from "src/app/core/router/router.enum";
 
+interface TopItem {
+  descricao: string;
+  qtdTotal: number;
+  valorTotal: number;
+}
+
 @Component({
   selector: "app-campaign-detail",
   templateUrl: "./campaign-detail.component.html",
@@ -23,6 +29,7 @@ export class CampaignDetailComponent implements OnInit {
   campaign?: Campaign;
   sales: Sale[] = [];
   expenses: Expense[] = [];
+  topItens: TopItem[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -59,10 +66,28 @@ export class CampaignDetailComponent implements OnInit {
     this.saleService.getSalesByCampaign(key).subscribe({
       next: (s) => {
         this.sales = s;
+        this.calcularTopItens();
         this.carregarDespesas(key);
       },
       error: () => this.loader.closeDialog(),
     });
+  }
+
+  private calcularTopItens(): void {
+    const map = new Map<string, TopItem>();
+    this.sales.forEach((s) => {
+      s.itens.forEach((it) => {
+        const cur = map.get(it.descricao.toLowerCase()) ?? {
+          descricao: it.descricao,
+          qtdTotal: 0,
+          valorTotal: 0,
+        };
+        cur.qtdTotal += it.quantidade;
+        cur.valorTotal += it.valorSubtotal;
+        map.set(it.descricao.toLowerCase(), cur);
+      });
+    });
+    this.topItens = Array.from(map.values()).sort((a, b) => b.qtdTotal - a.qtdTotal);
   }
 
   private carregarDespesas(key: string): void {
@@ -206,6 +231,20 @@ export class CampaignDetailComponent implements OnInit {
         })
         .catch(() => this.loader.closeDialog());
     });
+  }
+
+  get totalItensQtd(): number {
+    return this.sales.reduce(
+      (acc, s) => acc + s.itens.reduce((a, it) => a + it.quantidade, 0),
+      0
+    );
+  }
+
+  get totalItensValor(): number {
+    return this.sales.reduce(
+      (acc, s) => acc + s.itens.reduce((a, it) => a + it.valorSubtotal, 0),
+      0
+    );
   }
 
   get totalArrecadado(): number {

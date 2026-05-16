@@ -1,6 +1,7 @@
 import { NgModule } from "@angular/core";
 import { Routes, RouterModule } from "@angular/router";
 import { authGuard } from "./core/guards/auth.guard";
+import { roleGuard } from "./core/guards/role.guard";
 
 const routes: Routes = [
   {
@@ -10,7 +11,7 @@ const routes: Routes = [
   },
   {
     path: "new-account",
-    canActivate: [authGuard],
+    canActivate: [authGuard, roleGuard],
     loadChildren: () =>
       import("./feature/new-account/new-account.module").then(
         (m) => m.NewAccountModule
@@ -39,13 +40,13 @@ const routes: Routes = [
   },
   {
     path: "feed",
-    canActivate: [authGuard],
+    canActivate: [authGuard, roleGuard],
     loadChildren: () =>
       import("./feature/feed/feed.module").then((m) => m.FeedModule),
   },
   {
     path: "campaign-list",
-    canActivate: [authGuard],
+    canActivate: [authGuard, roleGuard],
     loadChildren: () =>
       import("./feature/campaign-list/campaign-list.module").then(
         (m) => m.CampaignListModule
@@ -53,7 +54,7 @@ const routes: Routes = [
   },
   {
     path: "new-campaign",
-    canActivate: [authGuard],
+    canActivate: [authGuard, roleGuard],
     loadChildren: () =>
       import("./feature/new-campaign/new-campaign.module").then(
         (m) => m.NewCampaignModule
@@ -61,7 +62,7 @@ const routes: Routes = [
   },
   {
     path: "campaign-detail/:key",
-    canActivate: [authGuard],
+    canActivate: [authGuard, roleGuard],
     loadChildren: () =>
       import("./feature/campaign-detail/campaign-detail.module").then(
         (m) => m.CampaignDetailModule
@@ -69,7 +70,7 @@ const routes: Routes = [
   },
   {
     path: "campaign/:key/new-sponsor",
-    canActivate: [authGuard],
+    canActivate: [authGuard, roleGuard],
     loadChildren: () =>
       import("./feature/new-sponsor/new-sponsor.module").then(
         (m) => m.NewSponsorModule
@@ -77,7 +78,7 @@ const routes: Routes = [
   },
   {
     path: "client-list",
-    canActivate: [authGuard],
+    canActivate: [authGuard, roleGuard],
     loadChildren: () =>
       import("./feature/client-list/client-list.module").then(
         (m) => m.ClientListModule
@@ -85,7 +86,7 @@ const routes: Routes = [
   },
   {
     path: "new-client",
-    canActivate: [authGuard],
+    canActivate: [authGuard, roleGuard],
     loadChildren: () =>
       import("./feature/new-client/new-client.module").then(
         (m) => m.NewClientModule
@@ -93,7 +94,7 @@ const routes: Routes = [
   },
   {
     path: "client-detail/:key",
-    canActivate: [authGuard],
+    canActivate: [authGuard, roleGuard],
     loadChildren: () =>
       import("./feature/client-detail/client-detail.module").then(
         (m) => m.ClientDetailModule
@@ -101,7 +102,7 @@ const routes: Routes = [
   },
   {
     path: "new-sale",
-    canActivate: [authGuard],
+    canActivate: [authGuard, roleGuard],
     loadChildren: () =>
       import("./feature/new-sale/new-sale.module").then(
         (m) => m.NewSaleModule
@@ -109,7 +110,7 @@ const routes: Routes = [
   },
   {
     path: "sale-list",
-    canActivate: [authGuard],
+    canActivate: [authGuard, roleGuard],
     loadChildren: () =>
       import("./feature/sale-list/sale-list.module").then(
         (m) => m.SaleListModule
@@ -117,7 +118,7 @@ const routes: Routes = [
   },
   {
     path: "contas-a-receber",
-    canActivate: [authGuard],
+    canActivate: [authGuard, roleGuard],
     loadChildren: () =>
       import("./feature/contas-a-receber/contas-a-receber.module").then(
         (m) => m.ContasAReceberModule
@@ -125,7 +126,7 @@ const routes: Routes = [
   },
   {
     path: "recebimento/:saleKey",
-    canActivate: [authGuard],
+    canActivate: [authGuard, roleGuard],
     loadChildren: () =>
       import("./feature/recebimento/recebimento.module").then(
         (m) => m.RecebimentoModule
@@ -133,7 +134,7 @@ const routes: Routes = [
   },
   {
     path: "listar-recebimentos",
-    canActivate: [authGuard],
+    canActivate: [authGuard, roleGuard],
     loadChildren: () =>
       import("./feature/listar-recebimentos/listar-recebimentos.module").then(
         (m) => m.ListarRecebimentosModule
@@ -141,7 +142,7 @@ const routes: Routes = [
   },
   {
     path: "expense-list",
-    canActivate: [authGuard],
+    canActivate: [authGuard, roleGuard],
     loadChildren: () =>
       import("./feature/expense-list/expense-list.module").then(
         (m) => m.ExpenseListModule
@@ -149,7 +150,7 @@ const routes: Routes = [
   },
   {
     path: "new-expense",
-    canActivate: [authGuard],
+    canActivate: [authGuard, roleGuard],
     loadChildren: () =>
       import("./feature/new-expense/new-expense.module").then(
         (m) => m.NewExpenseModule
@@ -157,7 +158,7 @@ const routes: Routes = [
   },
   {
     path: "sponsor-list",
-    canActivate: [authGuard],
+    canActivate: [authGuard, roleGuard],
     loadChildren: () =>
       import("./feature/sponsor-list/sponsor-list.module").then(
         (m) => m.SponsorListModule
@@ -165,7 +166,7 @@ const routes: Routes = [
   },
   {
     path: "dashboard",
-    canActivate: [authGuard],
+    canActivate: [authGuard, roleGuard],
     loadChildren: () =>
       import("./feature/dashboard/dashboard.module").then(
         (m) => m.DashboardModule
@@ -189,7 +190,7 @@ const routes: Routes = [
   },
   {
     path: "account-list",
-    canActivate: [authGuard],
+    canActivate: [authGuard, roleGuard],
     loadChildren: () =>
       import("./feature/account-list/account-list.module").then(
         (m) => m.AccountListModule
