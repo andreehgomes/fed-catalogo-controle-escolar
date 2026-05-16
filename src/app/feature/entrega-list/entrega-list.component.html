@@ -11,6 +11,23 @@
     </mat-form-field>
   </div>
 
+  <div class="contadores-itens" *ngIf="!carregando">
+    <div class="contador-item contador-item--entregue">
+      <mat-icon>check_circle</mat-icon>
+      <div class="contador-conteudo">
+        <span class="contador-valor">{{ totalItensEntregues }}</span>
+        <span class="contador-label">Itens entregues</span>
+      </div>
+    </div>
+    <div class="contador-item contador-item--pendente">
+      <mat-icon>pending</mat-icon>
+      <div class="contador-conteudo">
+        <span class="contador-valor">{{ totalItensFaltando }}</span>
+        <span class="contador-label">Itens a entregar</span>
+      </div>
+    </div>
+  </div>
+
   <mat-tab-group animationDuration="200ms">
 
     <mat-tab>

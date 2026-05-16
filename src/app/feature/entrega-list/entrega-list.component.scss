@@ -45,6 +45,59 @@
   padding: 16px 0;
 }
 
+// ─── Contadores de itens ──────────────────────────────────────────────────────
+
+.contadores-itens {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.contador-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+
+  mat-icon {
+    font-size: 22px;
+    height: 22px;
+    width: 22px;
+    flex-shrink: 0;
+  }
+}
+
+.contador-conteudo {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+  min-width: 0;
+}
+
+.contador-valor {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.contador-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  opacity: 0.85;
+}
+
+.contador-item--entregue {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.contador-item--pendente {
+  background: #fce4ec;
+  color: #c62828;
+}
+
 // ─── Contador nas abas ────────────────────────────────────────────────────────
 
 .tab-count-pill {

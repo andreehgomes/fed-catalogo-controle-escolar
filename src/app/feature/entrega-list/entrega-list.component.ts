@@ -17,6 +17,8 @@ import { RouterEnum } from 'src/app/core/router/router.enum';
 export class EntregaListComponent implements OnInit {
   pendentes: Sale[] = [];
   entregues: Sale[] = [];
+  totalItensEntregues = 0;
+  totalItensFaltando = 0;
   carregando = true;
   routes = RouterEnum;
   filtroCtrl = new FormControl('');
@@ -57,6 +59,29 @@ export class EntregaListComponent implements OnInit {
       : this.todasSales;
     this.pendentes = filtradas.filter((s) => s.entregaStatus !== 'entregue');
     this.entregues = filtradas.filter((s) => s.entregaStatus === 'entregue');
+    this.atualizarContadoresItens(filtradas);
+  }
+
+  private atualizarContadoresItens(sales: Sale[]): void {
+    let entregues = 0;
+    let faltando = 0;
+    for (const sale of sales) {
+      const entregadas = this.normalizarQuantidadesEntregues(sale);
+      sale.itens?.forEach((item, i) => {
+        const total = item.quantidade ?? 0;
+        const ent = entregadas[i] ?? 0;
+        entregues += ent;
+        faltando += Math.max(0, total - ent);
+      });
+    }
+    this.totalItensEntregues = entregues;
+    this.totalItensFaltando = faltando;
+  }
+
+  private normalizarQuantidadesEntregues(sale: Sale): number[] {
+    const raw = sale.quantidadesEntregues;
+    if (!raw) return sale.itens?.map(() => 0) ?? [];
+    return Object.values(raw as unknown as { [k: string]: number }).map(Number);
   }
 
   irParaDetalhe(sale: Sale): void {
