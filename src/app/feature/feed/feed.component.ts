@@ -1,5 +1,6 @@
-import { Component } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
+import { Subscription } from "rxjs";
 import { RouterEnum } from "../../core/router/router.enum";
 import { PerfilEnum } from "../../shared/model/accout.enum";
 import { UserProfileService } from "../../shared/service/user-profile/user-profile.service";
@@ -18,8 +19,8 @@ interface FeedCard {
   styleUrls: ["./feed.component.scss"],
   standalone: false,
 })
-export class FeedComponent {
-  cards: FeedCard[];
+export class FeedComponent implements OnInit, OnDestroy {
+  cards: FeedCard[] = [];
 
   private readonly allCards: FeedCard[] = [
     { label: "Campanhas", icon: "campaign", route: RouterEnum.CAMPAIGN_LIST, color: "primary", allowedPerfis: [PerfilEnum.MASTER, PerfilEnum.ADMIN] },
@@ -33,11 +34,20 @@ export class FeedComponent {
     { label: "Entregas", icon: "local_shipping", route: RouterEnum.ENTREGA_LIST, color: "success" },
   ];
 
-  constructor(private router: Router, private userProfileService: UserProfileService) {
-    const perfil = this.userProfileService.getPerfil();
-    this.cards = this.allCards.filter(
-      (c) => !c.allowedPerfis || c.allowedPerfis.includes(perfil as PerfilEnum)
-    );
+  private profileSub?: Subscription;
+
+  constructor(private router: Router, private userProfileService: UserProfileService) {}
+
+  ngOnInit(): void {
+    this.profileSub = this.userProfileService.perfil$.subscribe((perfil) => {
+      this.cards = this.allCards.filter(
+        (c) => !c.allowedPerfis || c.allowedPerfis.includes(perfil as PerfilEnum)
+      );
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.profileSub?.unsubscribe();
   }
 
   goTo(rota: string): void {

@@ -198,7 +198,7 @@ const routes: Routes = [
   },
   {
     path: "",
-    canActivate: [authGuard],
+    canActivate: [authGuard, roleGuard],
     loadChildren: () =>
       import("./feature/feed/feed.module").then((m) => m.FeedModule),
   },
