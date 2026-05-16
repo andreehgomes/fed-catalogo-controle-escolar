@@ -188,6 +188,14 @@ const routes: Routes = [
       ),
   },
   {
+    path: "account-list",
+    canActivate: [authGuard],
+    loadChildren: () =>
+      import("./feature/account-list/account-list.module").then(
+        (m) => m.AccountListModule
+      ),
+  },
+  {
     path: "",
     canActivate: [authGuard],
     loadChildren: () =>

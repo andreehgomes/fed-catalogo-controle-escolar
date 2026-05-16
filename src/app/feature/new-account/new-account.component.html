@@ -1,6 +1,6 @@
 <div class="page">
   <div class="header">
-    <span class="page-title">Cadastro de usuários</span>
+    <span class="page-title">{{ modoEdicao ? 'Editar usuário' : 'Cadastro de usuários' }}</span>
   </div>
 
   <div class="page-content">
@@ -57,7 +57,7 @@
         <mat-form-field color="accent" class="field-full" appearance="outline">
           <mat-label>Nova senha</mat-label>
           <input formControlName="novaSenha" [type]="hide ? 'password' : 'text'" matInput />
-          <mat-hint>Mínimo 6 dígitos</mat-hint>
+          <mat-hint>{{ modoEdicao ? 'Deixe em branco para manter a senha atual' : 'Mínimo 6 dígitos' }}</mat-hint>
           <button mat-icon-button matSuffix type="button" (click)="hide = !hide" [attr.aria-label]="'Mostrar senha'" [attr.aria-pressed]="hide">
             <mat-icon>{{ hide ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
@@ -72,7 +72,7 @@
           class="btn-action"
           type="submit"
           [disabled]="formControlNewAccount.invalid"
-        >Salvar</button>
+        >{{ modoEdicao ? 'Atualizar' : 'Salvar' }}</button>
       </div>
     </form>
   </div>

@@ -6,4 +6,5 @@ export interface AccountModel {
     senha: string;
     email?: string;
     uid?: string;
+    perfil?: string;
 }

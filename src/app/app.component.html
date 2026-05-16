@@ -97,6 +97,13 @@
           <span matListItemTitle>Cadastro de usuário</span>
         </a>
 
+        <a *ngIf="isMaster"
+           mat-list-item class="nav-item"
+           (click)="goTo(routes.ACCOUNT_LIST); drawer.toggle()">
+          <mat-icon matListItemIcon>group</mat-icon>
+          <span matListItemTitle>Usuários</span>
+        </a>
+
         <mat-divider></mat-divider>
 
         <a mat-list-item class="nav-item nav-item--auth"

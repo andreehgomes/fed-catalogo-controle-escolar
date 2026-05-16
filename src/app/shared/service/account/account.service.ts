@@ -100,7 +100,8 @@ export class AccountService {
           data_nascimento: data[key].data_nascimento,
           nome: data[key].nome,
           email: data[key].email,
-          uid: data[key].uid
+          uid: data[key].uid,
+          perfil: data[key].perfil ?? null,
         }));
       }
       return [];

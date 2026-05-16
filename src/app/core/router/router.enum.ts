@@ -33,4 +33,6 @@ export enum RouterEnum {
 
   ENTREGA_LIST = "entrega-list",
   ENTREGA_DETAIL = "entrega-detail",
+
+  ACCOUNT_LIST = "account-list",
 }

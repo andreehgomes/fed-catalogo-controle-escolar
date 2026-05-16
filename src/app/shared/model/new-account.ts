@@ -5,4 +5,5 @@ export class NewAccount {
     celular: string;
     data_nascimento: string;
     senha: string;
+    perfil?: string;
 }
