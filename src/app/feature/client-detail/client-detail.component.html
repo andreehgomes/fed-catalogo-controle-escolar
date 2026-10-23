@@ -1,105 +1,157 @@
-<div class="page" *ngIf="client">
-  <div class="header">
-    <button mat-icon-button class="btn-back" (click)="voltar()">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
-    <span class="page-title">{{ client.nome }}</span>
-    <button mat-icon-button class="btn-edit" (click)="editar()">
-      <mat-icon>edit</mat-icon>
-    </button>
+<section class="ce-page client-detail" *ngIf="client">
+  <header class="ce-page-header">
+    <div class="ce-page-title">
+      <h1>{{ client.nome }}</h1>
+      <span class="ce-page-subtitle" *ngIf="client.telefone">
+        <mat-icon>phone</mat-icon>
+        {{ client.telefone }}
+      </span>
+      <span class="ce-page-subtitle ce-page-subtitle--muted" *ngIf="!client.telefone">
+        Sem telefone cadastrado.
+      </span>
+    </div>
+    <div class="ce-page-actions">
+      <button
+        type="button"
+        class="ce-btn-icon"
+        aria-label="Editar cliente"
+        matTooltip="Editar"
+        (click)="editar()"
+      >
+        <mat-icon>edit</mat-icon>
+      </button>
+    </div>
+  </header>
+
+  <!-- ─── KPIs ──────────────────────────────────────────────────────────── -->
+  <div class="kpi-grid">
+    <article class="ce-summary kpi" data-tint="accent">
+      <span class="kpi-icon"><mat-icon>receipt_long</mat-icon></span>
+      <div class="kpi-body">
+        <span class="ce-summary-label">Vendas</span>
+        <span class="ce-summary-value">{{ sales.length }}</span>
+      </div>
+    </article>
+
+    <article class="ce-summary kpi" data-tint="accent">
+      <span class="kpi-icon"><mat-icon>shopping_cart</mat-icon></span>
+      <div class="kpi-body">
+        <span class="ce-summary-label">Total gasto</span>
+        <span class="ce-summary-value">R$ {{ fmt(totalGasto) }}</span>
+      </div>
+    </article>
+
+    <article
+      *ngIf="saldoPendente > 0"
+      class="ce-summary kpi"
+      data-tint="warn"
+    >
+      <span class="kpi-icon"><mat-icon>pending_actions</mat-icon></span>
+      <div class="kpi-body">
+        <span class="ce-summary-label">Saldo pendente</span>
+        <span class="ce-summary-value">R$ {{ fmt(saldoPendente) }}</span>
+      </div>
+    </article>
   </div>
 
-  <div class="page-content">
-    <mat-card class="info-card">
-      <div class="info-row" *ngIf="client.telefone">
-        <mat-icon>phone</mat-icon>
-        <span>{{ client.telefone }}</span>
-      </div>
-      <div class="info-row" *ngIf="!client.telefone">
-        <mat-icon>info</mat-icon>
-        <span class="muted">Sem telefone cadastrado.</span>
-      </div>
-    </mat-card>
-
-    <div class="stats-grid">
-      <mat-card class="stat-card">
-        <span class="stat-label">Vendas</span>
-        <span class="stat-value">{{ sales.length }}</span>
-      </mat-card>
-      <mat-card class="stat-card">
-        <span class="stat-label">Total gasto</span>
-        <span class="stat-value">R$ {{ fmt(totalGasto) }}</span>
-      </mat-card>
-    </div>
-
-    <button mat-flat-button color="accent" class="btn-nova-venda" (click)="novaVenda()">
+  <!-- ─── Ações principais ──────────────────────────────────────────────── -->
+  <div class="cld-main-actions">
+    <button type="button" class="ce-btn-primary" (click)="novaVenda()">
       <mat-icon>add</mat-icon>
       Nova venda para este cliente
     </button>
-
-    <button mat-stroked-button class="btn-resumo" *ngIf="saldoPendente > 0" (click)="compartilharResumo()">
+    <button
+      *ngIf="saldoPendente > 0"
+      type="button"
+      class="ce-btn-ghost"
+      (click)="compartilharResumo()"
+    >
       <mat-icon>share</mat-icon>
       Compartilhar resumo de pendências
     </button>
-
-    <div class="sales-section">
-      <h3>Histórico de vendas</h3>
-
-      <div *ngIf="sales.length === 0" class="empty">
-        <mat-icon>info</mat-icon>
-        <span>Nenhuma venda registrada.</span>
-      </div>
-
-      <div class="sale-card" *ngFor="let s of sales">
-        <div class="sale-top" (click)="editarVenda(s)">
-          <span class="sale-campaign">{{ s.campaignNome }}</span>
-          <span class="sale-valor">R$ {{ fmt(s.valorTotal) }}</span>
-        </div>
-        <div class="sale-status-row" *ngIf="s.status">
-          <span class="status-pill" [class.quitado]="s.status === 'quitado'">
-            {{ s.status === 'quitado' ? 'Quitado' : 'A receber' }}
-          </span>
-          <span *ngIf="s.status === 'pendente'" class="saldo-info">
-            Saldo: R$ {{ fmt(s.valorTotal - (s.valorRecebido ?? 0)) }}
-          </span>
-        </div>
-        <div class="sale-bottom" (click)="editarVenda(s)">
-          <span class="sale-data">{{ fmtData(s.dataCriacao) }}</span>
-          <span class="sale-itens">{{ s.itens.length }} {{ s.itens.length === 1 ? 'item' : 'itens' }}</span>
-        </div>
-
-        <div class="sale-actions">
-          <button mat-button class="action-comprovante"
-                  (click)="gerarComprovanteSale(s, $event)">
-            <mat-icon>receipt_long</mat-icon>
-            Comprovante
-          </button>
-          <button *ngIf="s.status === 'pendente'" mat-button class="action-receber"
-                  (click)="registrarRecebimento(s, $event)">
-            <mat-icon>payments</mat-icon>
-            Receber
-          </button>
-        </div>
-
-        <div class="recebimentos-section" *ngIf="saleRecebimentos(s).length > 0">
-          <span class="rec-label">Pagamentos</span>
-          <div class="rec-row" *ngFor="let item of saleRecebimentos(s)">
-            <div class="rec-info">
-              <span class="rec-data">{{ fmtData(item.r.data) }}</span>
-              <span class="rec-desc" *ngIf="item.r.descricao">— {{ item.r.descricao }}</span>
-            </div>
-            <span class="rec-valor">R$ {{ fmt(item.r.valor) }}</span>
-          </div>
-          <div class="rec-actions">
-            <button mat-button class="action-comprovante-rec"
-                    *ngFor="let item of saleRecebimentos(s)"
-                    (click)="gerarComprovanteRecebimento(s, item.key, item.r, $event)">
-              <mat-icon>receipt_long</mat-icon>
-              {{ fmtData(item.r.data) }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
-</div>
+
+  <!-- ─── Histórico de vendas ───────────────────────────────────────────── -->
+  <section class="cld-section">
+    <h2 class="ce-section-title">Histórico de vendas</h2>
+
+    <div *ngIf="sales.length === 0" class="ce-empty-state">
+      <mat-icon>info</mat-icon>
+      <span>Nenhuma venda registrada.</span>
+    </div>
+
+    <article class="ce-card cld-sale" *ngFor="let s of sales">
+      <header class="cld-sale-top" (click)="editarVenda(s)">
+        <div class="cld-sale-head">
+          <span class="cld-sale-campaign">{{ s.campaignNome }}</span>
+          <span class="cld-sale-meta">
+            {{ fmtData(s.dataCriacao) }} ·
+            {{ s.itens.length }} {{ s.itens.length === 1 ? 'item' : 'itens' }}
+          </span>
+        </div>
+        <span class="cld-sale-valor">R$ {{ fmt(s.valorTotal) }}</span>
+      </header>
+
+      <div class="cld-sale-status" *ngIf="s.status">
+        <span
+          class="ce-chip"
+          [class.success]="s.status === 'quitado'"
+          [class.warn]="s.status === 'pendente'"
+        >
+          {{ s.status === 'quitado' ? 'Quitado' : 'A receber' }}
+        </span>
+        <span *ngIf="s.status === 'pendente'" class="cld-saldo-info">
+          Saldo: R$ {{ fmt(s.valorTotal - (s.valorRecebido ?? 0)) }}
+        </span>
+      </div>
+
+      <div class="cld-sale-actions">
+        <button
+          type="button"
+          class="ce-btn-ghost cld-btn-sm"
+          (click)="gerarComprovanteSale(s, $event)"
+        >
+          <mat-icon>receipt_long</mat-icon>
+          Comprovante
+        </button>
+        <button
+          *ngIf="s.status === 'pendente'"
+          type="button"
+          class="ce-btn-primary cld-btn-sm"
+          (click)="registrarRecebimento(s, $event)"
+        >
+          <mat-icon>payments</mat-icon>
+          Receber
+        </button>
+      </div>
+
+      <div class="cld-recebimentos" *ngIf="saleRecebimentos(s).length > 0">
+        <span class="ce-label cld-rec-label">
+          <mat-icon>payments</mat-icon>
+          Pagamentos
+        </span>
+
+        <ul class="cld-rec-list">
+          <li class="cld-rec-row" *ngFor="let item of saleRecebimentos(s)">
+            <div class="cld-rec-info">
+              <span class="cld-rec-data">{{ fmtData(item.r.data) }}</span>
+              <span class="cld-rec-desc" *ngIf="item.r.descricao">
+                — {{ item.r.descricao }}
+              </span>
+            </div>
+            <span class="cld-rec-valor">R$ {{ fmt(item.r.valor) }}</span>
+            <button
+              type="button"
+              class="ce-btn-icon"
+              aria-label="Gerar comprovante do recebimento"
+              matTooltip="Comprovante"
+              (click)="gerarComprovanteRecebimento(s, item.key, item.r, $event)"
+            >
+              <mat-icon>receipt_long</mat-icon>
+            </button>
+          </li>
+        </ul>
+      </div>
+    </article>
+  </section>
+</section>

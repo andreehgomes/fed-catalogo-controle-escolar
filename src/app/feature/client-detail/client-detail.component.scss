@@ -1,295 +1,251 @@
-@import "../../shared/style/colors";
+@use "../../shared/style/tokens" as *;
+@use "../../shared/style/breakpoints" as *;
 
-.page {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 70px 16px 32px;
+:host {
+  display: block;
 }
 
-.header {
-  width: 100%;
-  max-width: 540px;
-  display: flex;
+// ── Cabeçalho ────────────────────────────────────────────────────────────────
+.ce-page-subtitle {
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 16px;
-  color: #fff;
+  gap: 6px;
 
-  .btn-back, .btn-edit {
-    color: #fff !important;
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: $ce-accent;
   }
 
-  .page-title {
+  &--muted {
+    color: $ce-text-muted;
+    font-style: italic;
+  }
+}
+
+// ── KPIs (molde do dashboard) ────────────────────────────────────────────────
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: $ce-gap;
+}
+
+.kpi {
+  flex-direction: row;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+}
+
+.kpi-icon {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: $ce-radius-inner;
+  background: $ce-accent-soft;
+  color: $ce-accent-ink;
+
+  mat-icon {
+    font-size: 26px;
+    width: 26px;
+    height: 26px;
+  }
+}
+
+.kpi-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+
+  .ce-summary-value {
     font-size: 20px;
-    font-weight: 600;
-    flex: 1;
+    font-variant-numeric: tabular-nums;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 }
 
-.page-content {
-  width: 100%;
-  max-width: 540px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
+.kpi[data-tint="warn"] {
+  .kpi-icon {
+    background: $ce-warn-soft;
+    color: $ce-warn;
+  }
 
-.info-card {
-  padding: 14px;
-  background: #fff;
-  border-radius: 12px;
-
-  .info-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px;
-    color: #444;
-
-    mat-icon {
-      color: $c-primary;
-    }
-
-    .muted {
-      color: #999;
-      font-style: italic;
-    }
+  .ce-summary-value {
+    color: $ce-warn;
   }
 }
 
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+// ── Ações principais ─────────────────────────────────────────────────────────
+.cld-main-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  > button {
+    flex: 1;
+    min-width: 240px;
+    justify-content: center;
+  }
+}
+
+// ── Histórico de vendas ──────────────────────────────────────────────────────
+.cld-section {
+  display: flex;
+  flex-direction: column;
   gap: 10px;
 }
 
-.stat-card {
-  background: #fff;
-  border-radius: 12px;
-  padding: 12px 14px;
+.cld-sale {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 10px;
+  padding: 14px 16px;
 }
 
-.stat-label {
-  font-size: 12px;
-  color: #777;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.stat-value {
-  font-size: 20px;
-  font-weight: 700;
-  color: $c-primary-dark;
-}
-
-.btn-nova-venda {
-  width: 100%;
-  height: 48px;
-
-  mat-icon {
-    margin-right: 4px;
-  }
-}
-
-.sales-section {
+.cld-sale-top {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-
-  h3 {
-    color: #fff;
-    margin: 8px 0 0;
-    font-size: 16px;
-  }
-}
-
-.empty {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(255, 255, 255, 0.07);
-  color: rgba(255, 255, 255, 0.85);
-  border-radius: 10px;
-  padding: 14px;
-  font-size: 14px;
-}
-
-.sale-card {
-  background: #fff;
-  border-radius: 10px;
-  padding: 12px 14px;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
   cursor: pointer;
-  transition: transform 0.12s ease, box-shadow 0.18s ease;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.14);
-
-  &:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 5px 14px rgba(0, 0, 0, 0.22);
-  }
 }
 
-.sale-top {
+.cld-sale-head {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-weight: 600;
-  color: #1a1a1a;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
 }
 
-.sale-bottom {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  color: #777;
-  margin-top: 4px;
+.cld-sale-campaign {
+  font-weight: 650;
+  font-size: 15px;
+  color: $ce-text-strong;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.sale-status-row {
+.cld-sale-meta {
+  font-size: 12.5px;
+  color: $ce-text-muted;
+}
+
+.cld-sale-valor {
+  font-weight: 700;
+  font-size: 15px;
+  color: $ce-accent-ink;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.cld-sale-status {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-top: 4px;
-
-  .status-pill {
-    font-size: 10px;
-    font-weight: 700;
-    padding: 2px 8px;
-    border-radius: 999px;
-    background: #fff3e0;
-    color: #e65100;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-
-    &.quitado {
-      background: #e8f5e9;
-      color: #2e7d32;
-    }
-  }
-
-  .saldo-info {
-    flex: 1;
-    font-size: 12px;
-    color: #c62828;
-    font-weight: 600;
-  }
+  flex-wrap: wrap;
 }
 
-.sale-actions {
+.cld-saldo-info {
+  font-size: 12.5px;
+  color: $ce-danger-data;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.cld-sale-actions {
   display: flex;
   justify-content: flex-end;
   flex-wrap: wrap;
-  gap: 4px;
-  padding-top: 6px;
-  margin-top: 6px;
-  border-top: 1px solid #f0f0f0;
-
-  button {
-    font-size: 12px !important;
-    font-weight: 600 !important;
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
-    line-height: 30px !important;
-    height: 30px !important;
-    padding: 0 8px !important;
-    min-width: 0 !important;
-
-    mat-icon {
-      font-size: 15px;
-      width: 15px;
-      height: 15px;
-      margin-right: 2px;
-    }
-  }
-
-  .action-comprovante { color: $c-primary-dark !important; }
-  .action-receber { color: $c-green-alert !important; }
+  gap: 6px;
+  padding-top: 8px;
+  border-top: 1px solid $ce-border-divider;
 }
 
-.btn-resumo {
-  width: 100%;
-  margin-top: 4px;
-  color: #fff !important;
-  border-color: rgba(255, 255, 255, 0.4) !important;
+.cld-btn-sm {
+  min-height: 34px;
+  padding: 0 12px;
+  font-size: 13px;
 
   mat-icon {
-    margin-right: 4px;
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
   }
 }
 
-.recebimentos-section {
-  margin-top: 8px;
-  padding-top: 8px;
-  border-top: 1px dashed #e0e0e0;
+// ── Recebimentos ────────────────────────────────────────────────────────────
+.cld-recebimentos {
   display: flex;
   flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+  background: $ce-success-soft;
+  border-radius: $ce-radius-inner;
+}
+
+.cld-rec-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: $ce-success;
+
+  mat-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+  }
+}
+
+.cld-rec-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.cld-rec-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba($ce-success, 0.18);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.cld-rec-info {
+  display: flex;
   gap: 4px;
+  flex-wrap: wrap;
+  min-width: 0;
+  flex: 1;
+  font-size: 12.5px;
+}
 
-  .rec-label {
-    font-size: 11px;
-    font-weight: 700;
-    color: $c-green-alert;
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
-  }
+.cld-rec-data {
+  font-weight: 650;
+  color: $ce-text-strong;
+}
 
-  .rec-row {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
+.cld-rec-desc {
+  color: $ce-text-muted;
+}
 
-    .rec-info {
-      flex: 1;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
-      color: #444;
-      min-width: 0;
-    }
-
-    .rec-data {
-      font-weight: 600;
-    }
-
-    .rec-desc {
-      color: #777;
-    }
-
-    .rec-valor {
-      font-weight: 700;
-      color: $c-green-alert;
-    }
-  }
-
-  .rec-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-    margin-top: 4px;
-
-    .action-comprovante-rec {
-      font-size: 11px !important;
-      font-weight: 600 !important;
-      line-height: 26px !important;
-      height: 26px !important;
-      padding: 0 6px !important;
-      min-width: 0 !important;
-      color: $c-primary-dark !important;
-
-      mat-icon {
-        font-size: 14px;
-        width: 14px;
-        height: 14px;
-        margin-right: 2px;
-      }
-    }
-  }
+.cld-rec-valor {
+  font-weight: 700;
+  font-size: 13.5px;
+  color: $ce-success;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
