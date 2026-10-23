@@ -1,51 +1,93 @@
-.content {
-    flex-direction: column;
+@use "../../shared/style/tokens" as *;
+
+// Page-error é tela fora do shell (ver AppComponent.outOfShellPrefixes).
+// Mesmo molde do login: viewport inteira com o gradiente da marca ao fundo.
+.error-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 32px 20px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  background: $ce-gradient-hero;
 }
 
-.menssagem-error {
-    width: 100%;
-    height: 80%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+.error-container {
+  width: 100%;
+  max-width: 440px;
 }
 
-.botao {
-    width: 100%;
-    height: 10%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: end;
-    padding: 10px;
-    margin-bottom: 15px;
+.error-card {
+  padding: 32px 26px 26px;
+  border-radius: $ce-radius-panel;
+  background: $ce-surface;
+  box-shadow: 0 30px 70px -34px rgba(0, 0, 0, 0.7);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
 }
 
-.top {
-    width: 100%;
-    height: 10%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 10px;
-    margin-bottom: 15px;
+.error-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: $ce-danger-soft;
+  color: $ce-danger-action;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+
+  mat-icon {
+    font-size: 44px;
+    width: 44px;
+    height: 44px;
+  }
 }
 
-h3 {
-    color: #074264;
-    font-weight: 500;
-    font-size: 20px;
-    margin-bottom: 5px;
+.error-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: $ce-display-weight;
+  letter-spacing: $ce-display-tracking;
+  color: $ce-text;
+  cursor: pointer;
+  user-select: none;
+
+  &:focus-visible {
+    outline: 2px solid $ce-accent;
+    outline-offset: 4px;
+    border-radius: 4px;
+  }
 }
 
-p {
-    color: red;
-    font-weight: 200;
-    font-size: 10px;
+.error-text {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: $ce-text-secondary;
 }
 
-button {
-    width: 80%;
+.error-tech {
+  margin: 4px 0 0;
+  padding: 8px 12px;
+  width: 100%;
+  background: $ce-surface-subtle;
+  border: 1px solid $ce-border;
+  border-radius: $ce-radius-sm;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11.5px;
+  color: $ce-text-muted;
+  text-align: left;
+  word-break: break-word;
+}
+
+.btn-voltar {
+  width: 100%;
+  padding: 14px;
+  font-size: 14.5px;
+  margin-top: 8px;
 }

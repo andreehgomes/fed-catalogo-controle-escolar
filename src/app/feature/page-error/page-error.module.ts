@@ -1,13 +1,16 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PageErrorRoutingModule } from './page-error-routing.module'
+import { PageErrorComponent } from './page-error.component';
+import { PageErrorRoutingModule } from './page-error-routing.module';
+import { MaterialModule } from 'src/app/material.module';
 
 
 @NgModule({
-  declarations: [],
+  declarations: [PageErrorComponent],
   imports: [
     CommonModule,
-    PageErrorRoutingModule
+    PageErrorRoutingModule,
+    MaterialModule,
   ]
 })
 export class PageErrorModule { }

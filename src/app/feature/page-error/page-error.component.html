@@ -1,14 +1,36 @@
-<div class="content">
-  <div class="top">
-    <h3 (click)="showMensagemTecnica = !showMensagemTecnica">Ops...</h3>
-    <p *ngIf="showMensagemTecnica">{{ mensagemTecnica }}</p>
-  </div>
-  <div class="menssagem-error">
-    <img src="../../../assets/imagens/logo.png" width="300" height="300" />
-    <h3>{{ mensagem1 }}</h3>
-    <h3>{{ mensagem2 }}</h3>
-  </div>
-  <div class="botao">
-    <button mat-flat-button color="accent" (click)="voltar()">Voltar</button>
+<!--
+  Page-error fica fora do shell (ver AppComponent.outOfShellPrefixes).
+  Mesmo molde do login: viewport inteira, gradiente da marca ao fundo,
+  card claro ao centro com a mensagem.
+-->
+<div class="error-page">
+  <div class="error-container">
+    <div class="error-card">
+      <div class="error-icon">
+        <mat-icon>error_outline</mat-icon>
+      </div>
+
+      <h1
+        class="error-title"
+        role="button"
+        tabindex="0"
+        (click)="showMensagemTecnica = !showMensagemTecnica"
+        (keyup.enter)="showMensagemTecnica = !showMensagemTecnica"
+      >
+        Ops…
+      </h1>
+
+      <p class="error-text" *ngIf="mensagem1">{{ mensagem1 }}</p>
+      <p class="error-text" *ngIf="mensagem2">{{ mensagem2 }}</p>
+
+      <p class="error-tech" *ngIf="showMensagemTecnica && mensagemTecnica">
+        {{ mensagemTecnica }}
+      </p>
+
+      <button type="button" class="ce-btn-primary btn-voltar" (click)="voltar()">
+        <mat-icon>home</mat-icon>
+        Voltar para o início
+      </button>
+    </div>
   </div>
 </div>
