@@ -1,9 +1,8 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // Design tokens — Controle Escolar
 // Guia: docs/design-system.md
-// Convivem com _colors.scss durante a migração; as variáveis `$c-*` daquele
-// arquivo foram reapontadas para `$ce-*` e só serão removidas na Fase 7,
-// quando nenhum arquivo as referenciar.
+// Fonte única da paleta: use `@use "../../shared/style/tokens" as *;` nos
+// SCSS das features.
 // ─────────────────────────────────────────────────────────────────────────────
 
 // ── Casca (azul escolar) ─────────────────────────────────────────────────────
