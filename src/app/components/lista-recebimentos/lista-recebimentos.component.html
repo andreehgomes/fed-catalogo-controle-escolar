@@ -1,37 +1,51 @@
-<div class="recebimentos-wrap" *ngIf="recebimentos.length > 0">
+<div class="lr-wrap" *ngIf="recebimentos.length > 0">
   <mat-accordion>
-    <mat-expansion-panel>
+    <mat-expansion-panel class="lr-panel">
       <mat-expansion-panel-header>
-        <mat-panel-title class="panel-title">
-          <mat-icon class="panel-icon">payments</mat-icon>
+        <mat-panel-title class="lr-title">
+          <mat-icon>payments</mat-icon>
           Pagamentos
         </mat-panel-title>
-        <mat-panel-description class="panel-desc">
-          {{ recebimentos.length }} {{ recebimentos.length === 1 ? 'registro' : 'registros' }}
+        <mat-panel-description class="lr-desc">
+          {{ recebimentos.length }}
+          {{ recebimentos.length === 1 ? 'registro' : 'registros' }}
         </mat-panel-description>
       </mat-expansion-panel-header>
 
-      <div class="recebimento-item" *ngFor="let r of recebimentos">
-        <div class="recebimento-row">
-          <div class="recebimento-data-wrap">
-            <mat-icon class="row-icon">calendar_today</mat-icon>
-            <span class="recebimento-data">{{ r.data | date:'dd/MM/yyyy' }}</span>
+      <ul class="lr-list">
+        <li class="lr-row" *ngFor="let r of recebimentos">
+          <div class="lr-info">
+            <span class="lr-data">
+              <mat-icon>calendar_today</mat-icon>
+              {{ r.data | date:'dd/MM/yyyy' }}
+            </span>
+            <span class="lr-desc-text" *ngIf="r.descricao">
+              {{ r.descricao }}
+            </span>
           </div>
-          <span class="recebimento-valor">R$ {{ fmt(r.valor) }}</span>
-        </div>
-        <div class="recebimento-descricao" *ngIf="r.descricao">{{ r.descricao }}</div>
-        <div class="recebimento-actions">
-          <button mat-button type="button" class="btn-comprovante" (click)="onComprovante(r.key)">
-            <mat-icon>receipt_long</mat-icon>
-            Comprovante
-          </button>
-          <button mat-button type="button" class="btn-delete" (click)="onExcluir(r.key)">
-            <mat-icon>delete</mat-icon>
-            Excluir
-          </button>
-        </div>
-      </div>
-
+          <span class="lr-valor">R$ {{ fmt(r.valor) }}</span>
+          <div class="lr-actions">
+            <button
+              type="button"
+              class="ce-btn-icon"
+              aria-label="Gerar comprovante"
+              matTooltip="Comprovante"
+              (click)="onComprovante(r.key)"
+            >
+              <mat-icon>receipt_long</mat-icon>
+            </button>
+            <button
+              type="button"
+              class="ce-btn-icon lr-btn-del"
+              aria-label="Excluir pagamento"
+              matTooltip="Excluir"
+              (click)="onExcluir(r.key)"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </li>
+      </ul>
     </mat-expansion-panel>
   </mat-accordion>
 </div>

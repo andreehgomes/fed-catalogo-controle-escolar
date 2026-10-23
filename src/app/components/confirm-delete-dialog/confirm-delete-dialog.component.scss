@@ -1,0 +1,62 @@
+@use "../../shared/style/tokens" as *;
+
+:host {
+  display: block;
+}
+
+.ce-confirm-dialog {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 24px 20px 16px;
+  text-align: center;
+  min-width: 280px;
+  max-width: 420px;
+}
+
+.ce-confirm-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: $ce-danger-soft;
+  color: $ce-danger-action;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  mat-icon {
+    font-size: 30px;
+    width: 30px;
+    height: 30px;
+  }
+}
+
+.ce-confirm-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+
+.ce-confirm-title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 650;
+  color: $ce-text;
+}
+
+.ce-confirm-msg {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.45;
+  color: $ce-text-secondary;
+}
+
+.ce-confirm-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 0 0 !important;
+}

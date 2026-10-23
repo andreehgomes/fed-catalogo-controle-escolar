@@ -4,13 +4,26 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 @Component({
   selector: 'app-confirm-delete-dialog',
   template: `
-    <h2 mat-dialog-title>{{ data.titulo }}</h2>
-    <mat-dialog-content>{{ data.mensagem }}</mat-dialog-content>
-    <mat-dialog-actions align="end">
-      <button mat-stroked-button (click)="cancel()">Cancelar</button>
-      <button mat-raised-button color="warn" (click)="confirm()">Excluir</button>
-    </mat-dialog-actions>
+    <div class="ce-confirm-dialog">
+      <div class="ce-confirm-icon">
+        <mat-icon>warning_amber</mat-icon>
+      </div>
+      <div class="ce-confirm-body">
+        <h2 mat-dialog-title class="ce-confirm-title">{{ data.titulo }}</h2>
+        <p class="ce-confirm-msg">{{ data.mensagem }}</p>
+      </div>
+      <mat-dialog-actions class="ce-confirm-actions">
+        <button type="button" class="ce-btn-ghost" (click)="cancel()">
+          Cancelar
+        </button>
+        <button type="button" class="ce-btn-danger" (click)="confirm()">
+          <mat-icon>delete</mat-icon>
+          Excluir
+        </button>
+      </mat-dialog-actions>
+    </div>
   `,
+  styleUrls: ['./confirm-delete-dialog.component.scss'],
   standalone: false,
 })
 export class ConfirmDeleteDialogComponent {

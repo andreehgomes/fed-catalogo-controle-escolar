@@ -1,16 +1,18 @@
-@import "../../shared/style/colors";
+@use "../../shared/style/tokens" as *;
+
+:host {
+  display: block;
+}
+
+// Loader global via mat-dialog: o container do Material já centraliza o
+// conteúdo e tem fundo próprio; aqui só garantimos o padding e o tom.
 .dialog-loader {
   display: flex;
   align-items: center;
   justify-content: center;
-}
+  padding: 20px;
 
-img {
-  max-width: 100%;
-  position: absolute;
-  max-height: 100%;
-  top: 0;
-  height: 95%;
-  width: 95%;
-  clip-path: circle(45% at 50% 49%);
+  ::ng-deep .mat-mdc-progress-spinner circle {
+    stroke: $ce-accent;
+  }
 }

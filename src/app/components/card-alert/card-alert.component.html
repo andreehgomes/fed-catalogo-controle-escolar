@@ -1,5 +1,12 @@
-<mat-card [id]="tipo">
-  <p>
-    {{ mensagem }}
-  </p>
-</mat-card>
+<div class="ce-info-block" [class.success]="tipo === 'sucesso'"
+                           [class.danger]="tipo === 'erro'"
+                           [class.warn]="tipo === 'alerta'">
+  <mat-icon>{{
+    tipo === 'sucesso' ? 'check_circle'
+      : tipo === 'erro' ? 'error_outline'
+      : 'warning_amber'
+  }}</mat-icon>
+  <div class="ce-info-block-body">
+    <p>{{ mensagem }}</p>
+  </div>
+</div>

@@ -1,152 +1,135 @@
-@import "../../shared/style/colors";
+@use "../../shared/style/tokens" as *;
 
-// ─── Wrapper ─────────────────────────────────────────────────────────────────
+:host {
+  display: block;
+}
 
-.recebimentos-wrap {
+.lr-wrap {
   width: 100%;
-  margin-top: 8px;
 }
 
-// ─── Accordion ───────────────────────────────────────────────────────────────
+// Painel do expansion renderiza embutido dentro de um card de conta: tom
+// verde-água do success-soft para marcar que é a trilha de pagamentos.
+.lr-panel {
+  background: $ce-success-soft !important;
+  border: 1px solid rgba($ce-success, 0.22);
+  border-radius: $ce-radius-inner !important;
+  box-shadow: none !important;
 
-::ng-deep {
-  .recebimentos-wrap .mat-expansion-panel {
-    background-color: $c-white;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07) !important;
-    border-radius: 16px !important;
-    overflow: hidden;
+  &.mat-expanded {
+    margin: 0 !important;
   }
 
-  .recebimentos-wrap .mat-expansion-panel-header {
-    background-color: $c-white !important;
-    padding: 0 16px;
-    height: 48px;
+  ::ng-deep .mat-expansion-panel-header {
+    padding: 0 14px;
+    height: 44px;
+    background: transparent !important;
+
+    &:hover:not(.mat-expanded) {
+      background: rgba($ce-success, 0.08) !important;
+    }
   }
 
-  .recebimentos-wrap .mat-expansion-panel-body {
-    padding: 0 0 8px;
+  ::ng-deep .mat-expansion-panel-body {
+    padding: 0 14px 10px;
+  }
+
+  ::ng-deep .mat-expansion-panel-content {
+    background: transparent;
   }
 }
 
-// ─── Header do painel ────────────────────────────────────────────────────────
+.lr-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13.5px;
+  font-weight: 650;
+  color: $ce-success;
 
-.panel-title {
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.lr-desc {
+  flex: 0 0 auto;
+  justify-content: flex-end;
+  font-size: 12px;
+  font-weight: 600;
+  color: $ce-text-muted;
+}
+
+.lr-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.lr-row {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  color: rgba(0, 0, 0, 0.82);
-}
-
-.panel-icon {
-  font-size: 18px;
-  width: 18px;
-  height: 18px;
-  color: $c-secondary;
-}
-
-.panel-desc {
-  font-size: 12px;
-  color: rgba(0, 0, 0, 0.45);
-}
-
-// ─── Item ─────────────────────────────────────────────────────────────────────
-
-.recebimento-item {
-  padding: 10px 16px;
-  border-bottom: 1px solid $c-primary-light-card;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba($ce-success, 0.18);
 
   &:last-child {
     border-bottom: none;
   }
 }
 
-// ─── Linha superior ──────────────────────────────────────────────────────────
-
-.recebimento-row {
+.lr-info {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
 }
 
-.recebimento-data-wrap {
-  display: flex;
+.lr-data {
+  display: inline-flex;
   align-items: center;
   gap: 4px;
-}
+  font-size: 12.5px;
+  font-weight: 650;
+  color: $ce-text-strong;
 
-.row-icon {
-  font-size: 14px;
-  width: 14px;
-  height: 14px;
-  color: rgba(0, 0, 0, 0.36);
-}
-
-.recebimento-data {
-  font-size: 13px;
-  color: rgba(0, 0, 0, 0.54);
-}
-
-.recebimento-valor {
-  font-size: 14px;
-  font-weight: 700;
-  color: $c-secondary;
-}
-
-// ─── Linha inferior ───────────────────────────────────────────────────────────
-
-.recebimento-bottom {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 2px;
-}
-
-.recebimento-descricao {
-  font-size: 12px;
-  color: rgba(0, 0, 0, 0.45);
-  margin-top: 2px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-// ─── Ações ────────────────────────────────────────────────────────────────────
-
-.recebimento-actions {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 4px;
-  margin-top: 6px;
-  padding-top: 6px;
-  border-top: 1px dashed $c-primary-light-card;
-
-  button {
-    font-size: 12px !important;
-    font-weight: 600 !important;
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
-    line-height: 28px !important;
-    height: 28px !important;
-    padding: 0 8px !important;
-    min-width: 0 !important;
-
-    mat-icon {
-      font-size: 14px;
-      width: 14px;
-      height: 14px;
-      margin-right: 2px;
-    }
+  mat-icon {
+    font-size: 13px;
+    width: 13px;
+    height: 13px;
+    color: $ce-text-muted;
   }
 }
 
-.btn-comprovante {
-  color: $c-primary-dark !important;
+.lr-desc-text {
+  font-size: 12px;
+  color: $ce-text-muted;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.btn-delete {
-  color: $c-red-alert !important;
+.lr-valor {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: $ce-success;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.lr-actions {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.lr-btn-del {
+  &:hover,
+  &:focus-visible {
+    color: $ce-danger-action !important;
+    background: $ce-danger-soft !important;
+  }
 }

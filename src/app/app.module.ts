@@ -11,7 +11,6 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
 import { LoaderComponent } from "./components/loader/loader.component";
-import { PageErrorComponent } from "./feature/page-error/page-error.component";
 import { MaterialModule } from "./material.module";
 import {
   HTTP_INTERCEPTORS,
@@ -27,7 +26,6 @@ import { GlobalHttpInterceptor } from "./core/http-handler/global-http.intercept
 import { GlobalErrorHandler } from "./core/http-handler/global-error-handler";
 import { registerLocaleData, DatePipe } from "@angular/common";
 import localePt from "@angular/common/locales/pt";
-import { ToolbarModule } from "./components/toolbar/toolbar.module";
 import { MatPaginatorIntl } from "@angular/material/paginator";
 import { Subject } from "rxjs";
 
@@ -66,14 +64,13 @@ export class MyCustomPaginatorIntl implements MatPaginatorIntl {
 registerLocaleData(localePt, "pt");
 
 @NgModule({
-  declarations: [AppComponent, LoaderComponent, PageErrorComponent],
+  declarations: [AppComponent, LoaderComponent],
   bootstrap: [AppComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
     MaterialModule,
     BrowserAnimationsModule,
-    ToolbarModule,
   ],
   providers: [
     {
