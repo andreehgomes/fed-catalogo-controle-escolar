@@ -1,105 +1,52 @@
-@import "../../shared/style/colors";
+@use "../../shared/style/tokens" as *;
 
-.page {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 70px 16px 32px;
+:host {
+  display: block;
 }
 
-.header {
-  width: 100%;
-  max-width: 540px;
+.new-sponsor-form {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 16px;
-  color: #fff;
+  flex-direction: column;
+  gap: $ce-section-gap;
+}
 
-  .btn-back {
-    color: #fff !important;
-  }
+.alert-block {
+  display: block;
+}
 
-  .page-title {
-    font-size: 20px;
-    font-weight: 600;
+.ns-field {
+  width: 100%;
+}
+
+.ns-tipo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+// O segmented padrão é inline-flex (encolhe pelo conteúdo). No form,
+// faço ele dividir a largura em duas colunas iguais.
+.ns-tipo-group {
+  display: flex;
+  width: 100%;
+
+  > button {
     flex: 1;
+    justify-content: center;
+    text-align: center;
   }
 }
 
-.page-content {
-  width: 100%;
-  max-width: 540px;
+.ns-field-valor {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
+  align-items: stretch;
 
-.info-card {
-  background: #fff !important;
-  border-radius: 12px !important;
-  padding: 12px 14px !important;
-  display: flex !important;
-  flex-direction: column;
-  gap: 2px;
-
-  .info-label {
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
-    color: rgba(0, 0, 0, 0.4);
-  }
-
-  .info-value {
-    font-size: 15px;
-    font-weight: 600;
-    color: $c-primary-dark;
+  ::ng-deep input-moeda {
+    display: block;
+    width: 100%;
   }
 }
 
-.form-card {
-  background: #fff;
-  border-radius: 14px;
-  padding: 18px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.fields {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.field-full {
-  width: 100%;
-}
-
-.section-label {
-  font-size: 12px;
-  font-weight: 700;
-  color: $c-primary;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-top: 4px;
-}
-
-.tipo-toggle {
-  align-self: stretch;
-
-  ::ng-deep .mat-button-toggle {
-    flex: 1;
-    font-size: 13px;
-  }
-}
-
-.actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 6px;
+.ns-actions {
+  padding-top: 6px;
 }

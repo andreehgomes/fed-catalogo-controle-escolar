@@ -1,59 +1,81 @@
-<div class="page" *ngIf="campaign">
-  <div class="header">
-    <button mat-icon-button class="btn-back" (click)="cancelar()">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
-    <span class="page-title">Novo patrocínio</span>
-  </div>
+<section class="ce-page ce-page--form new-sponsor" *ngIf="campaign">
+  <header class="ce-page-header">
+    <div class="ce-page-title">
+      <h1>Novo patrocínio</h1>
+      <span class="ce-page-subtitle">
+        Adicione um patrocinador à campanha
+        <strong>{{ campaign.nome }}</strong>.
+      </span>
+    </div>
+  </header>
 
-  <div class="page-content">
-    <mat-card class="info-card">
-      <span class="info-label">Campanha</span>
-      <span class="info-value">{{ campaign.nome }}</span>
-    </mat-card>
-
-    <form [formGroup]="form" class="form-card">
+  <form [formGroup]="form" class="ce-panel new-sponsor-form" (ngSubmit)="salvar()">
+    <div class="alert-block" *ngIf="alerta?.codigo != null">
       <card-alert
-        *ngIf="alerta?.codigo != null"
         tipo="{{ alerta.tipo }}"
         codigo="{{ alerta.codigo }}"
         mensagem="{{ alerta.mensagem }}"
       ></card-alert>
+    </div>
 
-      <div class="fields">
-        <mat-form-field appearance="outline" color="accent" class="field-full">
-          <mat-label>Nome do patrocinador</mat-label>
-          <mat-icon matPrefix>volunteer_activism</mat-icon>
-          <input matInput formControlName="nome" autocomplete="off" />
-        </mat-form-field>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="ns-field">
+      <mat-label>Nome do patrocinador</mat-label>
+      <mat-icon matPrefix>volunteer_activism</mat-icon>
+      <input matInput formControlName="nome" autocomplete="off" />
+    </mat-form-field>
 
-        <span class="section-label">Tipo de patrocínio</span>
-        <mat-button-toggle-group [formControl]="tipoCtrl" class="tipo-toggle">
-          <mat-button-toggle value="valor">Valor (R$)</mat-button-toggle>
-          <mat-button-toggle value="produto">Produto</mat-button-toggle>
-        </mat-button-toggle-group>
-
-        <input-moeda *ngIf="tipoCtrl.value === 'valor'"
-                     formControlName="valor" label="Valor patrocinado" />
-
-        <mat-form-field *ngIf="tipoCtrl.value === 'produto'"
-                        appearance="outline" color="accent" class="field-full">
-          <mat-label>Produto/Material patrocinado</mat-label>
-          <input matInput formControlName="produto" autocomplete="off" />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" color="accent" class="field-full">
-          <mat-label>Observação (opcional)</mat-label>
-          <textarea matInput formControlName="observacao" rows="2"></textarea>
-        </mat-form-field>
-      </div>
-
-      <div class="actions">
-        <button mat-stroked-button type="button" (click)="cancelar()">Cancelar</button>
-        <button mat-flat-button color="accent" type="button" (click)="salvar()">
-          Salvar
+    <!-- ─── Tipo de patrocínio ────────────────────────────────────────── -->
+    <div class="ns-tipo">
+      <span class="ce-label">Tipo de patrocínio</span>
+      <div class="ce-segmented ns-tipo-group" role="tablist">
+        <button
+          type="button"
+          role="tab"
+          [class.is-active]="tipoCtrl.value === 'valor'"
+          [attr.aria-selected]="tipoCtrl.value === 'valor'"
+          (click)="tipoCtrl.setValue('valor')"
+        >
+          Valor (R$)
+        </button>
+        <button
+          type="button"
+          role="tab"
+          [class.is-active]="tipoCtrl.value === 'produto'"
+          [attr.aria-selected]="tipoCtrl.value === 'produto'"
+          (click)="tipoCtrl.setValue('produto')"
+        >
+          Produto
         </button>
       </div>
-    </form>
-  </div>
-</div>
+    </div>
+
+    <div class="ns-field-valor" *ngIf="tipoCtrl.value === 'valor'">
+      <input-moeda formControlName="valor" label="Valor patrocinado" />
+    </div>
+
+    <mat-form-field
+      *ngIf="tipoCtrl.value === 'produto'"
+      appearance="outline"
+      subscriptSizing="dynamic"
+      class="ns-field"
+    >
+      <mat-label>Produto/Material patrocinado</mat-label>
+      <input matInput formControlName="produto" autocomplete="off" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="ns-field">
+      <mat-label>Observação (opcional)</mat-label>
+      <textarea matInput formControlName="observacao" rows="2"></textarea>
+    </mat-form-field>
+
+    <div class="ce-form-actions ns-actions">
+      <button type="button" class="ce-btn-ghost" (click)="cancelar()">
+        Cancelar
+      </button>
+      <button type="submit" class="ce-btn-primary">
+        <mat-icon>save</mat-icon>
+        Salvar patrocínio
+      </button>
+    </div>
+  </form>
+</section>
