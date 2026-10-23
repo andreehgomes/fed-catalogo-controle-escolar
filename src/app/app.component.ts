@@ -44,7 +44,6 @@ export class AppComponent implements OnInit, OnDestroy {
   isPublicView = false;
   private readonly outOfShellPrefixes: string[] = [
     "/" + RouterEnum.LOGIN,
-    "/" + RouterEnum.NEW_ACCOUNT,
     "/" + RouterEnum.REDEFINE_PASSWORD,
     "/" + RouterEnum.RESET_PASSWORD,
     "/" + RouterEnum.ERROR,

@@ -2,6 +2,7 @@ import { NgModule } from "@angular/core";
 import { Routes, RouterModule } from "@angular/router";
 import { authGuard } from "./core/guards/auth.guard";
 import { roleGuard } from "./core/guards/role.guard";
+import { masterGuard } from "./core/guards/master.guard";
 
 const routes: Routes = [
   {
@@ -11,7 +12,7 @@ const routes: Routes = [
   },
   {
     path: "new-account",
-    canActivate: [authGuard, roleGuard],
+    canActivate: [authGuard, roleGuard, masterGuard],
     loadChildren: () =>
       import("./feature/new-account/new-account.module").then(
         (m) => m.NewAccountModule
@@ -190,7 +191,7 @@ const routes: Routes = [
   },
   {
     path: "account-list",
-    canActivate: [authGuard, roleGuard],
+    canActivate: [authGuard, roleGuard, masterGuard],
     loadChildren: () =>
       import("./feature/account-list/account-list.module").then(
         (m) => m.AccountListModule

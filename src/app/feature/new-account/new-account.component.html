@@ -104,9 +104,12 @@
     </div>
 
     <div class="ce-form-actions na-actions">
-      <button type="button" class="ce-btn-ghost" (click)="zerarForm()">
+      <a
+        class="ce-btn-ghost"
+        [routerLink]="['/' + route.ACCOUNT_LIST]"
+      >
         Cancelar
-      </button>
+      </a>
       <button
         type="submit"
         class="ce-btn-primary"

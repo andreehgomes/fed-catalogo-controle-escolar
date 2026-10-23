@@ -22,4 +22,8 @@ export class UserProfileService {
   isEstagiario(): boolean {
     return this._perfil$.getValue() === PerfilEnum.ESTAGIARIO;
   }
+
+  isMaster(): boolean {
+    return this._perfil$.getValue() === PerfilEnum.MASTER;
+  }
 }
