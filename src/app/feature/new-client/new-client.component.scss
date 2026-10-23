@@ -1,53 +1,29 @@
-@import "../../shared/style/colors";
+@use "../../shared/style/tokens" as *;
 
-.page {
-  min-height: 100vh;
+:host {
+  display: block;
+}
+
+.new-client-form {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 70px 16px 32px;
+  gap: $ce-section-gap;
 }
 
-.header {
-  width: 100%;
-  max-width: 540px;
-  margin-bottom: 16px;
+.alert-block {
+  display: block;
 }
 
-.page-title {
-  font-size: 22px;
-  font-weight: 600;
-  color: #fff;
-}
-
-.page-content {
-  width: 100%;
-  max-width: 540px;
-}
-
-.form-card {
-  background: #fff;
-  border-radius: 14px;
-  padding: 20px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+.nc-fields {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: $ce-gap;
 }
 
-.fields {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.field-full {
+.nc-field {
   width: 100%;
 }
 
-.actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 6px;
+.nc-actions {
+  padding-top: 6px;
 }
