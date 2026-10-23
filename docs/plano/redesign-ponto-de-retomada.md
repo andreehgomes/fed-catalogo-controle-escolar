@@ -4,156 +4,146 @@
 > uma janela de contexto limpa.
 >
 > **Branch atual:** `feature/redesign`
-> **Último commit:** `f09962e redesign`
-> **Working tree:** limpo (tudo commitado até aqui).
+> **Working tree:** limpo (tudo commitado).
+> **Status:** Fases 1–7 concluídas. Resta a Fase 8 (qualidade, opcional).
 
-## 1. Onde paramos
+## 1. O que está feito
 
-Todas as mudanças abaixo estão commitadas em `feature/redesign` e o build
-Angular passa (`npx ng build` sem erros, só deprecation warning esperada do
-`@import "colors"` e warnings preexistentes de arquivos TS não referenciados).
+Todas as 25 features estão migradas para o DS `ce-*`, os componentes
+compartilhados foram portados ou removidos, e o legado de cores saiu do
+repositório. `npx ng build` passa sem erros nem deprecation warnings
+(só warnings pré-existentes de TS files não referenciados).
 
-### Fundação (Fases 1–4) — concluídas
+### Fundação (Fases 1–4)
 
-- **Docs base** em `docs/`:
-  - [`analise/redesign-estado-atual.md`](../analise/redesign-estado-atual.md) — inventário congelado.
-  - [`plano/redesign-controle-escolar.md`](redesign-controle-escolar.md) — plano em 8 fases.
-  - [`design-system.md`](../design-system.md) — guia visual.
-  - [`CLAUDE.md`](../../CLAUDE.md) na raiz.
-- **Design system `ce-*`** em `src/app/shared/style/`:
-  - `_tokens.scss` — casca azul escolar, superfícies claras, rampa de texto, semânticas, raios, sombras, layout, tipografia **Instrument Sans**.
+- Docs: `analise/redesign-estado-atual.md`, `plano/redesign-controle-escolar.md`,
+  `design-system.md`, `CLAUDE.md`.
+- Design system `ce-*` em `src/app/shared/style/`:
+  - `_tokens.scss` — paleta azul escolar, raios, sombras, tipografia Instrument Sans.
   - `_breakpoints.scss` — `mobile`, `tablet-up`, `desktop`, `shell-narrow`/`shell-wide`.
-  - `_admin-ui.scss` — mixins parametrizáveis: `ce-grid`, `ce-chip`, `ce-btn-icon-ghost`, `ce-icon-block`, `ce-progress`, `ce-segmented`, **`ce-field-mat`** (ver nota crítica abaixo).
-- **`_colors.scss`** reapontado: cada `$c-*` legado agora resolve para o `$ce-*` equivalente, mantendo 214 referências vivas nas 25 features.
-- **`styles.scss` reescrito** com classes globais `ce-*` (page/card/panel/field/btn-*/list/chip/segmented/info-block/empty-state/summary/loading/skeleton) + `@include ce-field-mat;` + overrides globais do `mat-mdc-select-panel`/`mat-mdc-autocomplete-panel` para o visual casar com o dropdown nativo.
-- **`index.html`** com Instrument Sans + Material Symbols Rounded carregados do Google Fonts, splash com `$ce-gradient-shell`.
-- **Shell novo** (`src/app/app.component.{ts,html,scss}`): `<aside class="ce-nav">` com rail 76 / expandido 264 / drawer 272 sobreposto <900px, header sticky translúcido com `backdrop-filter: blur(14px)`, scroll interno a `.ce-content`. RBAC preservado 1-a-1 (`!isEstagiario`, `isMaster`). Rotas **fora do shell**: `login`, `new-account`, `redefine-password`, `reset-password`, `error`, `c/:key`.
-- **`material.module.ts`** ganhou `MatTooltipModule` (usado no rail).
+  - `_admin-ui.scss` — mixins parametrizáveis: `ce-grid`, `ce-chip`,
+    `ce-btn-icon-ghost`, `ce-icon-block`, `ce-progress`, `ce-segmented`,
+    `ce-field-mat` (alinha mat-form-field outline ao `.ce-field` nativo).
+- `styles.scss` reescrito com classes globais `.ce-*` e overrides globais
+  de `mat-mdc-select-panel`/`mat-mdc-autocomplete-panel`.
+- `index.html` com Instrument Sans + Material Symbols Rounded.
+- Shell novo (`app.component.{ts,html,scss}`) com rail/expanded/drawer e
+  header sticky; RBAC preservado (`!isEstagiario`, `isMaster`).
 
-### Features migradas para o DS (Fase 5)
+### Fase 5 — Todas as features (25/25)
 
-Feitas até agora (todas com `.ce-page`, cabeçalho `.ce-page-header`, botões `.ce-btn-*`, chips `.ce-chip`, filtros em grid, empty states `.ce-empty-state` quando aplicável; ts/módulo **intocados** em todas):
-
-| Feature | Molde |
+| Feature | Nota |
 |---|---|
-| **Feed** | `.ce-page` com hero escuro + grid auto-fit de atalhos coloridos por `data-color`. |
-| **Login** | Fora do shell; card branco centralizado sobre `$ce-gradient-hero`; campos `<label class="ce-field">` + `<input>` nativo. |
-| **campaign-list** | Grid auto-fit de cards com chip de status, barra de progresso de meta via `ce-progress` + `--ce-progress-value`. |
-| **sale-list** | Grid auto-fit; chips de status success/warn, saldo pendente em `$ce-danger-data`. |
-| **entrega-list** | Dois `ce-summary` coloridos (entregues/faltando) + `mat-tab-group` com badges + cards com pills ce-chip (success/warn/danger/info) + comprovante verde. |
-| **client-list** | Lista densa `.ce-list` + `.ce-list-row` com avatar inicial, nome, telefone, edit/delete. |
-| **entrega-detail** | `.ce-page--detalhe` com 5 ce-cards (cabeçalho + saldo tiles / progresso / ações entrega / histórico edit inline / recebimentos edit inline). |
-| **Dashboard** | Filtros em grid + 8 KPIs em `ce-summary` com `data-tint` + card de meta + 4 `mat-expansion-panel` estilizados como ce-card. |
-| **contas-a-receber** | Filtros (busca + mat-select + `ce-segmented` + ghost) + 2 ce-summary + cards com 4 ações (Receber primary à direita). |
-| **listar-recebimentos** | Filtros + `ce-summary` verde + cards com cliente clicável acessível. |
-| **expense-list** | Grid auto-fit; valor vermelho (despesa=danger); "sem comprovante" discreto. |
-| **sponsor-list** | 2 ce-summary coloridos (dinheiro verde / produto azul) + grid de cards com chips semânticos. |
-| **account-list** | Lista densa com avatar, "· você" quando é o próprio usuário, chip de perfil (master=success/admin=info/estagiário=danger), delete desabilitado para si. |
-| **new-sale** | **Primeiro formulário.** `.ce-page--form` + `.ce-panel`; molde para os outros 6 (new-campaign, new-client, new-expense, new-sponsor, new-account, redefine-password). |
+| **Autenticação / conta** | `login`, `redefine-password`, `page-error` (fora do shell, molde do login); `new-account` entrou no shell e virou Master-only (ver seção abaixo). |
+| **Campanhas** | `feed`, `campaign-list`, `new-campaign`, `campaign-detail`, `campaign-public`, `new-sponsor`, `sponsor-list`. |
+| **Clientes** | `client-list`, `new-client`, `client-detail`. |
+| **Vendas / financeiro** | `new-sale`, `sale-list`, `contas-a-receber`, `recebimento`, `listar-recebimentos`. |
+| **Despesas** | `new-expense`, `expense-list`. |
+| **Entregas** | `entrega-list`, `entrega-detail`. |
+| **Gestão** | `dashboard`, `account-list`. |
 
-### Nota crítica sobre o `ce-field-mat` (ganho desta sessão)
+Padrão aplicado: `.ce-page[--form]` + `.ce-page-header`, `.ce-panel`/`.ce-card`,
+`mat-form-field` com `subscriptSizing="dynamic"` (herda `ce-field-mat`),
+`ce-form-actions` com ghost + primary, grid `align-items: end` para
+alinhar inputs mat-form-field com `.ce-field` nativo. `ts/módulo` intocados
+nas features (as exceções foram no fluxo de permissão do new-account e
+nos modules que precisavam de ajuste real).
 
-O mixin `ce-field-mat` em `_admin-ui.scss` **alinha o `mat-form-field appearance="outline"` ao `.ce-field` nativo**. É portado do `ep-field-mat` do confecções, mas **tem tokens adicionais que o confecções não tem** — essenciais para o Material v20.2.7 M3 real desta versão:
+#### Correções colaterais aplicadas durante a Fase 5
 
-```scss
---mat-form-field-outlined-outline-color       // v20 M3 — pinta .mat-mdc-notch-piece
---mat-form-field-outlined-hover-outline-color
---mat-form-field-outlined-focus-outline-color
---mat-form-field-outlined-error-outline-color
---mat-form-field-outlined-outline-width: 1px
---mat-form-field-outlined-container-shape     // raio do leading/trailing
-```
-
-Sem esses tokens novos, a borda do notched-outline sai cinza default
-`rgb(119, 118, 128)` com raio 4px. **Se for propagar esse mixin para
-cosméticos/confecções, inclua esses tokens.**
-
-Outras duas correções que fiz nesta sessão e ficam valendo para todas as
-features:
-
-1. **`.ce-field` passou a estilizar `> span` E `> label`** (antes só `> label`, que nunca batia no html `<label class="ce-field"><span>...</span>`).
-2. **Dropdown do `mat-select-panel`/`mat-mdc-autocomplete-panel`** foi estilizado em `styles.scss` para igualar o `.ns-suggestions` do new-sale: fundo branco, borda `$ce-border`, raio `$ce-radius-sm`, sombra `$ce-shadow-panel`, padding 4px, opções 40px com hover/selected em `$ce-accent-soft`.
-3. **Hints posicionadas absolute**: para evitar que uma mensagem abaixo de um campo desalinhe os vizinhos no grid, hints devem ser `position: absolute; top: 100%`.
-
-## 2. Pendente (Fases 5.c–8)
-
-### Formulários restantes (molde = new-sale)
-
-- `new-campaign` — tem FormArray de `itensPadrao` e `patrocinadores` (ver domain). Mais parecido com new-sale.
-- `new-client` — simples: nome, telefone. Molde para new-expense/new-sponsor.
-- `new-expense` — tem upload de comprovante (storage).
-- `new-sponsor` — nome, tipo (valor/produto), valor OU produto, observação.
-- `new-account` — nome, email, telefone, perfil.
-- `redefine-password` — fora do shell (já).
-
-### Detalhes restantes
-
-- `campaign-detail` — tela densa com totais, lista de patrocinadores, lista de vendas.
-- `client-detail` — detalhes do cliente + histórico de vendas.
-- `recebimento` — formulário de registro de pagamento vindo de contas-a-receber.
-
-### Especial
-
-- **`campaign-public` (`c/:key`)** — rota pública, compartilhável, com `html2canvas`. Decisão pendente: seguir o DS ou manter layout isolado de impressão. **Recomendação:** manter isolada, usar `$ce-font-print` (pilha de sistema) para o html2canvas renderizar bem.
-- `page-error` — tela de erro simples.
+- **new-account entra no shell e vira Master-only:** `masterGuard` novo
+  em `src/app/core/guards/master.guard.ts` + `isMaster()` em
+  `UserProfileService`. Guard aplicado em `/new-account` e `/account-list`.
+  Menu "Cadastro de usuário" ganha `*ngIf="isMaster"`.
+- **page-error.module** passou a declarar o próprio componente e importar
+  `MaterialModule` (ambos faltavam desde antes).
+- **Botões Cancelar** que só resetavam o form (new-account, redefine-password)
+  viraram `<a routerLink>` reais.
+- **campaign-public:** confirmado que NÃO usa `html2canvas` (a observação
+  antiga sobre fonte de impressão não se aplica). Aplicado o DS normal:
+  hero full-width com gradiente da marca e conteúdo em container 960px.
 
 ### Fase 6 — Componentes compartilhados
 
-Pendentes de migração:
-- `card-alert` → já funciona dentro de `.ce-info-block`, mas o componente em si ainda tem SCSS antigo. Converter.
-- `confirm-delete-dialog` → casca própria + overlay Material como veículo.
-- `input-moeda` → absorvido pelo `.ce-field` com prefix.
-- `lista-recebimentos` → `.ce-list` com linhas específicas. **Já aparece embutido em contas-a-receber mas com estilo antigo.**
-- `loader` → `.ce-loading`.
-- `toolbar` → **remover** (shell cobre).
-- `footer` → remover ou integrar.
+- `card-alert` → template virou `.ce-info-block` com variantes
+  `success/danger/warn` mapeadas de `AlertasType`.
+- `confirm-delete-dialog` → ícone circular em `danger-soft`, mensagem
+  secundária e botões `ce-btn-ghost` + `ce-btn-danger`.
+- `loader` → `@import "colors"` fora, `mat-spinner` com stroke `ce-accent`.
+- `lista-recebimentos` → casca `success-soft` embutida no card de conta,
+  linhas `.lr-row` com `ce-btn-icon` nas ações.
+- `input-moeda` → já renderiza `mat-form-field`, que ganha o `ce-field-mat`
+  global; template/TS mantidos.
+- `toolbar` e `footer` → **removidos** (componentes mortos); limpezas em
+  `app.module` e `new-account.module`.
 
 ### Fase 7 — Limpeza
 
-Depois que a última feature migrar:
-1. Remover `_colors.scss` (quando ninguém referenciar `$c-*`).
-2. Remover classes utilitárias `.c-primary`, `.c-red`, `.c-yellow`.
-3. Remover Roboto do `index.html` (não está mais lá — já removido).
-4. Migrar `@import "colors"` para `@use` nos SCSS das features (ou remover junto com `_colors.scss`).
+- `_colors.scss` removido. Nenhum `$c-*` nem `.c-primary/.c-red/.c-yellow`
+  no app.
+- `@import "./app/shared/style/colors"` removido de `styles.scss`.
+- Deprecation warnings do Sass (`@import rules are deprecated`) sumiram do
+  build.
+- Roboto já não estava no `index.html`.
 
-### Fase 8 — Qualidade (opcional)
+## 2. O que falta — Fase 8 (opcional)
 
-- Substituir `codelyzer`/`tslint` por `angular-eslint 20`.
-- Adicionar Playwright para e2e dos fluxos críticos (login, nova venda, nova entrega, confirmar pagamento, campanha pública).
+- **Substituir `codelyzer`/`tslint` por `angular-eslint 20`.** O `npm run lint`
+  ainda roda o linter legado. Migração é independente do DS.
+- **Playwright para e2e** dos fluxos críticos: login, nova venda, nova
+  entrega, confirmar pagamento, campanha pública.
 
-## 3. Decisões e padrões consolidados nesta sessão
+Nenhum é bloqueante do redesign.
+
+## 3. Decisões e padrões consolidados
 
 Para evitar refazer no próximo passo:
 
 - **Prefixo do DS:** `ce-*` (controle-escolar).
-- **NgModules mantidos** (não migrar para standalone — cosméticos e confecções também estão em NgModules).
-- **Filtros de lista** seguem padrão: grid `2fr / 1.x fr / auto` com busca `.ce-field--search` + mat-select (com `::ng-deep .mat-mdc-form-field-subscript-wrapper { display: none }` para alinhar altura) + `.ce-btn-ghost` Limpar.
-- **Busca com ícone absoluto**: `.ce-field--search` tem `.ce-field-prefix-icon` posicionado `left: 12px; top: 50%; transform: translateY(-50%)` e `input { padding-left: 40px }`.
-- **Chips semânticos**: `.ce-chip` + `.success` / `.info` / `.warn` / `.danger` / `.accent` (classes já no `styles.scss`).
-- **Botão de excluir** em cards/linhas: `.ce-btn-icon` com hover `$ce-danger-action` + `$ce-danger-soft` via `!important`.
-- **Empty states** diferenciam "nada cadastrado" × "sem resultado para filtros".
-- **Totais inline no subtítulo** (`.ce-page-subtitle`): contador + "· R$ xxx" quando há agregação monetária. Para destacar, usar um `.ce-summary` separado.
-- **Grid de 2 colunas com mat-form-field + .ce-field**: usar `align-items: end` para alinhar os inputs (mat tem `margin-top: 20px` do mixin).
-- **Hints abaixo de inputs**: `position: absolute; top: 100%` para não desalinhar vizinhos.
-- **Textarea Material**: usa `mat-form-field` (justifica pelo `mat-error`); respira melhor com o mixin.
-- **Formulário inline em bloco**: usar `.ce-block` com `h3.ce-section-title` e `.ce-form-actions.form-inline-actions`.
+- **NgModules mantidos** (não migrar para standalone).
+- **Filtros de lista** seguem padrão: grid `2fr / 1.x fr / auto` com
+  busca `.ce-field--search` + mat-select (com
+  `::ng-deep .mat-mdc-form-field-subscript-wrapper { display: none }`) +
+  `.ce-btn-ghost` Limpar; `align-items: end` no grid para alinhar inputs
+  mat + nativos.
+- **Busca com ícone absoluto:** `.ce-field--search` tem
+  `.ce-field-prefix-icon` posicionado `left: 12px; top: 50%; transform:
+  translateY(-50%)` e `input { padding-left: 40px }`.
+- **Chips semânticos:** `.ce-chip` + `.success` / `.info` / `.warn` /
+  `.danger` / `.accent`.
+- **Botão de excluir** em cards/linhas: `.ce-btn-icon` com hover
+  `$ce-danger-action` + `$ce-danger-soft` via `!important`.
+- **Empty states** diferenciam "nada cadastrado" × "sem resultado para
+  filtros".
+- **Hints abaixo de inputs:** `position: absolute; top: 100%` para não
+  desalinhar vizinhos.
+- **Textarea Material:** usa `mat-form-field` com o mixin.
+- **mat-expansion-panel estilizado como `.ce-card`** com os overrides do
+  dashboard (padding, altura 60px, ícone 20px em `$ce-accent`, body com
+  padding `0 20px 20px`).
 
 ## 4. Como retomar
 
 1. Abrir este projeto em uma nova janela do Claude Code.
-2. Ler, **nesta ordem**:
-   - [`docs/plano/redesign-controle-escolar.md`](redesign-controle-escolar.md) (plano das fases)
-   - [`docs/design-system.md`](../design-system.md) (guia visual)
+2. Ler, nesta ordem:
+   - [`docs/plano/redesign-controle-escolar.md`](redesign-controle-escolar.md)
+   - [`docs/design-system.md`](../design-system.md)
    - Este documento
    - `src/app/shared/style/_tokens.scss` e `_admin-ui.scss`
    - `src/styles.scss`
-   - `src/app/feature/new-sale/` (molde dos formulários)
-3. Para a **próxima feature**, perguntar ao usuário qual (sugerido: `new-client`, por ser o molde dos outros formulários simples). Seguir o padrão do new-sale, lendo primeiro os três arquivos (ts/html/scss) da feature alvo + um ou dois irmãos (ex.: new-sale, campaign-list).
+3. Para a Fase 8, começar pelo `angular-eslint` (é um comando `ng add` +
+   ajuste em `angular.json`; depois adaptar algumas regras); Playwright
+   é um projeto novo em `e2e/`.
 4. Validar com `npx ng build` ao final.
-5. Se um campo visual não parecer certo, **abrir o navegador** no `localhost:4200` (dev server já roda, não subir outra porta) e inspecionar os tokens reais com `mcp__Claude_Browser__javascript_tool` **antes** de supor a causa.
+5. Se um campo visual não parecer certo, abrir o navegador em
+   `localhost:4200` e inspecionar os tokens reais com
+   `mcp__Claude_Browser__javascript_tool` antes de supor a causa.
 
-## 5. Observações do usuário durante a sessão
+## 5. Observações do usuário durante as sessões
 
 - Preferência por verificar antes de supor (não ficar chutando overrides CSS).
-- Preferência por reaproveitar o que já existe nos projetos-irmãos (ganho confirmado com `ce-field-mat`).
+- Preferência por reaproveitar o que já existe nos projetos-irmãos (ganho
+  confirmado com `ce-field-mat`).
 - O dev server já roda em `localhost:4200`; **não subir outro na porta 4201**.
+- Botões "Cancelar" devem realmente navegar para fora do form, não só
+  resetar.
