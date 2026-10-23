@@ -2,7 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { forkJoin } from 'rxjs';
 import { SaleService } from 'src/app/shared/service/sale/sale.service';
+import { CampaignService } from 'src/app/shared/service/campaign/campaign.service';
 import { ComprovanteService } from 'src/app/shared/service/comprovante/comprovante.service';
 import { LoaderService } from 'src/app/components/loader/loader.service';
 import { Sale } from 'src/app/shared/model/sale';
@@ -27,6 +29,7 @@ export class EntregaListComponent implements OnInit {
 
   constructor(
     private saleService: SaleService,
+    private campaignService: CampaignService,
     private comprovanteService: ComprovanteService,
     private loader: LoaderService,
     private router: Router
@@ -34,9 +37,21 @@ export class EntregaListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loader.openDialog();
-    this.saleService.getAllSales().subscribe({
-      next: (sales) => {
-        this.todasSales = sales;
+    // Carrega vendas + campanhas em paralelo. Precisamos das campanhas
+    // para filtrar fora as vendas de campanhas sem controle de entrega.
+    forkJoin({
+      sales: this.saleService.getAllSales(),
+      campaigns: this.campaignService.getAllCampaigns(),
+    }).subscribe({
+      next: ({ sales, campaigns }) => {
+        // Campanhas sem controle (ex.: rifa) — ignora as vendas delas.
+        // Omisso = true, para preservar o comportamento das antigas.
+        const semControle = new Set(
+          campaigns
+            .filter((c) => c.controlaEntrega === false)
+            .map((c) => c.key as string)
+        );
+        this.todasSales = sales.filter((s) => !semControle.has(s.campaignKey));
         this.aplicarFiltro('');
         this.carregando = false;
         this.loader.closeDialog();

@@ -26,6 +26,10 @@ export interface Campaign {
   status: CampaignStatus;
   itensPadrao?: CampaignDefaultItem[];
   patrocinadores?: CampaignSponsor[];
+  // Quando false, as vendas desta campanha não aparecem na lista de
+  // entregas (ex.: rifa, bingo). Omisso = true para preservar o
+  // comportamento das campanhas já cadastradas.
+  controlaEntrega?: boolean;
   dataCriacao: string;
   dataAlteracao?: string;
 }

@@ -31,6 +31,7 @@ export class NewCampaignComponent implements OnInit {
     dataFim: [""],
     meta: [null],
     status: ["ativa", Validators.required],
+    controlaEntrega: [true],
     itensPadrao: this.fb.array([]),
   });
 
@@ -55,6 +56,7 @@ export class NewCampaignComponent implements OnInit {
         dataFim: selected.dataFim ?? "",
         meta: selected.meta ?? null,
         status: selected.status,
+        controlaEntrega: selected.controlaEntrega !== false,
       });
       selected.itensPadrao?.forEach((it) => {
         this.itensPadraoArray.push(
@@ -105,6 +107,7 @@ export class NewCampaignComponent implements OnInit {
       nome: v.nome.trim(),
       dataInicio: v.dataInicio,
       status: v.status,
+      controlaEntrega: v.controlaEntrega !== false,
       dataCriacao: this.editingKey && this.dataCriacaoOriginal ? this.dataCriacaoOriginal : now,
       ...(descricao ? { descricao } : {}),
       ...(v.dataFim ? { dataFim: v.dataFim } : {}),

@@ -141,6 +141,24 @@
   font-style: italic;
 }
 
+// ── Toggle "Controlar entregas ou retiradas" ─────────────────────────────────
+.nc-entrega {
+  display: block;
+}
+
+.nc-entrega-label {
+  font-weight: 600;
+  color: $ce-text-strong;
+  font-size: 14px;
+  margin-right: 4px;
+}
+
+.nc-entrega-help {
+  font-size: 13px;
+  color: $ce-text-muted;
+  font-weight: 400;
+}
+
 .nc-actions {
   padding-top: 6px;
 }
