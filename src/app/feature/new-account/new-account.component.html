@@ -1,42 +1,63 @@
-<div class="page">
-  <div class="header">
-    <span class="page-title">{{ modoEdicao ? 'Editar usuário' : 'Cadastro de usuários' }}</span>
-  </div>
+<section class="ce-page ce-page--form new-account">
+  <header class="ce-page-header">
+    <div class="ce-page-title">
+      <h1>{{ modoEdicao ? 'Editar usuário' : 'Cadastro de usuários' }}</h1>
+      <span class="ce-page-subtitle">
+        {{ modoEdicao
+          ? 'Ajuste os dados ou a senha do usuário.'
+          : 'Preencha os campos abaixo para cadastrar um novo usuário.' }}
+      </span>
+    </div>
+  </header>
 
-  <div class="page-content">
+  <div class="alert-block" *ngIf="mensagemRespostaCadastro?.codigo != null">
     <card-alert
-      *ngIf="mensagemRespostaCadastro?.codigo != null"
       tipo="{{ mensagemRespostaCadastro.tipo }}"
       codigo="{{ mensagemRespostaCadastro.codigo }}"
       mensagem="{{ mensagemRespostaCadastro.mensagem }}"
     ></card-alert>
+  </div>
 
-    <form
-      [formGroup]="formControlNewAccount"
-      (ngSubmit)="onSubmit()"
-      class="form-card"
-      #formDirective="ngForm"
-    >
-      <div class="fields">
-        <mat-form-field color="accent" class="field-full" appearance="outline">
-          <mat-label>Nome completo</mat-label>
-          <input matInput formControlName="nome" />
-        </mat-form-field>
+  <form
+    [formGroup]="formControlNewAccount"
+    (ngSubmit)="onSubmit()"
+    class="ce-panel new-account-form"
+    #formDirective="ngForm"
+  >
+    <div class="na-fields">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="na-field">
+        <mat-label>Nome completo</mat-label>
+        <mat-icon matPrefix>person</mat-icon>
+        <input matInput formControlName="nome" autocomplete="off" />
+      </mat-form-field>
 
-        <mat-form-field color="accent" class="field-full" appearance="outline">
+      <div class="na-row-2">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="na-field">
           <mat-label>Celular</mat-label>
-          <input matInput formControlName="celular" type="tel" placeholder="00 00000-0000" />
+          <mat-icon matPrefix>phone</mat-icon>
+          <input
+            matInput
+            formControlName="celular"
+            type="tel"
+            placeholder="00 00000-0000"
+          />
         </mat-form-field>
 
-        <mat-form-field color="accent" class="field-full" appearance="outline">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="na-field">
           <mat-label>E-mail</mat-label>
+          <mat-icon matPrefix>mail</mat-icon>
           <input matInput formControlName="email" type="text" />
         </mat-form-field>
+      </div>
 
-        <mat-form-field color="accent" class="field-full" appearance="outline">
+      <div class="na-row-2">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="na-field">
           <mat-label>Data de Nascimento</mat-label>
-          <input matInput formControlName="dataNascimento" [matDatepicker]="datepicker" />
-          <mat-hint>DD/MM/AAAA</mat-hint>
+          <input
+            matInput
+            formControlName="dataNascimento"
+            [matDatepicker]="datepicker"
+          />
           <mat-datepicker-toggle matSuffix [for]="datepicker"></mat-datepicker-toggle>
           <mat-datepicker #datepicker>
             <mat-datepicker-actions>
@@ -46,34 +67,54 @@
           </mat-datepicker>
         </mat-form-field>
 
-        <mat-form-field color="accent" class="field-full" appearance="outline">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="na-field">
           <mat-label>Perfil</mat-label>
+          <mat-icon matPrefix>badge</mat-icon>
           <mat-select formControlName="perfil">
             <mat-option value="admin">Admin</mat-option>
             <mat-option value="estagiario">Estagiário</mat-option>
           </mat-select>
         </mat-form-field>
-
-        <mat-form-field color="accent" class="field-full" appearance="outline">
-          <mat-label>Nova senha</mat-label>
-          <input formControlName="novaSenha" [type]="hide ? 'password' : 'text'" matInput />
-          <mat-hint>{{ modoEdicao ? 'Deixe em branco para manter a senha atual' : 'Mínimo 6 dígitos' }}</mat-hint>
-          <button mat-icon-button matSuffix type="button" (click)="hide = !hide" [attr.aria-label]="'Mostrar senha'" [attr.aria-pressed]="hide">
-            <mat-icon>{{ hide ? 'visibility_off' : 'visibility' }}</mat-icon>
-          </button>
-        </mat-form-field>
       </div>
 
-      <div class="actions">
-        <a mat-stroked-button color="accent" class="btn-action" (click)="zerarForm()">Cancelar</a>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="na-field">
+        <mat-label>Nova senha</mat-label>
+        <mat-icon matPrefix>lock</mat-icon>
+        <input
+          matInput
+          formControlName="novaSenha"
+          [type]="hide ? 'password' : 'text'"
+        />
+        <mat-hint>
+          {{ modoEdicao
+            ? 'Deixe em branco para manter a senha atual'
+            : 'Mínimo 6 dígitos' }}
+        </mat-hint>
         <button
-          mat-flat-button
-          color="accent"
-          class="btn-action"
-          type="submit"
-          [disabled]="formControlNewAccount.invalid"
-        >{{ modoEdicao ? 'Atualizar' : 'Salvar' }}</button>
-      </div>
-    </form>
-  </div>
-</div>
+          mat-icon-button
+          matSuffix
+          type="button"
+          (click)="hide = !hide"
+          [attr.aria-label]="'Mostrar senha'"
+          [attr.aria-pressed]="hide"
+        >
+          <mat-icon>{{ hide ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+
+    <div class="ce-form-actions na-actions">
+      <button type="button" class="ce-btn-ghost" (click)="zerarForm()">
+        Cancelar
+      </button>
+      <button
+        type="submit"
+        class="ce-btn-primary"
+        [disabled]="formControlNewAccount.invalid"
+      >
+        <mat-icon>save</mat-icon>
+        {{ modoEdicao ? 'Salvar alterações' : 'Salvar usuário' }}
+      </button>
+    </div>
+  </form>
+</section>
