@@ -1,98 +1,147 @@
-<div class="page">
-  <div class="header">
-    <span class="page-title">{{ editingKey ? 'Editar campanha' : 'Nova campanha' }}</span>
-  </div>
+<section class="ce-page ce-page--form new-campaign">
+  <header class="ce-page-header">
+    <div class="ce-page-title">
+      <h1>{{ editingKey ? 'Editar campanha' : 'Nova campanha' }}</h1>
+      <span class="ce-page-subtitle">
+        {{ editingKey
+          ? 'Ajuste os dados, meta e itens padrão da campanha.'
+          : 'Preencha os campos abaixo para registrar uma nova campanha.' }}
+      </span>
+    </div>
+  </header>
 
-  <div class="page-content">
-    <form [formGroup]="form" class="form-card">
+  <form [formGroup]="form" class="ce-panel new-campaign-form" (ngSubmit)="salvar()">
+    <div class="alert-block" *ngIf="alerta?.codigo != null">
       <card-alert
-        *ngIf="alerta?.codigo != null"
         tipo="{{ alerta.tipo }}"
         codigo="{{ alerta.codigo }}"
         mensagem="{{ alerta.mensagem }}"
       ></card-alert>
+    </div>
 
-      <div class="fields">
-        <mat-form-field appearance="outline" color="accent" class="field-full">
+    <!-- ─── Dados da campanha ─────────────────────────────────────────── -->
+    <div class="nc-section">
+      <h2 class="ce-section-title">Dados da campanha</h2>
+
+      <div class="nc-fields">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="nc-field">
           <mat-label>Nome da campanha</mat-label>
           <mat-icon matPrefix>campaign</mat-icon>
           <input matInput formControlName="nome" autocomplete="off" />
         </mat-form-field>
 
-        <mat-form-field appearance="outline" color="accent" class="field-full">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="nc-field">
           <mat-label>Descrição</mat-label>
           <textarea matInput formControlName="descricao" rows="3"></textarea>
         </mat-form-field>
 
-        <div class="row-2">
-          <mat-form-field appearance="outline" color="accent" class="field-half">
+        <div class="nc-row-2">
+          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="nc-field">
             <mat-label>Data de início</mat-label>
+            <mat-icon matPrefix>calendar_today</mat-icon>
             <input matInput type="date" formControlName="dataInicio" />
           </mat-form-field>
 
-          <mat-form-field appearance="outline" color="accent" class="field-half">
+          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="nc-field">
             <mat-label>Data de fim</mat-label>
+            <mat-icon matPrefix>event</mat-icon>
             <input matInput type="date" formControlName="dataFim" />
           </mat-form-field>
         </div>
 
-        <input-moeda formControlName="meta" label="Meta (opcional)" />
-
-        <mat-form-field appearance="outline" color="accent" class="field-full">
-          <mat-label>Status</mat-label>
-          <mat-select formControlName="status">
-            <mat-option value="ativa">Ativa</mat-option>
-            <mat-option value="encerrada">Encerrada</mat-option>
-          </mat-select>
-        </mat-form-field>
-
-        <!-- Itens padrão -->
-        <div class="itens-padrao-section">
-          <span class="section-label">Itens padrão</span>
-          <span class="section-hint">Preenchidos automaticamente em cada nova venda desta campanha.</span>
-
-          <div class="item-input-col">
-            <mat-form-field appearance="outline" color="accent" class="field-full">
-              <mat-label>Descrição</mat-label>
-              <input matInput [formControl]="itemDescricaoCtrl" />
-            </mat-form-field>
-
-            <div class="item-row-valor">
-              <input-moeda [formControl]="itemValorCtrl" label="Valor" />
-
-              <button mat-mini-fab color="accent" type="button" class="btn-add-item"
-                      [disabled]="itemDescricaoCtrl.invalid || itemValorCtrl.invalid"
-                      (click)="adicionarItemPadrao()">
-                <mat-icon>add</mat-icon>
-              </button>
-            </div>
+        <div class="nc-row-2">
+          <div class="nc-field-valor">
+            <input-moeda formControlName="meta" label="Meta (opcional)" />
           </div>
 
-          <div class="itens-padrao-list" *ngIf="itensPadraoArray.length > 0">
-            <div class="item-card" *ngFor="let item of itensPadraoArray.controls; let i = index">
-              <div class="item-info">
-                <span class="item-desc">{{ item.get('descricao').value }}</span>
-                <span class="item-valor">R$ {{ fmt(item.get('valorUnitario').value) }}</span>
-              </div>
-              <button mat-icon-button type="button" class="btn-remove" (click)="removerItemPadrao(i)">
-                <mat-icon>delete</mat-icon>
-              </button>
-            </div>
-          </div>
-
-          <div *ngIf="itensPadraoArray.length === 0" class="empty-mini">
-            Nenhum item padrão. Adicione acima se quiser pré-preenchimento nas vendas.
-          </div>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="nc-field">
+            <mat-label>Status</mat-label>
+            <mat-icon matPrefix>flag</mat-icon>
+            <mat-select formControlName="status">
+              <mat-option value="ativa">Ativa</mat-option>
+              <mat-option value="encerrada">Encerrada</mat-option>
+            </mat-select>
+          </mat-form-field>
         </div>
       </div>
+    </div>
 
-      <div class="actions">
-        <button mat-stroked-button type="button" (click)="cancelar()">Cancelar</button>
-        <button mat-flat-button color="accent" type="button"
-                [disabled]="form.invalid" (click)="salvar()">
-          Salvar
+    <!-- ─── Itens padrão ──────────────────────────────────────────────── -->
+    <div class="nc-section ce-block">
+      <header class="nc-section-head">
+        <h2 class="ce-section-title">Itens padrão</h2>
+        <span class="nc-section-hint">
+          Preenchidos automaticamente em cada nova venda desta campanha.
+        </span>
+      </header>
+
+      <label class="ce-field">
+        <span>Descrição</span>
+        <input
+          type="text"
+          [formControl]="itemDescricaoCtrl"
+          placeholder="Ex.: Rifa, caixa de bombom, kit festa…"
+          autocomplete="off"
+        />
+      </label>
+
+      <div class="nc-item-row">
+        <div class="nc-field-valor">
+          <input-moeda [formControl]="itemValorCtrl" label="Valor" />
+        </div>
+
+        <button
+          type="button"
+          class="ce-btn-primary nc-btn-add"
+          [disabled]="itemDescricaoCtrl.invalid || itemValorCtrl.invalid"
+          (click)="adicionarItemPadrao()"
+        >
+          <mat-icon>add</mat-icon>
+          Adicionar
         </button>
       </div>
-    </form>
-  </div>
-</div>
+
+      <ul class="ce-list nc-itens-list" *ngIf="itensPadraoArray.length > 0">
+        <li
+          *ngFor="let item of itensPadraoArray.controls; let i = index"
+          class="nc-item-row-card"
+        >
+          <div class="nc-item-info">
+            <strong>{{ item.get('descricao').value }}</strong>
+            <span class="nc-item-meta">
+              R$ {{ fmt(item.get('valorUnitario').value) }}
+            </span>
+          </div>
+          <button
+            type="button"
+            class="ce-btn-icon nc-item-del"
+            aria-label="Remover item padrão"
+            matTooltip="Remover"
+            (click)="removerItemPadrao(i)"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+        </li>
+      </ul>
+
+      <p *ngIf="itensPadraoArray.length === 0" class="nc-empty">
+        Nenhum item padrão. Adicione acima se quiser pré-preenchimento
+        nas vendas.
+      </p>
+    </div>
+
+    <div class="ce-form-actions nc-actions">
+      <button type="button" class="ce-btn-ghost" (click)="cancelar()">
+        Cancelar
+      </button>
+      <button
+        type="submit"
+        class="ce-btn-primary"
+        [disabled]="form.invalid"
+      >
+        <mat-icon>save</mat-icon>
+        {{ editingKey ? 'Salvar alterações' : 'Salvar campanha' }}
+      </button>
+    </div>
+  </form>
+</section>
