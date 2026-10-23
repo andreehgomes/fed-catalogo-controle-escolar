@@ -1,68 +1,95 @@
-<div class="page">
-  <div class="header">
-    <button mat-icon-button class="btn-back" (click)="cancelar()">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
-    <span class="page-title">Registrar recebimento</span>
-  </div>
+<section class="ce-page ce-page--form recebimento">
+  <header class="ce-page-header">
+    <div class="ce-page-title">
+      <h1>Registrar recebimento</h1>
+      <span class="ce-page-subtitle">
+        Confirme o pagamento desta venda. O saldo é atualizado automaticamente.
+      </span>
+    </div>
+  </header>
 
-  <div class="page-content">
-
+  <div class="alert-block" *ngIf="alerta?.codigo != null">
     <card-alert
-      *ngIf="alerta?.codigo != null"
       tipo="{{ alerta.tipo }}"
       codigo="{{ alerta.codigo }}"
       mensagem="{{ alerta.mensagem }}"
     ></card-alert>
+  </div>
 
-    <mat-card class="sale-summary" *ngIf="sale">
-      <div class="summary-row">
-        <span class="summary-label">Cliente</span>
-        <span class="summary-value">{{ sale.clienteNome }}</span>
+  <!-- ─── Resumo da venda ────────────────────────────────────────────────── -->
+  <article class="ce-card rec-summary" *ngIf="sale">
+    <header class="rec-summary-head">
+      <div class="rec-head-item">
+        <span class="ce-label">Cliente</span>
+        <strong>{{ sale.clienteNome }}</strong>
       </div>
-      <div class="summary-row">
-        <span class="summary-label">Campanha</span>
-        <span class="summary-value">{{ sale.campaignNome }}</span>
+      <div class="rec-head-item">
+        <span class="ce-label">Campanha</span>
+        <strong>{{ sale.campaignNome }}</strong>
       </div>
-      <div class="summary-divider"></div>
-      <div class="summary-row">
-        <span class="summary-label">Total</span>
-        <span class="summary-value">R$ {{ fmt(sale.valorTotal) }}</span>
-      </div>
-      <div class="summary-row">
-        <span class="summary-label">Já recebido</span>
-        <span class="summary-value">R$ {{ fmt(sale.valorRecebido ?? 0) }}</span>
-      </div>
-      <div class="summary-row">
-        <span class="summary-label">Saldo restante</span>
-        <span class="summary-value summary-saldo">R$ {{ fmt(saldo) }}</span>
-      </div>
-    </mat-card>
+    </header>
 
-    <form [formGroup]="form" class="form-card" *ngIf="sale">
-      <div class="fields">
-        <mat-form-field appearance="outline" color="accent" class="field-full">
+    <div class="rec-summary-grid">
+      <div class="rec-stat">
+        <span class="ce-label">Total da venda</span>
+        <span class="rec-stat-value">R$ {{ fmt(sale.valorTotal) }}</span>
+      </div>
+      <div class="rec-stat">
+        <span class="ce-label">Já recebido</span>
+        <span class="rec-stat-value rec-stat-value--success">
+          R$ {{ fmt(sale.valorRecebido ?? 0) }}
+        </span>
+      </div>
+      <div class="rec-stat">
+        <span class="ce-label">Saldo restante</span>
+        <span class="rec-stat-value rec-stat-value--danger">
+          R$ {{ fmt(saldo) }}
+        </span>
+      </div>
+    </div>
+  </article>
+
+  <!-- ─── Formulário ────────────────────────────────────────────────────── -->
+  <form
+    *ngIf="sale"
+    [formGroup]="form"
+    class="ce-panel rec-form"
+    (ngSubmit)="salvar()"
+  >
+    <h2 class="ce-section-title">Dados do pagamento</h2>
+
+    <div class="rec-fields">
+      <div class="rec-row-2">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="rec-field">
           <mat-label>Data do recebimento</mat-label>
           <mat-icon matPrefix>calendar_today</mat-icon>
           <input matInput type="date" formControlName="data" />
         </mat-form-field>
 
-        <input-moeda formControlName="valor" label="Valor recebido" />
-
-        <mat-form-field appearance="outline" color="accent" class="field-full">
-          <mat-label>Descrição (opcional)</mat-label>
-          <input matInput formControlName="descricao" />
-        </mat-form-field>
+        <div class="rec-field-valor">
+          <input-moeda formControlName="valor" label="Valor recebido" />
+        </div>
       </div>
 
-      <div class="actions">
-        <button mat-stroked-button type="button" (click)="cancelar()">Cancelar</button>
-        <button mat-flat-button color="accent" type="button"
-                [disabled]="form.invalid"
-                (click)="salvar()">
-          Salvar recebimento
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="rec-field">
+        <mat-label>Descrição (opcional)</mat-label>
+        <mat-icon matPrefix>notes</mat-icon>
+        <input matInput formControlName="descricao" autocomplete="off" />
+      </mat-form-field>
+    </div>
+
+    <div class="ce-form-actions rec-actions">
+      <button type="button" class="ce-btn-ghost" (click)="cancelar()">
+        Cancelar
+      </button>
+      <button
+        type="submit"
+        class="ce-btn-primary"
+        [disabled]="form.invalid"
+      >
+        <mat-icon>payments</mat-icon>
+        Salvar recebimento
+      </button>
+    </div>
+  </form>
+</section>
