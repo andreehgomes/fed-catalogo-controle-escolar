@@ -1,79 +1,112 @@
-<div class="page">
-  <div class="header">
-    <button mat-icon-button class="btn-back" (click)="cancelar()">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
-    <span class="page-title">{{ editingKey ? 'Editar despesa' : 'Nova despesa' }}</span>
-  </div>
+<section class="ce-page ce-page--form new-expense">
+  <header class="ce-page-header">
+    <div class="ce-page-title">
+      <h1>{{ editingKey ? 'Editar despesa' : 'Nova despesa' }}</h1>
+      <span class="ce-page-subtitle">
+        {{ editingKey
+          ? 'Ajuste os dados ou o comprovante da despesa.'
+          : 'Preencha os campos abaixo para registrar uma nova despesa.' }}
+      </span>
+    </div>
+  </header>
 
-  <div class="page-content">
-    <form [formGroup]="form" class="form-card">
+  <form [formGroup]="form" class="ce-panel new-expense-form" (ngSubmit)="salvar()">
+    <div class="alert-block" *ngIf="alerta?.codigo != null">
       <card-alert
-        *ngIf="alerta?.codigo != null"
         tipo="{{ alerta.tipo }}"
         codigo="{{ alerta.codigo }}"
         mensagem="{{ alerta.mensagem }}"
       ></card-alert>
+    </div>
 
-      <!-- Comprovante -->
-      <div class="comprovante-section">
-        <span class="section-label">Comprovante</span>
+    <!-- ─── Comprovante ────────────────────────────────────────────────── -->
+    <div class="ne-section">
+      <span class="ce-label">Comprovante</span>
 
-        <div class="comprovante-preview" [class.empty]="!comprovantePreview">
-          <img *ngIf="comprovantePreview" [src]="comprovantePreview" alt="Comprovante" />
-          <button mat-fab color="accent" type="button" class="btn-upload"
-                  (click)="clickInputImage()" *ngIf="!comprovantePreview">
-            <mat-icon>add_a_photo</mat-icon>
+      <div class="ne-dropzone" [class.ne-dropzone--empty]="!comprovantePreview">
+        <img *ngIf="comprovantePreview" [src]="comprovantePreview" alt="Comprovante" />
+
+        <button
+          *ngIf="!comprovantePreview"
+          type="button"
+          class="ce-btn-primary ne-btn-upload"
+          (click)="clickInputImage()"
+        >
+          <mat-icon>add_a_photo</mat-icon>
+          Anexar imagem
+        </button>
+
+        <div class="ne-dropzone-actions" *ngIf="comprovantePreview">
+          <button
+            type="button"
+            class="ce-btn-icon"
+            matTooltip="Trocar"
+            aria-label="Trocar comprovante"
+            (click)="clickInputImage()"
+          >
+            <mat-icon>edit</mat-icon>
           </button>
-          <div class="comprovante-actions" *ngIf="comprovantePreview">
-            <button mat-mini-fab color="accent" type="button" (click)="clickInputImage()" title="Trocar">
-              <mat-icon>edit</mat-icon>
-            </button>
-            <button mat-mini-fab type="button" class="btn-remove" (click)="removerComprovante()" title="Remover">
-              <mat-icon>delete</mat-icon>
-            </button>
-          </div>
+          <button
+            type="button"
+            class="ce-btn-icon ne-btn-remove"
+            matTooltip="Remover"
+            aria-label="Remover comprovante"
+            (click)="removerComprovante()"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
         </div>
-
-        <input
-          #inputImage
-          type="file"
-          accept="image/*"
-          style="display: none"
-          (change)="selectFile($event)"
-        />
       </div>
 
-      <div class="fields">
-        <mat-form-field appearance="outline" color="accent" class="field-full">
-          <mat-label>Campanha</mat-label>
-          <mat-icon matPrefix>campaign</mat-icon>
-          <mat-select formControlName="campaignKey">
-            <mat-option *ngFor="let c of campaigns" [value]="c.key">{{ c.nome }}</mat-option>
-          </mat-select>
-        </mat-form-field>
+      <input
+        #inputImage
+        type="file"
+        accept="image/*"
+        hidden
+        (change)="selectFile($event)"
+      />
+    </div>
 
-        <mat-form-field appearance="outline" color="accent" class="field-full">
-          <mat-label>Descrição</mat-label>
-          <input matInput formControlName="descricao" autocomplete="off" />
-        </mat-form-field>
+    <!-- ─── Dados da despesa ──────────────────────────────────────────── -->
+    <div class="ne-fields">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="ne-field">
+        <mat-label>Campanha</mat-label>
+        <mat-icon matPrefix>campaign</mat-icon>
+        <mat-select formControlName="campaignKey">
+          <mat-option *ngFor="let c of campaigns" [value]="c.key">{{ c.nome }}</mat-option>
+        </mat-select>
+      </mat-form-field>
 
-        <input-moeda formControlName="valor" label="Valor" />
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="ne-field">
+        <mat-label>Descrição</mat-label>
+        <input matInput formControlName="descricao" autocomplete="off" />
+      </mat-form-field>
 
-        <mat-form-field appearance="outline" color="accent" class="field-full">
+      <div class="ne-row-2">
+        <div class="ne-field-valor">
+          <input-moeda formControlName="valor" label="Valor" />
+        </div>
+
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="ne-field">
           <mat-label>Data</mat-label>
           <mat-icon matPrefix>calendar_today</mat-icon>
           <input matInput type="date" formControlName="data" />
         </mat-form-field>
       </div>
+    </div>
 
-      <div class="actions">
-        <button mat-stroked-button type="button" (click)="cancelar()">Cancelar</button>
-        <button mat-flat-button color="accent" type="button"
-                [disabled]="form.invalid" (click)="salvar()">
-          Salvar
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
+    <div class="ce-form-actions ne-actions">
+      <button type="button" class="ce-btn-ghost" (click)="cancelar()">
+        Cancelar
+      </button>
+      <button
+        type="submit"
+        class="ce-btn-primary"
+        [disabled]="form.invalid"
+      >
+        <mat-icon>save</mat-icon>
+        {{ editingKey ? 'Salvar alterações' : 'Salvar despesa' }}
+      </button>
+    </div>
+  </form>
+</section>

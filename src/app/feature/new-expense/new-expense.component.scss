@@ -1,117 +1,111 @@
-@import "../../shared/style/colors";
+@use "../../shared/style/tokens" as *;
+@use "../../shared/style/breakpoints" as *;
 
-.page {
-  min-height: 100vh;
+:host {
+  display: block;
+}
+
+.new-expense-form {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 70px 16px 32px;
+  gap: $ce-section-gap;
 }
 
-.header {
-  width: 100%;
-  max-width: 540px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 16px;
-  color: #fff;
-
-  .btn-back {
-    color: #fff !important;
-  }
-
-  .page-title {
-    font-size: 20px;
-    font-weight: 600;
-    flex: 1;
-  }
+.alert-block {
+  display: block;
 }
 
-.page-content {
-  width: 100%;
-  max-width: 540px;
-}
-
-.form-card {
-  background: #fff;
-  border-radius: 14px;
-  padding: 18px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.comprovante-section {
+.ne-section {
   display: flex;
   flex-direction: column;
   gap: 8px;
-
-  .section-label {
-    font-size: 12px;
-    font-weight: 700;
-    color: $c-primary;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
 }
 
-.comprovante-preview {
+// Comprovante: dropzone com imagem ocupando a área toda; ações sobrepostas.
+.ne-dropzone {
   position: relative;
   width: 100%;
-  height: 280px;
-  background: #fafafa;
-  border: 2px dashed $c-primary-light-card;
-  border-radius: 12px;
+  min-height: 220px;
+  background: $ce-surface-muted;
+  border: 1.5px dashed $ce-border-dashed;
+  border-radius: $ce-radius-inner;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
 
-  &.empty {
-    border-style: dashed;
+  &--empty {
+    background: $ce-accent-soft;
+    border-color: $ce-accent-border;
   }
 
   img {
     width: 100%;
     height: 100%;
+    max-height: 320px;
     object-fit: contain;
-    background: #fff;
-  }
-
-  .btn-upload {
-    width: 64px;
-    height: 64px;
-  }
-
-  .comprovante-actions {
-    position: absolute;
-    bottom: 8px;
-    right: 8px;
-    display: flex;
-    gap: 6px;
-
-    .btn-remove {
-      background: $c-red-alert !important;
-      color: #fff !important;
-    }
+    background: $ce-surface;
   }
 }
 
-.fields {
+.ne-btn-upload {
+  min-height: 44px;
+}
+
+.ne-dropzone-actions {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  display: flex;
+  gap: 4px;
+  background: $ce-surface;
+  padding: 4px;
+  border-radius: $ce-radius-pill;
+  box-shadow: $ce-shadow-panel;
+}
+
+.ne-btn-remove {
+  &:hover,
+  &:focus-visible {
+    color: $ce-danger-action !important;
+    background: $ce-danger-soft !important;
+  }
+}
+
+// ── Campos ───────────────────────────────────────────────────────────────────
+.ne-fields {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: $ce-gap;
 }
 
-.field-full {
+.ne-field {
   width: 100%;
 }
 
-.actions {
+.ne-row-2 {
+  display: grid;
+  gap: $ce-gap;
+  grid-template-columns: 1fr 1fr;
+  // mat-form-field tem margin-top: 20px (label flutuada); input-moeda vem do
+  // mesmo mixin. align-items: end alinha os inputs pelo rodapé.
+  align-items: end;
+
+  @include mobile {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ne-field-valor {
   display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 6px;
+  align-items: stretch;
+
+  ::ng-deep input-moeda {
+    display: block;
+    width: 100%;
+  }
+}
+
+.ne-actions {
+  padding-top: 6px;
 }
