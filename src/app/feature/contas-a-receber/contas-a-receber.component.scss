@@ -23,7 +23,10 @@
   display: grid;
   grid-template-columns: 2fr 1.4fr auto auto;
   gap: $ce-gap;
-  align-items: start;
+  // mat-form-field tem margin-top: 20px (reservado para a label flutuada),
+  // enquanto .ce-field nativo tem a label no fluxo. Alinhar pelo fim do
+  // container iguala a linha dos inputs.
+  align-items: end;
 
   @include mobile {
     grid-template-columns: 1fr;
