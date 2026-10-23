@@ -1,106 +1,167 @@
-<div class="entrega-list-container">
+<section class="ce-page entrega-list">
+  <header class="ce-page-header">
+    <div class="ce-page-title">
+      <h1>Entregas</h1>
+      <span class="ce-page-subtitle" *ngIf="!carregando">
+        {{ pendentes.length + entregues.length }}
+        {{ (pendentes.length + entregues.length) === 1 ? 'venda' : 'vendas' }}
+      </span>
+    </div>
+  </header>
 
-  <div class="filtros busca-wrap">
-    <mat-form-field appearance="outline" class="busca-field">
-      <mat-label>Buscar por cliente</mat-label>
-      <mat-icon matPrefix>search</mat-icon>
-      <input matInput [formControl]="filtroCtrl" autocomplete="off" />
-      <button *ngIf="filtroCtrl.value" matSuffix mat-icon-button (click)="filtroCtrl.setValue('')">
-        <mat-icon>close</mat-icon>
-      </button>
-    </mat-form-field>
-  </div>
+  <!-- Busca. Ícone à esquerda, "limpar" à direita quando há valor. -->
+  <label class="ce-field ce-field--search">
+    <span class="sr-only">Buscar por cliente</span>
+    <mat-icon class="ce-field-prefix-icon">search</mat-icon>
+    <input
+      type="search"
+      [formControl]="filtroCtrl"
+      placeholder="Buscar por cliente…"
+      autocomplete="off"
+    />
+    <button
+      *ngIf="filtroCtrl.value"
+      type="button"
+      class="ce-field-clear"
+      aria-label="Limpar busca"
+      (click)="filtroCtrl.setValue('')"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
+  </label>
 
-  <div class="contadores-itens" *ngIf="!carregando">
-    <div class="contador-item contador-item--entregue">
+  <!-- Contadores de itens: dois summary tiles coloridos no padrão do DS. -->
+  <div class="contadores" *ngIf="!carregando">
+    <div class="ce-summary contador contador--entregue">
       <mat-icon>check_circle</mat-icon>
-      <div class="contador-conteudo">
-        <span class="contador-valor">{{ totalItensEntregues }}</span>
-        <span class="contador-label">Itens entregues</span>
+      <div class="contador-corpo">
+        <span class="ce-summary-label">Itens entregues</span>
+        <span class="ce-summary-value">{{ totalItensEntregues }}</span>
       </div>
     </div>
-    <div class="contador-item contador-item--pendente">
+    <div class="ce-summary contador contador--pendente">
       <mat-icon>pending</mat-icon>
-      <div class="contador-conteudo">
-        <span class="contador-valor">{{ totalItensFaltando }}</span>
-        <span class="contador-label">Itens a entregar</span>
+      <div class="contador-corpo">
+        <span class="ce-summary-label">Itens a entregar</span>
+        <span class="ce-summary-value">{{ totalItensFaltando }}</span>
       </div>
     </div>
   </div>
 
-  <mat-tab-group animationDuration="200ms">
-
+  <!-- Tabs Pendentes / Entregues. -->
+  <mat-tab-group animationDuration="200ms" class="entrega-tabs">
     <mat-tab>
       <ng-template mat-tab-label>
-        Pendentes
-        <span class="tab-count-pill tab-count-pill--pendente">{{ pendentes.length }}</span>
+        <span class="entrega-tab-label">
+          Pendentes
+          <span class="ce-badge entrega-tab-badge entrega-tab-badge--pendente">
+            {{ pendentes.length }}
+          </span>
+        </span>
       </ng-template>
 
       <div class="tab-content">
-        <p *ngIf="!carregando && pendentes.length === 0" class="empty-msg">
+        <div *ngIf="!carregando && pendentes.length === 0" class="ce-empty-inline">
           Nenhuma venda pendente de entrega.
-        </p>
+        </div>
 
-        <mat-card
+        <article
           *ngFor="let sale of pendentes; trackBy: trackBySaleKey"
           class="sale-card"
+          tabindex="0"
           (click)="irParaDetalhe(sale)"
+          (keyup.enter)="irParaDetalhe(sale)"
         >
-          <mat-card-content>
-            <div class="card-header">
-              <span class="card-cliente">{{ sale.clienteNome }}</span>
+          <header class="sale-top">
+            <div class="sale-cliente">
+              <mat-icon>person</mat-icon>
+              <span>{{ sale.clienteNome }}</span>
             </div>
-            <div class="card-info">
-              <span class="card-campanha">{{ sale.campaignNome }}</span>
-              <span class="card-data">{{ fmtDate(sale.dataCriacao) }}</span>
-            </div>
-            <div class="pills-wrap">
-              <span [ngClass]="'status-pill pag-pill--' + pagColor(sale)">{{ pagLabel(sale) }}</span>
-              <span [ngClass]="'status-pill entrega-pill--' + chipColor(sale)">{{ chipLabel(sale) }}</span>
-            </div>
-          </mat-card-content>
-        </mat-card>
+          </header>
+
+          <ul class="sale-info">
+            <li>
+              <mat-icon>campaign</mat-icon>
+              <span>{{ sale.campaignNome }}</span>
+            </li>
+            <li>
+              <mat-icon>event</mat-icon>
+              <span>{{ fmtDate(sale.dataCriacao) }}</span>
+            </li>
+          </ul>
+
+          <div class="sale-pills">
+            <span class="ce-chip" [ngClass]="'pag--' + pagColor(sale)">
+              {{ pagLabel(sale) }}
+            </span>
+            <span class="ce-chip" [ngClass]="'entrega--' + chipColor(sale)">
+              {{ chipLabel(sale) }}
+            </span>
+          </div>
+        </article>
       </div>
     </mat-tab>
 
     <mat-tab>
       <ng-template mat-tab-label>
-        Entregues
-        <span class="tab-count-pill tab-count-pill--entregue">{{ entregues.length }}</span>
+        <span class="entrega-tab-label">
+          Entregues
+          <span class="ce-badge entrega-tab-badge entrega-tab-badge--entregue">
+            {{ entregues.length }}
+          </span>
+        </span>
       </ng-template>
 
       <div class="tab-content">
-        <p *ngIf="!carregando && entregues.length === 0" class="empty-msg">
+        <div *ngIf="!carregando && entregues.length === 0" class="ce-empty-inline">
           Nenhuma venda entregue ainda.
-        </p>
+        </div>
 
-        <mat-card
+        <article
           *ngFor="let sale of entregues; trackBy: trackBySaleKey"
           class="sale-card"
+          tabindex="0"
           (click)="irParaDetalhe(sale)"
+          (keyup.enter)="irParaDetalhe(sale)"
         >
-          <mat-card-content>
-            <div class="card-header">
-              <span class="card-cliente">{{ sale.clienteNome }}</span>
+          <header class="sale-top">
+            <div class="sale-cliente">
+              <mat-icon>person</mat-icon>
+              <span>{{ sale.clienteNome }}</span>
             </div>
-            <div class="card-info">
-              <span class="card-campanha">{{ sale.campaignNome }}</span>
-              <span class="card-data">{{ fmtDate(sale.dataCriacao) }}</span>
+          </header>
+
+          <ul class="sale-info">
+            <li>
+              <mat-icon>campaign</mat-icon>
+              <span>{{ sale.campaignNome }}</span>
+            </li>
+            <li>
+              <mat-icon>event</mat-icon>
+              <span>{{ fmtDate(sale.dataCriacao) }}</span>
+            </li>
+          </ul>
+
+          <footer class="sale-foot">
+            <div class="sale-pills">
+              <span class="ce-chip" [ngClass]="'pag--' + pagColor(sale)">
+                {{ pagLabel(sale) }}
+              </span>
+              <span class="ce-chip" [ngClass]="'entrega--' + chipColor(sale)">
+                {{ chipLabel(sale) }}
+              </span>
             </div>
-            <div class="card-footer">
-              <div class="pills-wrap">
-                <span [ngClass]="'status-pill pag-pill--' + pagColor(sale)">{{ pagLabel(sale) }}</span>
-                <span [ngClass]="'status-pill entrega-pill--' + chipColor(sale)">{{ chipLabel(sale) }}</span>
-              </div>
-              <button mat-stroked-button class="btn-comprovante" (click)="gerarComprovante(sale, $event)">
-                <mat-icon>receipt_long</mat-icon>
-                Comprovante
-              </button>
-            </div>
-          </mat-card-content>
-        </mat-card>
+            <button
+              type="button"
+              class="ce-btn-secondary sale-comprovante"
+              (click)="gerarComprovante(sale, $event)"
+            >
+              <mat-icon>receipt_long</mat-icon>
+              Comprovante
+            </button>
+          </footer>
+        </article>
       </div>
     </mat-tab>
-
   </mat-tab-group>
-</div>
+</section>

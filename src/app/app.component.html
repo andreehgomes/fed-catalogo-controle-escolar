@@ -1,148 +1,281 @@
-<mat-drawer-container class="app-container" [hasBackdrop]="true">
+<!--
+  Shell do app. Não usa `mat-drawer`: o Material não tem o estado "aberto e
+  fixo" que o rail de 76px exige — `mode="over"` sempre sobrepõe e escurece o
+  resto. Aqui o `<aside>` é um irmão do conteúdo, e só vira drawer sobreposto
+  abaixo de 900px.
 
-  <mat-drawer #drawer mode="over" class="app-sidenav">
+  O scroll é interno (`.ce-content`), não do `body`. É isso que mantém o header
+  no topo sem `position: fixed`.
 
-    <div class="sidenav-header">
-      <div class="sidenav-brand">
-        <mat-icon class="brand-icon">school</mat-icon>
-        <span class="brand-name">Campanhas</span>
+  Rotas sem shell (login, nova conta, redefinir senha, erro e campanha pública
+  `c/:key`) escondem o `<aside>` e o header via `showBtnMenu=false`.
+-->
+<div class="ce-shell" [class.sem-shell]="!showBtnMenu">
+  <ng-container *ngIf="showBtnMenu">
+    <aside
+      class="ce-nav"
+      [class.expandido]="expanded"
+      [class.rail]="rail"
+    >
+      <div class="ce-nav-header">
+        <div class="ce-nav-logo">
+          <mat-icon>school</mat-icon>
+        </div>
+        <div class="ce-nav-brand">
+          <span class="ce-nav-brand-name">Campanhas</span>
+          <span class="ce-nav-brand-tag">Controle Escolar</span>
+        </div>
       </div>
-      <button mat-icon-button class="btn-close" (click)="drawer.close()">
-        <mat-icon>close</mat-icon>
+
+      <ng-container *ngIf="isLogged$ | async as isLogged; else notLogged">
+        <nav class="ce-nav-list">
+          <button
+            type="button"
+            class="ce-nav-item"
+            [matTooltip]="rail ? 'Página inicial' : ''"
+            matTooltipPosition="right"
+            (click)="goTo()"
+          >
+            <mat-icon>home</mat-icon>
+            <span class="ce-nav-label">Página inicial</span>
+          </button>
+
+          <ng-container *ngIf="!isEstagiario">
+            <div class="ce-nav-group">Campanhas</div>
+
+            <button
+              type="button"
+              class="ce-nav-item"
+              [matTooltip]="rail ? 'Nova campanha' : ''"
+              matTooltipPosition="right"
+              (click)="goTo(routes.NEW_CAMPAIGN)"
+            >
+              <mat-icon>campaign</mat-icon>
+              <span class="ce-nav-label">Nova campanha</span>
+            </button>
+
+            <button
+              type="button"
+              class="ce-nav-item"
+              [matTooltip]="rail ? 'Listar campanhas' : ''"
+              matTooltipPosition="right"
+              (click)="goTo(routes.CAMPAIGN_LIST)"
+            >
+              <mat-icon>list_alt</mat-icon>
+              <span class="ce-nav-label">Listar campanhas</span>
+            </button>
+
+            <button
+              type="button"
+              class="ce-nav-item"
+              [matTooltip]="rail ? 'Nova despesa' : ''"
+              matTooltipPosition="right"
+              (click)="goTo(routes.NEW_EXPENSE)"
+            >
+              <mat-icon>add_card</mat-icon>
+              <span class="ce-nav-label">Nova despesa</span>
+            </button>
+
+            <button
+              type="button"
+              class="ce-nav-item"
+              [matTooltip]="rail ? 'Despesas' : ''"
+              matTooltipPosition="right"
+              (click)="goTo(routes.EXPENSE_LIST)"
+            >
+              <mat-icon>receipt</mat-icon>
+              <span class="ce-nav-label">Despesas</span>
+            </button>
+
+            <div class="ce-nav-group">Vendas &amp; Clientes</div>
+
+            <button
+              type="button"
+              class="ce-nav-item"
+              [matTooltip]="rail ? 'Nova venda' : ''"
+              matTooltipPosition="right"
+              (click)="goTo(routes.NEW_SALE)"
+            >
+              <mat-icon>point_of_sale</mat-icon>
+              <span class="ce-nav-label">Nova venda</span>
+            </button>
+
+            <button
+              type="button"
+              class="ce-nav-item"
+              [matTooltip]="rail ? 'Listar vendas' : ''"
+              matTooltipPosition="right"
+              (click)="goTo(routes.SALE_LIST)"
+            >
+              <mat-icon>receipt_long</mat-icon>
+              <span class="ce-nav-label">Listar vendas</span>
+            </button>
+
+            <button
+              type="button"
+              class="ce-nav-item"
+              [matTooltip]="rail ? 'Contas a receber' : ''"
+              matTooltipPosition="right"
+              (click)="goTo(routes.CONTAS_A_RECEBER)"
+            >
+              <mat-icon>request_quote</mat-icon>
+              <span class="ce-nav-label">Contas a receber</span>
+            </button>
+
+            <button
+              type="button"
+              class="ce-nav-item"
+              [matTooltip]="rail ? 'Recebimentos' : ''"
+              matTooltipPosition="right"
+              (click)="goTo(routes.LISTAR_RECEBIMENTOS)"
+            >
+              <mat-icon>payments</mat-icon>
+              <span class="ce-nav-label">Recebimentos</span>
+            </button>
+          </ng-container>
+
+          <ng-container *ngIf="isEstagiario">
+            <div class="ce-nav-group">Operação</div>
+          </ng-container>
+
+          <button
+            type="button"
+            class="ce-nav-item"
+            [matTooltip]="rail ? 'Entregas' : ''"
+            matTooltipPosition="right"
+            (click)="goTo(routes.ENTREGA_LIST)"
+          >
+            <mat-icon>local_shipping</mat-icon>
+            <span class="ce-nav-label">Entregas</span>
+          </button>
+
+          <ng-container *ngIf="!isEstagiario">
+            <button
+              type="button"
+              class="ce-nav-item"
+              [matTooltip]="rail ? 'Novo cliente' : ''"
+              matTooltipPosition="right"
+              (click)="goTo(routes.NEW_CLIENT)"
+            >
+              <mat-icon>person_add</mat-icon>
+              <span class="ce-nav-label">Novo cliente</span>
+            </button>
+
+            <button
+              type="button"
+              class="ce-nav-item"
+              [matTooltip]="rail ? 'Clientes' : ''"
+              matTooltipPosition="right"
+              (click)="goTo(routes.CLIENT_LIST)"
+            >
+              <mat-icon>people</mat-icon>
+              <span class="ce-nav-label">Clientes</span>
+            </button>
+
+            <div class="ce-nav-group">Gestão</div>
+
+            <button
+              type="button"
+              class="ce-nav-item"
+              [matTooltip]="rail ? 'Dashboard' : ''"
+              matTooltipPosition="right"
+              (click)="goTo(routes.DASHBOARD)"
+            >
+              <mat-icon>dashboard</mat-icon>
+              <span class="ce-nav-label">Dashboard</span>
+            </button>
+
+            <button
+              type="button"
+              class="ce-nav-item"
+              [matTooltip]="rail ? 'Cadastro de usuário' : ''"
+              matTooltipPosition="right"
+              (click)="goTo(routes.NEW_ACCOUNT)"
+            >
+              <mat-icon>manage_accounts</mat-icon>
+              <span class="ce-nav-label">Cadastro de usuário</span>
+            </button>
+
+            <button
+              *ngIf="isMaster"
+              type="button"
+              class="ce-nav-item"
+              [matTooltip]="rail ? 'Usuários' : ''"
+              matTooltipPosition="right"
+              (click)="goTo(routes.ACCOUNT_LIST)"
+            >
+              <mat-icon>group</mat-icon>
+              <span class="ce-nav-label">Usuários</span>
+            </button>
+          </ng-container>
+
+          <button
+            type="button"
+            class="ce-nav-item ce-nav-item--auth"
+            [matTooltip]="rail ? 'Sair' : ''"
+            matTooltipPosition="right"
+            (click)="logout(routes.LOGIN)"
+          >
+            <mat-icon>logout</mat-icon>
+            <span class="ce-nav-label">Sair</span>
+          </button>
+        </nav>
+      </ng-container>
+
+      <ng-template #notLogged>
+        <nav class="ce-nav-list">
+          <button
+            type="button"
+            class="ce-nav-item ce-nav-item--auth"
+            [matTooltip]="rail ? 'Entrar' : ''"
+            matTooltipPosition="right"
+            (click)="goTo(routes.LOGIN)"
+          >
+            <mat-icon>login</mat-icon>
+            <span class="ce-nav-label">Entrar</span>
+          </button>
+        </nav>
+      </ng-template>
+
+      <div class="ce-nav-footer">
+        <span class="ce-nav-footer-label">Controle de Campanhas</span>
+        <span class="ce-nav-footer-tag">Escolares</span>
+      </div>
+    </aside>
+
+    <!-- Só captura clique quando o drawer está aberto em tela estreita. -->
+    <div
+      class="ce-scrim"
+      [class.ativo]="narrow && expanded"
+      (click)="fecharNav()"
+    ></div>
+  </ng-container>
+
+  <main class="ce-main">
+    <header class="ce-header" *ngIf="showBtnMenu">
+      <button
+        type="button"
+        class="ce-header-btn"
+        aria-label="Abrir menu"
+        (click)="alternarNav()"
+      >
+        <mat-icon>menu</mat-icon>
       </button>
+
+      <span class="ce-header-title">Campanhas Escolares</span>
+
+      <span class="ce-header-spacer"></span>
+
+      <div class="ce-header-user" *ngIf="isLogged$ | async">
+        <span class="ce-header-avatar">
+          <mat-icon>school</mat-icon>
+        </span>
+        <span class="ce-header-user-label">Escola</span>
+      </div>
+    </header>
+
+    <div class="ce-content">
+      <router-outlet></router-outlet>
     </div>
-
-    <ng-container *ngIf="isLogged$ | async as isLogged; else notLogged">
-      <mat-nav-list class="sidenav-nav">
-
-        <a mat-list-item class="nav-item" (click)="goTo(); drawer.toggle()">
-          <mat-icon matListItemIcon>home</mat-icon>
-          <span matListItemTitle>Página inicial</span>
-        </a>
-
-        <ng-container *ngIf="!isEstagiario">
-          <mat-divider></mat-divider>
-
-          <div class="nav-section-label">Campanhas</div>
-
-          <a mat-list-item class="nav-item" (click)="goTo(routes.NEW_CAMPAIGN); drawer.toggle()">
-            <mat-icon matListItemIcon>campaign</mat-icon>
-            <span matListItemTitle>Nova campanha</span>
-          </a>
-
-          <a mat-list-item class="nav-item" (click)="goTo(routes.CAMPAIGN_LIST); drawer.toggle()">
-            <mat-icon matListItemIcon>list_alt</mat-icon>
-            <span matListItemTitle>Listar campanhas</span>
-          </a>
-
-          <a mat-list-item class="nav-item" (click)="goTo(routes.NEW_EXPENSE); drawer.toggle()">
-            <mat-icon matListItemIcon>add_card</mat-icon>
-            <span matListItemTitle>Nova despesa</span>
-          </a>
-
-          <a mat-list-item class="nav-item" (click)="goTo(routes.EXPENSE_LIST); drawer.toggle()">
-            <mat-icon matListItemIcon>receipt</mat-icon>
-            <span matListItemTitle>Despesas</span>
-          </a>
-        </ng-container>
-
-        <mat-divider></mat-divider>
-
-        <div class="nav-section-label">Vendas & Clientes</div>
-
-        <ng-container *ngIf="!isEstagiario">
-          <a mat-list-item class="nav-item" (click)="goTo(routes.NEW_SALE); drawer.toggle()">
-            <mat-icon matListItemIcon>point_of_sale</mat-icon>
-            <span matListItemTitle>Nova venda</span>
-          </a>
-
-          <a mat-list-item class="nav-item" (click)="goTo(routes.SALE_LIST); drawer.toggle()">
-            <mat-icon matListItemIcon>receipt_long</mat-icon>
-            <span matListItemTitle>Listar vendas</span>
-          </a>
-
-          <a mat-list-item class="nav-item" (click)="goTo(routes.CONTAS_A_RECEBER); drawer.toggle()">
-            <mat-icon matListItemIcon>request_quote</mat-icon>
-            <span matListItemTitle>Contas a receber</span>
-          </a>
-
-          <a mat-list-item class="nav-item" (click)="goTo(routes.LISTAR_RECEBIMENTOS); drawer.toggle()">
-            <mat-icon matListItemIcon>payments</mat-icon>
-            <span matListItemTitle>Recebimentos</span>
-          </a>
-        </ng-container>
-
-        <a mat-list-item class="nav-item" (click)="goTo(routes.ENTREGA_LIST); drawer.toggle()">
-          <mat-icon matListItemIcon>local_shipping</mat-icon>
-          <span matListItemTitle>Entregas</span>
-        </a>
-
-        <ng-container *ngIf="!isEstagiario">
-          <a mat-list-item class="nav-item" (click)="goTo(routes.NEW_CLIENT); drawer.toggle()">
-            <mat-icon matListItemIcon>person_add</mat-icon>
-            <span matListItemTitle>Novo cliente</span>
-          </a>
-
-          <a mat-list-item class="nav-item" (click)="goTo(routes.CLIENT_LIST); drawer.toggle()">
-            <mat-icon matListItemIcon>people</mat-icon>
-            <span matListItemTitle>Clientes</span>
-          </a>
-        </ng-container>
-
-        <ng-container *ngIf="!isEstagiario">
-          <mat-divider></mat-divider>
-
-          <div class="nav-section-label">Gestão</div>
-
-          <a mat-list-item class="nav-item" (click)="goTo(routes.DASHBOARD); drawer.toggle()">
-            <mat-icon matListItemIcon>dashboard</mat-icon>
-            <span matListItemTitle>Dashboard</span>
-          </a>
-
-          <a mat-list-item class="nav-item" (click)="goTo(routes.NEW_ACCOUNT); drawer.toggle()">
-            <mat-icon matListItemIcon>manage_accounts</mat-icon>
-            <span matListItemTitle>Cadastro de usuário</span>
-          </a>
-        </ng-container>
-
-        <a *ngIf="isMaster"
-           mat-list-item class="nav-item"
-           (click)="goTo(routes.ACCOUNT_LIST); drawer.toggle()">
-          <mat-icon matListItemIcon>group</mat-icon>
-          <span matListItemTitle>Usuários</span>
-        </a>
-
-        <mat-divider></mat-divider>
-
-        <a mat-list-item class="nav-item nav-item--auth"
-           (click)="drawer.toggle(); logout(routes.LOGIN)">
-          <mat-icon matListItemIcon>logout</mat-icon>
-          <span matListItemTitle>Sair</span>
-        </a>
-      </mat-nav-list>
-    </ng-container>
-
-    <ng-template #notLogged>
-      <mat-nav-list class="sidenav-nav">
-        <a mat-list-item class="nav-item nav-item--auth"
-           (click)="drawer.toggle(); goTo(routes.LOGIN)">
-          <mat-icon matListItemIcon>login</mat-icon>
-          <span matListItemTitle>Entrar</span>
-        </a>
-      </mat-nav-list>
-    </ng-template>
-
-    <div class="sidenav-footer">
-      <span class="footer-label">Controle de Campanhas Escolares</span>
-    </div>
-
-  </mat-drawer>
-
-  <mat-drawer-content>
-    <button *ngIf="showBtnMenu" class="btn-menu-float" mat-mini-fab (click)="drawer.toggle()">
-      <mat-icon>menu</mat-icon>
-    </button>
-    <router-outlet></router-outlet>
-  </mat-drawer-content>
-
-</mat-drawer-container>
+  </main>
+</div>

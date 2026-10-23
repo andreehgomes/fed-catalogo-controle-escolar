@@ -1,247 +1,231 @@
-@import "../../shared/style/colors";
+@use "../../shared/style/tokens" as *;
+@use "../../shared/style/breakpoints" as *;
+@use "../../shared/style/admin-ui" as *;
 
-.page {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 70px 16px 32px;
+:host {
+  display: block;
 }
 
-.header {
-  width: 100%;
-  max-width: 540px;
-  margin-bottom: 16px;
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
 
-  .page-title {
-    font-size: 22px;
-    font-weight: 600;
-    color: #fff;
+// ── Filtros ──────────────────────────────────────────────────────────────────
+.contas-filtros {
+  display: grid;
+  grid-template-columns: 2fr 1.4fr auto auto;
+  gap: $ce-gap;
+  align-items: start;
+
+  @include mobile {
+    grid-template-columns: 1fr;
   }
 }
 
-.page-content {
-  width: 100%;
-  max-width: 540px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+.ce-field--search {
+  position: relative;
+
+  .ce-field-prefix-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $ce-text-muted;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    pointer-events: none;
+  }
+
+  input {
+    padding-left: 40px;
+  }
 }
 
-.filtros {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+.contas-filter-campanha {
+  width: 100%;
 
-  .status-toggle {
+  ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+  }
+}
+
+.contas-filter-status {
+  align-self: stretch;
+  min-height: 44px;
+
+  @include mobile {
     align-self: stretch;
-    margin-top: 4px;
-
-    ::ng-deep {
-      .mat-button-toggle-group {
-        border-color: rgba(255, 255, 255, 0.3) !important;
-        background: transparent !important;
-      }
-
-      .mat-button-toggle {
-        font-size: 12px;
-        flex: 1;
-        background: transparent !important;
-        color: rgba(255, 255, 255, 0.7) !important;
-        border-color: rgba(255, 255, 255, 0.3) !important;
-      }
-
-      .mat-button-toggle-label-content {
-        color: rgba(255, 255, 255, 0.7) !important;
-      }
-
-      .mat-button-toggle-checked {
-        background: rgba(255, 255, 255, 0.15) !important;
-
-        .mat-button-toggle-label-content {
-          color: #fff !important;
-        }
-      }
-    }
-  }
-
-  .btn-clear {
-    align-self: flex-end;
-    font-size: 13px !important;
-    color: rgba(255, 255, 255, 0.8) !important;
   }
 }
 
-.field-full {
-  width: 100%;
-}
+.contas-filter-clear {
+  min-height: 44px;
+  justify-self: end;
 
-.totais {
-  background: rgba(255, 255, 255, 0.92);
-  border-radius: 10px;
-  padding: 8px 14px;
-
-  .totais-row {
-    display: flex;
-    justify-content: space-between;
-    font-size: 14px;
-    color: #1a1a1a;
-  }
-
-  .totais-saldo strong {
-    color: #c62828;
+  @include mobile {
+    justify-self: stretch;
   }
 }
 
-.empty-msg {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(255, 255, 255, 0.07);
-  color: rgba(255, 255, 255, 0.85);
-  border-radius: 10px;
-  padding: 14px;
-  font-size: 14px;
-  margin: 0;
-}
-
-.sale-card {
-  padding: 14px !important;
-  border-radius: 12px !important;
-  display: flex !important;
-  flex-direction: column;
-  gap: 6px;
-  border: 1px solid $c-primary-light-card;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
-}
-
-.card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-
-  .client-name {
-    font-size: 16px;
-    font-weight: 600;
-    color: $c-primary;
-  }
-}
-
-.status-pill {
-  font-size: 11px;
-  font-weight: 700;
-  padding: 2px 10px;
-  border-radius: 999px;
-  background: $c-yellow-alert-ligth;
-  color: $c-yellow-alert;
-  border: 1px solid $c-yellow-alert-border;
-  text-transform: uppercase;
-
-  &.quitado {
-    background: $c-green-alert-light;
-    color: $c-green-alert;
-    border-color: $c-green-alert-border;
-  }
-}
-
-.chip-quitado {
-  background-color: $c-green-alert-light !important;
-  color: $c-green-alert !important;
-  border: 1px solid $c-green-alert-border !important;
-}
-
-.chip-pendente {
-  background-color: $c-yellow-alert-ligth !important;
-  color: $c-yellow-alert !important;
-  border: 1px solid $c-yellow-alert-border !important;
-}
-
-.campaign-info {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 13px;
-  color: #555;
-
-  mat-icon {
-    font-size: 14px;
-    width: 14px;
-    height: 14px;
-    color: $c-primary;
-  }
-}
-
-.info-grid {
+// ── Totais ───────────────────────────────────────────────────────────────────
+.contas-totais {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px 12px;
-  margin-top: 4px;
-  padding: 10px 12px;
-  background-color: #fafafa;
-  border-radius: 10px;
-  border: 1px solid $c-primary-light-card;
+  gap: $ce-gap;
+
+  @include mobile {
+    gap: 10px;
+  }
 }
 
-.info-item {
+.contas-total-tile {
+  padding: 14px 16px;
+
+  .ce-summary-value {
+    font-size: 20px;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.contas-total-tile--saldo {
+  border-color: $ce-danger-border;
+
+  .ce-summary-value {
+    color: $ce-danger-data;
+  }
+}
+
+// ── Lista de cards ───────────────────────────────────────────────────────────
+.contas-list {
+  display: flex;
+  flex-direction: column;
+  gap: $ce-gap;
+}
+
+.conta-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px;
+}
+
+.conta-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.conta-cliente {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
+  color: $ce-text-strong;
+  font-weight: 650;
+  font-size: 16px;
+  letter-spacing: -0.005em;
+
+  mat-icon {
+    flex: 0 0 auto;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: $ce-text-muted;
+  }
+
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.conta-campanha {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: $ce-text-body;
+
+  mat-icon {
+    font-size: 15px;
+    width: 15px;
+    height: 15px;
+    color: $ce-text-muted;
+  }
+}
+
+.conta-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px 14px;
+  padding: 12px 14px;
+  background: $ce-surface-subtle;
+  border-radius: $ce-radius-inner;
+}
+
+.conta-info {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  min-width: 0;
 }
 
-.info-label {
-  font-size: 11px;
+.conta-info-value {
+  font-size: 14.5px;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-  color: rgba(0, 0, 0, 0.4);
+  color: $ce-text;
+  font-variant-numeric: tabular-nums;
 }
 
-.info-value {
-  font-size: 14px;
-  font-weight: 500;
-  color: #333;
-
-  &.saldo {
-    font-weight: 700;
-    color: $c-red;
-  }
+.conta-info-recebido {
+  color: $ce-success;
 }
 
-.card-actions {
+.conta-info-saldo {
+  color: $ce-danger-data;
+  font-weight: 700;
+}
+
+// Ações do card. Botões um pouco compactos.
+.conta-actions {
   display: flex;
-  justify-content: flex-end;
-  align-items: center;
   flex-wrap: wrap;
-  gap: 4px;
-  padding-top: 8px;
-  border-top: 1px solid $c-primary-light-card;
-  margin-top: 4px;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid $ce-border-divider;
 
-  button {
-    font-size: 12px !important;
-    font-weight: 600 !important;
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
-    line-height: 32px !important;
-    height: 32px !important;
-    padding: 0 8px !important;
-    min-width: 0 !important;
-
-    mat-icon {
-      font-size: 16px;
-      width: 16px;
-      height: 16px;
-      margin-right: 2px;
-    }
+  .ce-btn-ghost,
+  .ce-btn-danger,
+  .ce-btn-primary {
+    min-height: 36px;
+    padding: 0 12px;
+    font-size: 13px;
   }
 
-  .action-comprovante { color: $c-primary-dark !important; }
-  .action-edit { color: $c-blue-alert !important; }
-  .action-receber { color: $c-green-alert !important; }
-  .action-delete { color: $c-red-alert !important; }
-
-  button[disabled] {
-    color: rgba(0, 0, 0, 0.26) !important;
+  // Receber é o CTA principal: empurra para a direita.
+  .conta-receber {
+    margin-left: auto;
   }
 }
+
+// Lista de recebimentos renderizada pelo componente filho — só o
+// enquadramento visual é do pai.
+.conta-recebimentos {
+  display: block;
+}
+
+// ── Chip de status (fallbacks com variantes semânticas globais) ──────────────
+// Já contempladas em styles.scss via .ce-chip.success / .ce-chip.warn —
+// nada a fazer aqui.

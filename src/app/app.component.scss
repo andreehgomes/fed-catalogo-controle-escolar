@@ -1,130 +1,378 @@
-@import "./shared/style/colors";
+@use "./shared/style/tokens" as *;
+@use "./shared/style/admin-ui" as *;
 
-.app-container {
-  height: 100vh;
+// ─────────────────────────────────────────────────────────────────────────────
+// Shell: sidebar + header.
+//
+// Três estados de largura do `<aside>`: rail de 76px (desktop recolhido),
+// expandido de 264px (desktop) e drawer de 272px sobreposto (abaixo de 900px).
+// A única media query do arquivo é a de 900px — grade e tipografia são fluidas,
+// via `clamp()` e `minmax()`.
+// ─────────────────────────────────────────────────────────────────────────────
+
+:host {
+  display: block;
+  height: 100%;
 }
 
-.app-sidenav {
-  width: 280px;
+.ce-shell {
+  position: relative;
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+// Login, nova conta, redefinir senha, erro e campanha pública ficam fora do
+// shell: nada de aside nem header, apenas o conteúdo.
+.ce-shell.sem-shell {
+  display: block;
+  height: 100%;
+  overflow: visible;
+}
+
+// ── Sidebar ──────────────────────────────────────────────────────────────────
+
+.ce-nav {
+  z-index: 40;
   display: flex;
   flex-direction: column;
-  background: #fff;
-  border-right: none;
-  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.12);
-}
-
-.sidenav-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 8px 16px 16px;
-  background: linear-gradient(135deg, $c-primary 0%, $c-primary-dark 100%);
-  color: #fff;
   flex-shrink: 0;
+  width: $ce-rail-width;
+  background: $ce-gradient-shell;
+  overflow-x: hidden;
+  transition: width 0.24s $ce-ease, transform 0.26s $ce-ease;
+
+  &.expandido {
+    width: $ce-nav-width;
+  }
 }
 
-.sidenav-brand {
+.ce-nav-header {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 11px;
+  flex-shrink: 0;
+  padding: 16px 16px 14px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.brand-icon {
-  font-size: 28px;
-  width: 28px;
-  height: 28px;
-  opacity: 0.95;
-}
-
-.brand-name {
-  font-size: 18px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-}
-
-.btn-close {
-  color: rgba(255, 255, 255, 0.85) !important;
-  transition: color 0.2s;
-
-  &:hover {
-    color: #fff !important;
-  }
-}
-
-.sidenav-nav {
-  flex: 1;
-  overflow-y: auto;
-  padding-top: 8px;
-
-  mat-divider {
-    margin: 4px 16px;
-  }
-}
-
-.nav-section-label {
-  padding: 12px 16px 4px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: rgba(0, 0, 0, 0.4);
-}
-
-.nav-item {
-  border-radius: 8px !important;
-  margin: 2px 8px !important;
-  width: calc(100% - 16px) !important;
-  transition: background 0.15s ease !important;
+.ce-nav-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  flex: 0 0 auto;
 
   mat-icon {
-    color: $c-primary !important;
-    transition: transform 0.15s ease;
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+  }
+}
+
+.ce-nav-brand {
+  display: flex;
+  flex-direction: column;
+  white-space: nowrap;
+}
+
+.ce-nav-brand-name {
+  font-size: 15.5px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  color: #fff;
+}
+
+.ce-nav-brand-tag {
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+// ── Itens ────────────────────────────────────────────────────────────────────
+
+.ce-nav-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 8px 0;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.ce-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 0 10px;
+  padding: 10px 12px 10px 17px;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.68);
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 500;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+
+  mat-icon {
+    flex-shrink: 0;
+    width: 22px;
+    font-size: 21px;
+    height: 21px;
+    text-align: center;
   }
 
   &:hover {
-    background: rgba($c-primary, 0.07) !important;
+    background: rgba(255, 255, 255, 0.09);
+  }
 
-    mat-icon {
-      transform: scale(1.1);
-    }
+  &.ativo {
+    background: rgba(255, 255, 255, 0.14);
+    color: #fff;
   }
 
   &--auth {
-    mat-icon {
-      color: $c-primary-light !important;
-    }
+    color: rgba(255, 255, 255, 0.55);
 
     &:hover {
-      background: rgba(0, 0, 0, 0.05) !important;
+      color: #fff;
     }
   }
 }
 
-.sidenav-footer {
+.ce-nav-group {
+  padding: 16px 22px 6px;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.32);
+  white-space: nowrap;
+}
+
+// ── Rodapé ───────────────────────────────────────────────────────────────────
+
+.ce-nav-footer {
   display: flex;
   flex-direction: column;
-  padding: 16px;
-  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  gap: 2px;
   flex-shrink: 0;
+  padding: 14px 22px 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  white-space: nowrap;
 }
 
-.footer-label {
-  font-size: 12px;
-  color: rgba(0, 0, 0, 0.55);
+.ce-nav-footer-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
 }
 
-.btn-menu-float {
-  position: fixed;
-  top: 14px;
-  left: 14px;
-  z-index: 999;
-  background: $c-primary !important;
-  color: #fff !important;
-  box-shadow: 0 3px 10px rgba($c-primary, 0.45) !important;
-  transition: box-shadow 0.2s ease, transform 0.15s ease !important;
+.ce-nav-footer-tag {
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+}
 
-  &:hover {
-    box-shadow: 0 5px 16px rgba($c-primary, 0.6) !important;
-    transform: scale(1.05);
+// ── Rail: só o ícone ─────────────────────────────────────────────────────────
+//
+// `display: none`, não `overflow: hidden`. Numa caixa de 76px o `overflow`
+// cortaria "Contas a receber" no meio da palavra. Escondido é legível;
+// cortado não é.
+//
+// A condição é `.rail`, uma classe explícita, e não `:not(.expandido)`:
+// abaixo de 900px o aside recolhido está FORA da tela, não estreito — lá os
+// rótulos devem continuar existindo. Uma classe que o componente só aplica no
+// desktop recolhido diz isso sem depender de a media query vencer a cascata.
+.ce-nav.rail {
+  .ce-nav-label,
+  .ce-nav-group,
+  .ce-nav-brand,
+  .ce-nav-footer {
+    display: none;
+  }
+
+  .ce-nav-header {
+    justify-content: center;
+    padding: 16px 0 14px;
+  }
+}
+
+// ── Scrim ────────────────────────────────────────────────────────────────────
+
+.ce-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  background: rgba(11, 31, 63, 0.42);
+  backdrop-filter: blur(2px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s ease;
+
+  &.ativo {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+// ── Área de conteúdo ─────────────────────────────────────────────────────────
+
+.ce-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+// O scroll vive aqui, não no `body`. É o que mantém o header no topo sem
+// `position: fixed`.
+.ce-content {
+  flex: 1;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+// ── Header ───────────────────────────────────────────────────────────────────
+
+.ce-header {
+  z-index: 5;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid $ce-border;
+  position: sticky;
+  top: 0;
+}
+
+.ce-header-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border: none;
+  background: transparent;
+  color: $ce-text-secondary;
+  border-radius: $ce-radius-pill;
+  cursor: pointer;
+  transition: background-color $ce-transition-card, color $ce-transition-card;
+
+  &:hover,
+  &:focus-visible {
+    background: $ce-surface-subtle;
+    color: $ce-text;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $ce-accent;
+    outline-offset: 2px;
+  }
+
+  mat-icon {
+    font-size: 21px;
+    width: 21px;
+    height: 21px;
+    line-height: 21px;
+  }
+}
+
+.ce-header-title {
+  font-size: 15.5px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  color: $ce-text;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ce-header-spacer {
+  flex: 1;
+}
+
+.ce-header-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px 5px 5px;
+  border: 1px solid $ce-border;
+  border-radius: $ce-radius-pill;
+  background: $ce-surface;
+}
+
+.ce-header-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: $ce-radius-pill;
+  background: $ce-gradient-avatar;
+  color: #fff;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.ce-header-user-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: $ce-text-header-user;
+}
+
+// ── Tela estreita: o mesmo aside vira drawer ─────────────────────────────────
+
+@media (max-width: 899px) {
+  .ce-nav {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: $ce-drawer-width;
+    transform: translateX(-100%);
+    box-shadow: $ce-shadow-drawer;
+
+    &.expandido {
+      width: $ce-drawer-width;
+      transform: translateX(0);
+    }
+
+    .ce-nav-item {
+      padding: 10px 12px;
+    }
+  }
+
+  .ce-header-user-label {
+    display: none;
+  }
+}
+
+// No desktop expandido o item ganha padding simétrico.
+@media (min-width: 900px) {
+  .ce-nav.expandido .ce-nav-item {
+    padding: 10px 12px;
   }
 }

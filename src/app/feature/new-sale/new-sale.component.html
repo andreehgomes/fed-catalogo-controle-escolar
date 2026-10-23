@@ -1,151 +1,252 @@
-<div class="page">
-  <div class="header">
-    <span class="page-title">{{ editingKey ? 'Editar venda' : 'Nova venda' }}</span>
-  </div>
+<section class="ce-page ce-page--form new-sale">
+  <header class="ce-page-header">
+    <div class="ce-page-title">
+      <h1>{{ editingKey ? 'Editar venda' : 'Nova venda' }}</h1>
+      <span class="ce-page-subtitle">
+        {{ editingKey
+          ? 'Ajuste os itens, o pagamento e a observação da venda.'
+          : 'Preencha os campos abaixo para registrar uma nova venda.' }}
+      </span>
+    </div>
+  </header>
 
-  <div class="page-content">
-    <form [formGroup]="form" class="form-card">
+  <form [formGroup]="form" class="ce-panel new-sale-form" (ngSubmit)="salvar()">
+    <!-- Alerta -->
+    <div class="alert-block" *ngIf="alerta?.codigo != null">
       <card-alert
-        *ngIf="alerta?.codigo != null"
         tipo="{{ alerta.tipo }}"
         codigo="{{ alerta.codigo }}"
         mensagem="{{ alerta.mensagem }}"
       ></card-alert>
+    </div>
 
-      <div class="fields">
+    <!-- ─── Dados da venda ─────────────────────────────────────────────── -->
+    <div class="ns-section">
+      <h2 class="ce-section-title">Dados da venda</h2>
 
-        <!-- Campanha -->
-        <mat-form-field appearance="outline" color="accent" class="field-full">
+      <div class="ns-row-2">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="ns-field">
           <mat-label>Campanha</mat-label>
           <mat-icon matPrefix>campaign</mat-icon>
           <mat-select formControlName="campaignKey">
-            <mat-option *ngFor="let c of campaigns" [value]="c.key">{{ c.nome }}</mat-option>
+            <mat-option *ngFor="let c of campaigns" [value]="c.key">
+              {{ c.nome }}
+            </mat-option>
           </mat-select>
         </mat-form-field>
 
-        <!-- Cliente -->
-        <div class="cliente-wrap">
-          <mat-form-field appearance="outline" color="accent" class="field-full">
-            <mat-label>Buscar/criar cliente</mat-label>
-            <mat-icon matPrefix>person_search</mat-icon>
-            <input matInput formControlName="clienteNome" autocomplete="off" />
-          </mat-form-field>
-          <ul class="suggestions-list" *ngIf="sugestoes.length > 0">
+        <div class="ns-cliente-wrap">
+          <label class="ce-field ns-cliente-field">
+            <span>Cliente</span>
+            <mat-icon class="ns-cliente-icon">person_search</mat-icon>
+            <input
+              type="text"
+              formControlName="clienteNome"
+              placeholder="Buscar ou criar cliente…"
+              autocomplete="off"
+            />
+          </label>
+
+          <ul class="ns-suggestions" *ngIf="sugestoes.length > 0">
             <li *ngFor="let c of sugestoes">
-              <button type="button" class="suggestion-btn"
-                      (click)="selecionarCliente(c)">{{ c.nome }}</button>
+              <button
+                type="button"
+                class="ns-suggestion-btn"
+                (click)="selecionarCliente(c)"
+              >
+                <mat-icon>person</mat-icon>
+                <span>{{ c.nome }}</span>
+              </button>
             </li>
           </ul>
-          <p class="hint" *ngIf="form.get('clienteNome').value && !form.get('clienteKey').value && sugestoes.length === 0">
+
+          <p
+            *ngIf="form.get('clienteNome').value
+              && !form.get('clienteKey').value
+              && sugestoes.length === 0"
+            class="ns-hint ns-hint--novo"
+          >
             <mat-icon>info</mat-icon>
             Cliente novo: será cadastrado ao salvar a venda.
           </p>
         </div>
+      </div>
+    </div>
 
-        <!-- Adicionar item -->
-        <div class="item-input-section">
-          <div class="section-header">
-            <span class="section-label">Adicionar item</span>
+    <!-- ─── Adicionar item ─────────────────────────────────────────────── -->
+    <div class="ns-section ce-block">
+      <header class="ns-section-head">
+        <h2 class="ce-section-title">Adicionar item</h2>
+        <button
+          *ngIf="itensPadrao.length === 1"
+          type="button"
+          class="ns-btn-padrao"
+          (click)="preencherItem(itensPadrao[0])"
+        >
+          <mat-icon>auto_fix_high</mat-icon>
+          Item padrão
+        </button>
+      </header>
 
-            <button *ngIf="itensPadrao.length === 1"
-                    type="button" class="btn-padrao"
-                    (click)="preencherItem(itensPadrao[0])">
-              <mat-icon>auto_fix_high</mat-icon>
-              Item padrão
-            </button>
-          </div>
+      <div class="ns-chips" *ngIf="itensPadrao.length > 1">
+        <span class="ce-label">Itens padrão</span>
+        <div class="ns-chip-list">
+          <button
+            *ngFor="let p of itensPadrao"
+            type="button"
+            class="ce-chip accent ns-chip-padrao"
+            (click)="preencherItem(p)"
+          >
+            {{ p.descricao }}
+          </button>
+        </div>
+      </div>
 
-          <div class="itens-padrao-chips" *ngIf="itensPadrao.length > 1">
-            <span class="chips-label">Itens padrão:</span>
-            <button *ngFor="let p of itensPadrao" type="button"
-                    class="chip-padrao"
-                    (click)="preencherItem(p)">
-              {{ p.descricao }}
-            </button>
-          </div>
+      <label class="ce-field">
+        <span>Descrição do item</span>
+        <input
+          type="text"
+          [formControl]="itemDescricaoCtrl"
+          placeholder="Ex.: Rifa, bolo, caixa de chocolate…"
+          autocomplete="off"
+        />
+      </label>
 
-          <mat-form-field appearance="outline" color="accent" class="field-full">
-            <mat-label>Descrição do item</mat-label>
-            <input matInput [formControl]="itemDescricaoCtrl" />
-          </mat-form-field>
+      <div class="ns-item-row">
+        <label class="ce-field ns-field-qtd">
+          <span>Qtd</span>
+          <input
+            type="number"
+            min="1"
+            inputmode="numeric"
+            [formControl]="itemQuantidadeCtrl"
+          />
+        </label>
 
-          <div class="item-row-2">
-            <mat-form-field appearance="outline" color="accent" class="field-qtd">
-              <mat-label>Qtd</mat-label>
-              <input matInput type="number" min="1" [formControl]="itemQuantidadeCtrl" />
-            </mat-form-field>
-
-            <input-moeda [formControl]="itemValorUnitarioCtrl" label="Valor unitário" />
-
-            <button mat-mini-fab color="accent" type="button" class="btn-add-item"
-                    [disabled]="itemDescricaoCtrl.invalid || itemQuantidadeCtrl.invalid || itemValorUnitarioCtrl.invalid"
-                    (click)="adicionarItem()">
-              <mat-icon>add</mat-icon>
-            </button>
-          </div>
+        <div class="ns-field-valor">
+          <input-moeda [formControl]="itemValorUnitarioCtrl" label="Valor unitário" />
         </div>
 
-        <!-- Lista de itens -->
-        <div class="itens-section" *ngIf="itensArray.length > 0">
-          <div class="itens-header">
-            <span class="itens-titulo">
-              <mat-icon>shopping_bag</mat-icon>
-              Itens
+        <button
+          type="button"
+          class="ce-btn-primary ns-btn-add-item"
+          [disabled]="itemDescricaoCtrl.invalid
+            || itemQuantidadeCtrl.invalid
+            || itemValorUnitarioCtrl.invalid"
+          (click)="adicionarItem()"
+        >
+          <mat-icon>add</mat-icon>
+          Adicionar
+        </button>
+      </div>
+    </div>
+
+    <!-- ─── Lista de itens ─────────────────────────────────────────────── -->
+    <div class="ns-section" *ngIf="itensArray.length > 0">
+      <header class="ns-section-head">
+        <h2 class="ce-section-title">
+          <mat-icon>shopping_bag</mat-icon>
+          Itens
+          <span class="ns-itens-count">
+            · {{ itensArray.length }} {{ itensArray.length === 1 ? 'item' : 'itens' }}
+          </span>
+        </h2>
+        <button
+          type="button"
+          class="ce-btn-ghost ns-btn-limpar"
+          (click)="limparItens()"
+        >
+          <mat-icon>delete_sweep</mat-icon>
+          Limpar
+        </button>
+      </header>
+
+      <ul class="ce-list ns-itens-list">
+        <li
+          *ngFor="let item of itensArray.controls; let i = index"
+          class="ns-item-row-card"
+        >
+          <div class="ns-item-info">
+            <strong>{{ item.get('descricao').value }}</strong>
+            <span class="ns-item-meta">
+              {{ item.get('quantidade').value }}
+              × R$ {{ fmt(item.get('valorUnitario').value) }}
+              = <strong>R$ {{ fmt(item.get('valorSubtotal').value) }}</strong>
             </span>
-            <span class="itens-count">{{ itensArray.length }} {{ itensArray.length === 1 ? 'item' : 'itens' }}</span>
-            <button mat-button type="button" class="btn-limpar" (click)="limparItens()">
-              <mat-icon>delete_sweep</mat-icon>
-              Limpar
-            </button>
           </div>
-          <div class="item-card" *ngFor="let item of itensArray.controls; let i = index">
-            <div class="item-card-info">
-              <span class="item-card-desc">{{ item.get('descricao').value }}</span>
-              <span class="item-card-meta">
-                {{ item.get('quantidade').value }} × R$ {{ fmt(item.get('valorUnitario').value) }}
-                = <strong>R$ {{ fmt(item.get('valorSubtotal').value) }}</strong>
-              </span>
-            </div>
-            <button mat-icon-button type="button" class="btn-edit" (click)="editarItem(i)">
+          <div class="ns-item-actions">
+            <button
+              type="button"
+              class="ce-btn-icon"
+              aria-label="Editar item"
+              matTooltip="Editar"
+              (click)="editarItem(i)"
+            >
               <mat-icon>edit</mat-icon>
             </button>
-            <button mat-icon-button type="button" class="btn-remove" (click)="removerItem(i)">
+            <button
+              type="button"
+              class="ce-btn-icon ns-item-del"
+              aria-label="Remover item"
+              matTooltip="Remover"
+              (click)="removerItem(i)"
+            >
               <mat-icon>delete</mat-icon>
             </button>
           </div>
-        </div>
+        </li>
+      </ul>
+    </div>
 
-        <!-- Total -->
-        <div class="total-row">
-          <span class="total-label">Total</span>
-          <span class="total-value">R$ {{ fmt(form.get('valorTotal').value || 0) }}</span>
-        </div>
+    <!-- ─── Total ─────────────────────────────────────────────────────── -->
+    <div class="ns-total">
+      <span class="ns-total-label">Total</span>
+      <span class="ns-total-value">
+        R$ {{ fmt(form.get('valorTotal').value || 0) }}
+      </span>
+    </div>
 
-        <!-- Observação -->
-        <mat-form-field appearance="outline" color="accent" class="field-full">
-          <mat-label>Observação (opcional)</mat-label>
-          <textarea matInput formControlName="observacao" rows="2"></textarea>
-        </mat-form-field>
+    <!-- ─── Observação ────────────────────────────────────────────────── -->
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="ns-obs">
+      <mat-label>Observação (opcional)</mat-label>
+      <textarea matInput formControlName="observacao" rows="2"></textarea>
+    </mat-form-field>
 
-        <!-- A receber -->
-        <mat-checkbox color="accent" [formControl]="aReceberCtrl" class="a-receber-check">
-          Venda a receber (cliente vai pagar depois)
-        </mat-checkbox>
-        <p class="a-receber-hint" *ngIf="aReceberCtrl.value">
-          <mat-icon>info</mat-icon>
-          Esta venda ficará como pendente em "Contas a receber" até o pagamento.
+    <!-- ─── A receber ─────────────────────────────────────────────────── -->
+    <div class="ns-areceber">
+      <mat-checkbox color="accent" [formControl]="aReceberCtrl">
+        <span class="ns-areceber-label">Venda a receber</span>
+        <span class="ns-areceber-help">— cliente vai pagar depois</span>
+      </mat-checkbox>
+    </div>
+
+    <div class="ce-info-block warn ns-areceber-hint" *ngIf="aReceberCtrl.value">
+      <mat-icon>info</mat-icon>
+      <div class="ce-info-block-body">
+        <p>
+          Esta venda ficará como pendente em
+          <strong>Contas a receber</strong> até o pagamento.
         </p>
-
       </div>
+    </div>
 
-      <div class="actions">
-        <button mat-stroked-button type="button" (click)="cancelar()">Cancelar</button>
-        <button mat-flat-button color="accent" type="button"
-                [disabled]="form.invalid || itensArray.length === 0"
-                (click)="salvar()">
-          Salvar venda
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
+    <!-- ─── Ações ─────────────────────────────────────────────────────── -->
+    <div class="ce-form-actions ns-actions">
+      <button
+        type="button"
+        class="ce-btn-ghost"
+        (click)="cancelar()"
+      >
+        Cancelar
+      </button>
+      <button
+        type="submit"
+        class="ce-btn-primary"
+        [disabled]="form.invalid || itensArray.length === 0"
+      >
+        <mat-icon>save</mat-icon>
+        {{ editingKey ? 'Salvar alterações' : 'Salvar venda' }}
+      </button>
+    </div>
+  </form>
+</section>

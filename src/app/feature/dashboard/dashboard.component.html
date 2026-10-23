@@ -1,166 +1,202 @@
-<div class="page">
-  <div class="header">
-    <span class="page-title">Dashboard</span>
-    <span class="page-subtitle">Resumo das campanhas e vendas</span>
+<section class="ce-page dashboard">
+  <header class="ce-page-header">
+    <div class="ce-page-title">
+      <h1>Dashboard</h1>
+      <span class="ce-page-subtitle">Resumo das campanhas e vendas</span>
+    </div>
+  </header>
+
+  <!-- ─── Filtros ────────────────────────────────────────────────────────── -->
+  <div class="dashboard-filtros">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="filtro-campanha">
+      <mat-label>Campanha</mat-label>
+      <mat-icon matPrefix>campaign</mat-icon>
+      <mat-select [formControl]="campaignCtrl">
+        <mat-option [value]="">Todas</mat-option>
+        <mat-option *ngFor="let c of campaigns" [value]="c.key">{{ c.nome }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>De</mat-label>
+      <mat-icon matPrefix>calendar_today</mat-icon>
+      <input matInput type="date" [formControl]="dataDeCtrl" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Até</mat-label>
+      <mat-icon matPrefix>calendar_today</mat-icon>
+      <input matInput type="date" [formControl]="dataAteCtrl" />
+    </mat-form-field>
+
+    <button
+      *ngIf="campaignCtrl.value || dataDeCtrl.value || dataAteCtrl.value"
+      type="button"
+      class="ce-btn-ghost dashboard-clear"
+      (click)="limparFiltros()"
+    >
+      <mat-icon>filter_alt_off</mat-icon>
+      Limpar filtros
+    </button>
   </div>
 
-  <div class="page-content">
-
-    <div class="filtros">
-      <mat-form-field appearance="outline" color="accent" class="field-full" subscriptSizing="dynamic">
-        <mat-label>Campanha</mat-label>
-        <mat-icon matPrefix>campaign</mat-icon>
-        <mat-select [formControl]="campaignCtrl">
-          <mat-option [value]="">Todas</mat-option>
-          <mat-option *ngFor="let c of campaigns" [value]="c.key">{{ c.nome }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-
-      <div class="row-2">
-        <mat-form-field appearance="outline" color="accent" class="field-half" subscriptSizing="dynamic">
-          <mat-label>De</mat-label>
-          <mat-icon matPrefix>calendar_today</mat-icon>
-          <input matInput type="date" [formControl]="dataDeCtrl" />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" color="accent" class="field-half" subscriptSizing="dynamic">
-          <mat-label>Até</mat-label>
-          <mat-icon matPrefix>calendar_today</mat-icon>
-          <input matInput type="date" [formControl]="dataAteCtrl" />
-        </mat-form-field>
+  <!-- ─── KPIs ───────────────────────────────────────────────────────────── -->
+  <div class="kpi-grid">
+    <article class="ce-summary kpi" data-tint="accent">
+      <span class="kpi-icon"><mat-icon>receipt_long</mat-icon></span>
+      <div class="kpi-body">
+        <span class="ce-summary-label">Vendas realizadas</span>
+        <span class="ce-summary-value">{{ totalVendas }}</span>
       </div>
+    </article>
 
-      <button mat-button class="btn-clear" *ngIf="campaignCtrl.value || dataDeCtrl.value || dataAteCtrl.value"
-        (click)="limparFiltros()">
-        <mat-icon>filter_alt_off</mat-icon> Limpar filtros
-      </button>
+    <article class="ce-summary kpi" data-tint="accent">
+      <span class="kpi-icon"><mat-icon>shopping_cart</mat-icon></span>
+      <div class="kpi-body">
+        <span class="ce-summary-label">Total vendido</span>
+        <span class="ce-summary-value">R$ {{ fmt(totalVendido) }}</span>
+      </div>
+    </article>
+
+    <article class="ce-summary kpi" data-tint="success">
+      <span class="kpi-icon"><mat-icon>payments</mat-icon></span>
+      <div class="kpi-body">
+        <span class="ce-summary-label">Total recebido</span>
+        <span class="ce-summary-value">R$ {{ fmt(totalRecebido) }}</span>
+      </div>
+    </article>
+
+    <article class="ce-summary kpi" data-tint="warn">
+      <span class="kpi-icon"><mat-icon>pending_actions</mat-icon></span>
+      <div class="kpi-body">
+        <span class="ce-summary-label">Falta receber</span>
+        <span class="ce-summary-value">R$ {{ fmt(totalAReceber) }}</span>
+      </div>
+    </article>
+
+    <article class="ce-summary kpi" data-tint="danger">
+      <span class="kpi-icon"><mat-icon>receipt</mat-icon></span>
+      <div class="kpi-body">
+        <span class="ce-summary-label">Despesas</span>
+        <span class="ce-summary-value">R$ {{ fmt(totalDespesas) }}</span>
+      </div>
+    </article>
+
+    <article class="ce-summary kpi" data-tint="info" *ngIf="patrociniosFiltrados.length > 0">
+      <span class="kpi-icon"><mat-icon>volunteer_activism</mat-icon></span>
+      <div class="kpi-body">
+        <span class="ce-summary-label">Patrocínio (R$)</span>
+        <span class="ce-summary-value">R$ {{ fmt(totalPatrocinioValor) }}</span>
+      </div>
+    </article>
+
+    <article class="ce-summary kpi" data-tint="accent" *ngIf="qtdPatrocinioProduto > 0">
+      <span class="kpi-icon"><mat-icon>inventory_2</mat-icon></span>
+      <div class="kpi-body">
+        <span class="ce-summary-label">Patrocínio (produto)</span>
+        <span class="ce-summary-value">
+          {{ qtdPatrocinioProduto }} {{ qtdPatrocinioProduto === 1 ? 'item' : 'itens' }}
+        </span>
+      </div>
+    </article>
+
+    <article class="ce-summary kpi kpi--wide" data-tint="accent">
+      <span class="kpi-icon"><mat-icon>account_balance</mat-icon></span>
+      <div class="kpi-body">
+        <span class="ce-summary-label">
+          Saldo líquido · recebido + patrocínios − despesas
+        </span>
+        <span
+          class="ce-summary-value"
+          [class.saldo-negativo]="saldoLiquido < 0"
+        >
+          R$ {{ fmt(saldoLiquido) }}
+        </span>
+      </div>
+    </article>
+  </div>
+
+  <!-- ─── Meta ───────────────────────────────────────────────────────────── -->
+  <article
+    *ngIf="campaignSelecionada?.meta && campaignSelecionada.meta > 0"
+    class="ce-card meta-card"
+  >
+    <header class="meta-top">
+      <div>
+        <span class="ce-label">Meta da campanha</span>
+        <h2 class="ce-section-title">{{ campaignSelecionada.nome }}</h2>
+      </div>
+      <span class="meta-pct">{{ pctMeta }}%</span>
+    </header>
+    <div class="meta-progress" [class.completa]="pctMeta >= 100">
+      <div class="fill" [style.--ce-progress-value.%]="pctMeta"></div>
+    </div>
+    <div class="meta-legend">
+      <span>
+        Vendido
+        <strong>R$ {{ fmt(totalVendido) }}</strong>
+      </span>
+      <span>
+        Meta
+        <strong>R$ {{ fmt(campaignSelecionada.meta) }}</strong>
+      </span>
+    </div>
+  </article>
+
+  <!-- ─── Top itens ──────────────────────────────────────────────────────── -->
+  <mat-expansion-panel class="ce-card dashboard-panel">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <mat-icon>trending_up</mat-icon>
+        Top 10 itens vendidos
+      </mat-panel-title>
+      <mat-panel-description *ngIf="totalItensQtd > 0">
+        {{ totalItensQtd }} un · R$ {{ fmt(totalItensValor) }}
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <div *ngIf="topItens.length === 0" class="ce-empty-inline">
+      Nenhum item vendido no período.
     </div>
 
-    <div class="cards-grid">
-      <mat-card class="kpi-card kpi-blue">
-        <div class="kpi-icon"><mat-icon>receipt_long</mat-icon></div>
-        <div class="kpi-body">
-          <span class="kpi-label">Vendas realizadas</span>
-          <span class="kpi-value">{{ totalVendas }}</span>
-        </div>
-      </mat-card>
-
-      <mat-card class="kpi-card kpi-blue">
-        <div class="kpi-icon"><mat-icon>shopping_cart</mat-icon></div>
-        <div class="kpi-body">
-          <span class="kpi-label">Total vendido</span>
-          <span class="kpi-value">R$ {{ fmt(totalVendido) }}</span>
-        </div>
-      </mat-card>
-
-      <mat-card class="kpi-card kpi-green">
-        <div class="kpi-icon"><mat-icon>payments</mat-icon></div>
-        <div class="kpi-body">
-          <span class="kpi-label">Total recebido</span>
-          <span class="kpi-value">R$ {{ fmt(totalRecebido) }}</span>
-        </div>
-      </mat-card>
-
-      <mat-card class="kpi-card kpi-orange">
-        <div class="kpi-icon"><mat-icon>pending_actions</mat-icon></div>
-        <div class="kpi-body">
-          <span class="kpi-label">Falta receber</span>
-          <span class="kpi-value">R$ {{ fmt(totalAReceber) }}</span>
-        </div>
-      </mat-card>
-
-      <mat-card class="kpi-card kpi-red">
-        <div class="kpi-icon"><mat-icon>receipt</mat-icon></div>
-        <div class="kpi-body">
-          <span class="kpi-label">Despesas</span>
-          <span class="kpi-value">R$ {{ fmt(totalDespesas) }}</span>
-        </div>
-      </mat-card>
-
-      <mat-card class="kpi-card kpi-pink" *ngIf="patrociniosFiltrados.length > 0">
-        <div class="kpi-icon"><mat-icon>volunteer_activism</mat-icon></div>
-        <div class="kpi-body">
-          <span class="kpi-label">Patrocínio (R$)</span>
-          <span class="kpi-value">R$ {{ fmt(totalPatrocinioValor) }}</span>
-        </div>
-      </mat-card>
-
-      <mat-card class="kpi-card kpi-saldo kpi-full">
-        <div class="kpi-icon"><mat-icon>account_balance</mat-icon></div>
-        <div class="kpi-body">
-          <span class="kpi-label">Saldo líquido (recebido + patrocínios − despesas)</span>
-          <span class="kpi-value" [class.negativo]="saldoLiquido < 0">R$ {{ fmt(saldoLiquido) }}</span>
-        </div>
-      </mat-card>
-
-      <mat-card class="kpi-card kpi-teal" *ngIf="qtdPatrocinioProduto > 0">
-        <div class="kpi-icon"><mat-icon>inventory_2</mat-icon></div>
-        <div class="kpi-body">
-          <span class="kpi-label">Patrocínio (Produto)</span>
-          <span class="kpi-value">{{ qtdPatrocinioProduto }} {{ qtdPatrocinioProduto === 1 ? 'item' : 'itens' }}</span>
-        </div>
-      </mat-card>
-
-      <mat-card class="kpi-card kpi-purple kpi-full" *ngIf="campaignSelecionada?.meta">
-        <div class="kpi-icon"><mat-icon>flag</mat-icon></div>
-        <div class="kpi-body">
-          <span class="kpi-label">Meta atingida</span>
-          <span class="kpi-value">{{ pctMeta }}%</span>
-        </div>
-      </mat-card>
-    </div>
-
-    <mat-card class="meta-card" *ngIf="campaignSelecionada?.meta && campaignSelecionada.meta > 0">
-      <div class="meta-header">
-        <span>Progresso da meta</span>
-        <span class="pct">{{ pctMeta }}%</span>
-      </div>
-      <mat-progress-bar mode="determinate" color="accent" [value]="pctMeta"></mat-progress-bar>
-      <div class="meta-legend">
-        <span>Vendido: R$ {{ fmt(totalVendido) }}</span>
-        <span>Meta: R$ {{ fmt(campaignSelecionada.meta) }}</span>
-      </div>
-    </mat-card>
-
-    <mat-expansion-panel class="section-panel">
-      <mat-expansion-panel-header>
-        <mat-panel-title>Top 10 itens vendidos</mat-panel-title>
-        <mat-panel-description>
-          <span *ngIf="totalItensQtd > 0">{{ totalItensQtd }} un · R$ {{ fmt(totalItensValor) }}</span>
-        </mat-panel-description>
-      </mat-expansion-panel-header>
-      <div *ngIf="topItens.length === 0" class="empty-mini">Nenhum item vendido no período.</div>
-      <div class="top-row" *ngFor="let it of topItens; let i = index">
+    <ul class="top-list" *ngIf="topItens.length > 0">
+      <li class="top-row" *ngFor="let it of topItens; let i = index">
         <span class="top-rank">{{ i + 1 }}</span>
         <span class="top-desc">{{ it.descricao }}</span>
         <span class="top-qtd">{{ it.qtdTotal }} un</span>
         <span class="top-valor">R$ {{ fmt(it.valorTotal) }}</span>
-      </div>
-      <div class="top-row top-total" *ngIf="topItens.length > 0">
+      </li>
+      <li class="top-row top-total">
         <span class="top-rank"></span>
         <span class="top-desc">Total geral</span>
         <span class="top-qtd">{{ totalItensQtd }} un</span>
         <span class="top-valor">R$ {{ fmt(totalItensValor) }}</span>
-      </div>
-    </mat-expansion-panel>
+      </li>
+    </ul>
+  </mat-expansion-panel>
 
-    <mat-expansion-panel class="section-panel">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          <mat-icon>volunteer_activism</mat-icon>
-          Patrocínios
-        </mat-panel-title>
-        <mat-panel-description>
-          <span *ngIf="totalPatrocinioValor > 0">R$ {{ fmt(totalPatrocinioValor) }}</span>
-          <span *ngIf="qtdPatrocinioProduto > 0">
-            {{ totalPatrocinioValor > 0 ? ' · ' : '' }}{{ qtdPatrocinioProduto }} produto{{ qtdPatrocinioProduto > 1 ? 's' : '' }}
-          </span>
-        </mat-panel-description>
-      </mat-expansion-panel-header>
+  <!-- ─── Patrocínios ────────────────────────────────────────────────────── -->
+  <mat-expansion-panel class="ce-card dashboard-panel">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <mat-icon>volunteer_activism</mat-icon>
+        Patrocínios
+      </mat-panel-title>
+      <mat-panel-description>
+        <span *ngIf="totalPatrocinioValor > 0">R$ {{ fmt(totalPatrocinioValor) }}</span>
+        <span *ngIf="qtdPatrocinioProduto > 0">
+          {{ totalPatrocinioValor > 0 ? ' · ' : '' }}{{ qtdPatrocinioProduto }}
+          produto{{ qtdPatrocinioProduto > 1 ? 's' : '' }}
+        </span>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
 
-      <div *ngIf="patrociniosFiltrados.length === 0" class="empty-mini">Nenhum patrocínio no período.</div>
+    <div *ngIf="patrociniosFiltrados.length === 0" class="ce-empty-inline">
+      Nenhum patrocínio no período.
+    </div>
 
-      <div class="pat-row" *ngFor="let p of patrociniosFiltrados">
+    <ul class="pat-list">
+      <li class="pat-row" *ngFor="let p of patrociniosFiltrados">
         <div class="pat-info">
           <span class="pat-nome">{{ p.sponsor.nome }}</span>
           <span class="pat-meta">
@@ -169,57 +205,86 @@
               {{ !campaignSelecionada ? ' · ' : '' }}{{ p.sponsor.produto }}
             </ng-container>
           </span>
-          <span class="pat-obs" *ngIf="p.sponsor.observacao">{{ p.sponsor.observacao }}</span>
+          <span class="pat-obs" *ngIf="p.sponsor.observacao">
+            {{ p.sponsor.observacao }}
+          </span>
         </div>
         <div class="pat-right">
-          <span class="pat-valor" *ngIf="p.sponsor.tipo === 'valor'">R$ {{ fmt(p.sponsor.valor || 0) }}</span>
-          <span class="pat-tipo-pill" [class.produto]="p.sponsor.tipo === 'produto'">
+          <span class="pat-valor" *ngIf="p.sponsor.tipo === 'valor'">
+            R$ {{ fmt(p.sponsor.valor || 0) }}
+          </span>
+          <span
+            class="ce-chip"
+            [class.success]="p.sponsor.tipo === 'valor'"
+            [class.info]="p.sponsor.tipo === 'produto'"
+          >
             {{ p.sponsor.tipo === 'valor' ? 'R$' : 'Produto' }}
           </span>
         </div>
-      </div>
-    </mat-expansion-panel>
+      </li>
+    </ul>
+  </mat-expansion-panel>
 
-    <mat-expansion-panel class="section-panel" *ngIf="filteredExpenses.length > 0">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          <mat-icon>receipt</mat-icon>
-          Despesas
-        </mat-panel-title>
-        <mat-panel-description>
-          <span>R$ {{ fmt(totalDespesas) }}</span>
-        </mat-panel-description>
-      </mat-expansion-panel-header>
-      <div class="expense-row" *ngFor="let e of filteredExpenses">
+  <!-- ─── Despesas ───────────────────────────────────────────────────────── -->
+  <mat-expansion-panel
+    *ngIf="filteredExpenses.length > 0"
+    class="ce-card dashboard-panel"
+  >
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <mat-icon>receipt</mat-icon>
+        Despesas
+      </mat-panel-title>
+      <mat-panel-description>R$ {{ fmt(totalDespesas) }}</mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <ul class="expense-list">
+      <li class="expense-row" *ngFor="let e of filteredExpenses">
         <div class="expense-info">
           <span class="expense-desc">{{ e.descricao }}</span>
-          <span class="expense-meta">{{ e.campaignNome }} · {{ fmtData(e.data) }}</span>
+          <span class="expense-meta">
+            {{ e.campaignNome }} · {{ fmtData(e.data) }}
+          </span>
         </div>
         <div class="expense-right">
           <span class="expense-valor">R$ {{ fmt(e.valor) }}</span>
-          <button mat-button class="action-comprovante"
-                  *ngIf="e.comprovanteUrl"
-                  (click)="abrirComprovante(e.comprovanteUrl)">
+          <button
+            *ngIf="e.comprovanteUrl"
+            type="button"
+            class="ce-btn-ghost expense-comprovante"
+            (click)="abrirComprovante(e.comprovanteUrl)"
+          >
             <mat-icon>receipt</mat-icon>
             Comprovante
           </button>
         </div>
-      </div>
-    </mat-expansion-panel>
+      </li>
+    </ul>
+  </mat-expansion-panel>
 
-    <mat-expansion-panel class="section-panel">
-      <mat-expansion-panel-header>
-        <mat-panel-title>Últimas vendas</mat-panel-title>
-      </mat-expansion-panel-header>
-      <div *ngIf="ultimasVendas.length === 0" class="empty-mini">Nenhuma venda no período.</div>
-      <div class="last-row" *ngFor="let s of ultimasVendas">
+  <!-- ─── Últimas vendas ─────────────────────────────────────────────────── -->
+  <mat-expansion-panel class="ce-card dashboard-panel">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <mat-icon>schedule</mat-icon>
+        Últimas vendas
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <div *ngIf="ultimasVendas.length === 0" class="ce-empty-inline">
+      Nenhuma venda no período.
+    </div>
+
+    <ul class="last-list">
+      <li class="last-row" *ngFor="let s of ultimasVendas">
         <div class="last-info">
           <span class="last-cliente">{{ s.clienteNome }}</span>
-          <span class="last-meta">{{ s.campaignNome }} · {{ fmtData(s.dataCriacao) }}</span>
+          <span class="last-meta">
+            {{ s.campaignNome }} · {{ fmtData(s.dataCriacao) }}
+          </span>
         </div>
         <span class="last-valor">R$ {{ fmt(s.valorTotal) }}</span>
-      </div>
-    </mat-expansion-panel>
-
-  </div>
-</div>
+      </li>
+    </ul>
+  </mat-expansion-panel>
+</section>

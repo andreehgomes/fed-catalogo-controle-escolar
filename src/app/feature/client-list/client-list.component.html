@@ -1,40 +1,84 @@
-<div class="page">
-  <div class="header">
-    <span class="page-title">Clientes</span>
-    <button mat-mini-fab color="accent" class="btn-add" (click)="novoCliente()">
+<section class="ce-page client-list">
+  <header class="ce-page-header">
+    <div class="ce-page-title">
+      <h1>Clientes</h1>
+      <span class="ce-page-subtitle">
+        {{ clients.length }}
+        {{ clients.length === 1 ? 'cliente' : 'clientes' }}
+      </span>
+    </div>
+    <div class="ce-page-actions">
+      <button type="button" class="ce-btn-primary" (click)="novoCliente()">
+        <mat-icon>person_add</mat-icon>
+        Novo cliente
+      </button>
+    </div>
+  </header>
+
+  <!-- Busca -->
+  <label class="ce-field ce-field--search">
+    <span class="sr-only">Buscar cliente</span>
+    <mat-icon class="ce-field-prefix-icon">search</mat-icon>
+    <input
+      type="search"
+      [formControl]="searchCtrl"
+      placeholder="Buscar por nome ou telefone…"
+      autocomplete="off"
+    />
+  </label>
+
+  <!-- Vazio -->
+  <div *ngIf="clients.length === 0" class="ce-empty-state">
+    <mat-icon>group</mat-icon>
+    <h3>Nenhum cliente encontrado</h3>
+    <p>Cadastre o primeiro cliente para começar a registrar vendas no nome dele.</p>
+    <button type="button" class="ce-btn-primary" (click)="novoCliente()">
       <mat-icon>person_add</mat-icon>
+      Novo cliente
     </button>
   </div>
 
-  <div class="page-content">
-    <div class="filtros">
-      <mat-form-field appearance="outline" color="accent" class="field-full">
-        <mat-label>Buscar</mat-label>
-        <mat-icon matPrefix>search</mat-icon>
-        <input matInput [formControl]="searchCtrl" autocomplete="off" />
-      </mat-form-field>
-    </div>
+  <!-- Lista densa de clientes -->
+  <ul class="ce-list ce-card client-list-ul" *ngIf="clients.length > 0">
+    <li
+      *ngFor="let c of clients"
+      class="ce-list-row client-row"
+      tabindex="0"
+      (click)="abrirDetalhe(c)"
+      (keyup.enter)="abrirDetalhe(c)"
+    >
+      <div class="client-avatar" aria-hidden="true">
+        {{ (c.nome || '?').charAt(0).toUpperCase() }}
+      </div>
 
-    <div *ngIf="clients.length === 0" class="empty">
-      <mat-icon>info</mat-icon>
-      <span>Nenhum cliente encontrado.</span>
-    </div>
-
-    <div class="client-card" *ngFor="let c of clients" (click)="abrirDetalhe(c)">
-      <div class="client-info">
-        <span class="client-nome">{{ c.nome }}</span>
-        <span class="client-tel" *ngIf="c.telefone">
-          <mat-icon>phone</mat-icon>{{ c.telefone }}
+      <div class="ce-list-row-main">
+        <strong>{{ c.nome }}</strong>
+        <span *ngIf="c.telefone" class="client-tel">
+          <mat-icon>phone</mat-icon>
+          {{ c.telefone }}
         </span>
       </div>
-      <div class="client-actions">
-        <button mat-icon-button (click)="editar(c, $event)">
+
+      <div class="client-row-actions">
+        <button
+          type="button"
+          class="ce-btn-icon"
+          aria-label="Editar"
+          matTooltip="Editar"
+          (click)="editar(c, $event)"
+        >
           <mat-icon>edit</mat-icon>
         </button>
-        <button mat-icon-button (click)="excluir(c, $event)">
+        <button
+          type="button"
+          class="ce-btn-icon client-del"
+          aria-label="Excluir"
+          matTooltip="Excluir"
+          (click)="excluir(c, $event)"
+        >
           <mat-icon>delete</mat-icon>
         </button>
       </div>
-    </div>
-  </div>
-</div>
+    </li>
+  </ul>
+</section>

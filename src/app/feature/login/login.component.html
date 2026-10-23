@@ -1,25 +1,29 @@
-<div class="page">
+<!--
+  Login fica fora do shell (ver AppComponent.outOfShellPrefixes). Ocupa a
+  viewport inteira, com o gradiente da marca ao fundo e um card claro central.
+-->
+<div class="login-page">
   <div class="login-container">
-
     <div class="logo-wrapper">
       <img
         src="../../../assets/imagens/logo.png"
-        width="280"
-        height="280"
-        alt="Logo Controle de Campanhas"
+        alt="Controle de Campanhas Escolares"
         class="logo"
       />
-      <span class="brand-name">Controle de Campanhas</span>
+      <div class="brand">
+        <span class="brand-eyebrow">Controle de Campanhas</span>
+        <span class="brand-name">Escolares</span>
+      </div>
     </div>
 
     <div class="form-card">
-      <card-alert
-        *ngIf="mensagemRespostaLogin?.codigo != null"
-        tipo="{{ mensagemRespostaLogin.tipo }}"
-        codigo="{{ mensagemRespostaLogin.codigo }}"
-        mensagem="{{ mensagemRespostaLogin.mensagem }}"
-        class="alert-block"
-      ></card-alert>
+      <div class="alert-block" *ngIf="mensagemRespostaLogin?.codigo != null">
+        <card-alert
+          tipo="{{ mensagemRespostaLogin.tipo }}"
+          codigo="{{ mensagemRespostaLogin.codigo }}"
+          mensagem="{{ mensagemRespostaLogin.mensagem }}"
+        ></card-alert>
+      </div>
 
       <form
         #form="ngForm"
@@ -27,25 +31,34 @@
         (ngSubmit)="onSubmitLogin()"
         class="form"
       >
-        <mat-form-field class="field-full" appearance="outline" color="accent">
-          <mat-label>E-mail</mat-label>
-          <input formControlName="emailFormGroup" type="email" matInput />
-        </mat-form-field>
+        <!--
+          `<label>` real envolvendo o `<input>`: mantém `getByLabel("E-mail")`
+          dos e2e funcionando sem depender de `mat-form-field`.
+        -->
+        <label class="ce-field">
+          <span>E-mail</span>
+          <input
+            type="email"
+            formControlName="emailFormGroup"
+            autocomplete="email"
+          />
+        </label>
 
-        <mat-form-field class="field-full" appearance="outline" color="accent">
-          <mat-label>Senha</mat-label>
-          <input formControlName="senhaFormGroup" type="password" matInput />
-        </mat-form-field>
+        <label class="ce-field">
+          <span>Senha</span>
+          <input
+            type="password"
+            formControlName="senhaFormGroup"
+            autocomplete="current-password"
+          />
+        </label>
 
-        <button mat-flat-button color="accent" type="submit" class="btn-entrar">
-          Entrar
-        </button>
+        <button type="submit" class="ce-btn-primary btn-entrar">Entrar</button>
 
         <div class="links">
           <a class="link" (click)="newPassword()">Esqueci minha senha</a>
         </div>
       </form>
     </div>
-
   </div>
 </div>

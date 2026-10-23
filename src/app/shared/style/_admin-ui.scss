@@ -1,0 +1,309 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Mixins parametrizáveis — Controle Escolar
+//
+// Regra: só vai para cá o que **precisa** receber parâmetro ou é específico
+// de uma tela. Tudo mais (botões, cards, listas, campos, chips…) vive como
+// classe global em `src/styles.scss` — a classe é emitida uma vez e serve
+// as 25 telas; o mixin é expandido inline em cada componente que o inclui e
+// come o budget `anyComponentStyle` (6kb aviso, 10kb erro).
+// ─────────────────────────────────────────────────────────────────────────────
+
+@use './tokens' as *;
+
+// ── Grid responsivo ──────────────────────────────────────────────────────────
+// Grid auto-fit sem media query no próprio grid. Use em listas de cards.
+@mixin ce-grid($min: 260px, $gap: $ce-gap) {
+  display: grid;
+  gap: $gap;
+  grid-template-columns: repeat(auto-fit, minmax($min, 1fr));
+}
+
+// ── Chip com cor customizada ─────────────────────────────────────────────────
+// Para chips semânticos fora da paleta padrão (ex.: status específico de
+// entrega ou campanha). Para chips comuns, use `.ce-chip` + variantes.
+@mixin ce-chip($ink, $bg, $border: transparent) {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: $ce-radius-pill;
+  background: $bg;
+  color: $ink;
+  border: 1px solid $border;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+// ── Botão ícone fantasma ─────────────────────────────────────────────────────
+// Botão redondo transparente usado em ações secundárias (editar, excluir
+// inline). A cor da tinta define hover e foco.
+@mixin ce-btn-icon-ghost($ink: $ce-text-secondary, $hover-bg: $ce-surface-subtle) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  color: $ink;
+  border-radius: $ce-radius-pill;
+  cursor: pointer;
+  transition: background-color $ce-transition-card, color $ce-transition-card;
+
+  &:hover,
+  &:focus-visible {
+    background: $hover-bg;
+    color: $ce-text;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $ce-accent;
+    outline-offset: 2px;
+  }
+
+  &[disabled] {
+    color: $ce-text-disabled;
+    cursor: not-allowed;
+    background: transparent;
+  }
+
+  mat-icon,
+  .material-icons {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+  }
+}
+
+// ── Bloco de ícone (atalhos do feed, cabeçalho de card) ──────────────────────
+// Quadrado colorido com ícone centralizado. Usado nos atalhos do feed e em
+// cabeçalhos de card de resumo.
+@mixin ce-icon-block($ink: $ce-accent, $bg: $ce-accent-soft, $size: 44px) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: $size;
+  height: $size;
+  border-radius: $ce-radius-icon;
+  background: $bg;
+  color: $ink;
+  flex: 0 0 auto;
+
+  mat-icon,
+  .material-icons {
+    font-size: calc($size * 0.5);
+    width: calc($size * 0.5);
+    height: calc($size * 0.5);
+    line-height: calc($size * 0.5);
+  }
+}
+
+// ── Barra de progresso ───────────────────────────────────────────────────────
+// Trilho + preenchimento. Para preenchimento colorido, defina
+// `--ce-progress-fill` no elemento filho.
+@mixin ce-progress($height: 8px) {
+  position: relative;
+  width: 100%;
+  height: $height;
+  border-radius: $ce-radius-pill;
+  background: $ce-surface-track;
+  overflow: hidden;
+
+  > .fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: var(--ce-progress-value, 0%);
+    background: var(--ce-progress-fill, #{$ce-accent});
+    border-radius: inherit;
+    transition: width $ce-transition-card;
+  }
+}
+
+// ── mat-form-field appearance="outline" → .ce-field ──────────────────────────
+//
+// Material fica para datepicker (locale pt-BR em `material.module.ts`),
+// autocomplete (busca com estado no new-sale) e select (overlay/teclado). Os
+// demais campos são `<label>` + `<input>` nativo com `.ce-field`.
+//
+// Para os três que sobram, este mixin alinha o visual do mat-form-field
+// outline ao `.ce-field`: altura 44, raio $ce-radius-input, borda
+// $ce-border-input, foco $ce-accent, label uppercase 10px acima do campo
+// (fora do notched-outline), tipografia Instrument Sans.
+//
+// Portado de `fed-catalogo-confeccoes/src/app/shared/style/_admin-ui.scss`
+// (@mixin ep-field-mat) — a solução já estava medida lá.
+@mixin ce-field-mat {
+  .mat-mdc-form-field {
+    width: 100%;
+    --mat-form-field-filled-container-color: #{$ce-surface-input};
+
+    // Material v20 M3: a borda do outlined-text-field é pintada em
+    // `.mat-mdc-notch-piece` com `--mat-form-field-outlined-outline-color`
+    // (não com `--mdc-outlined-text-field-outline-color`, que ficou como
+    // alias). Setamos os dois para cobrir Material 15–20.
+    --mat-form-field-outlined-outline-color: #{$ce-border-input};
+    --mat-form-field-outlined-hover-outline-color: #{$ce-border-hover};
+    --mat-form-field-outlined-focus-outline-color: #{$ce-accent};
+    --mat-form-field-outlined-error-outline-color: #{$ce-danger-action};
+    --mat-form-field-outlined-outline-width: 1px;
+    --mat-form-field-outlined-container-shape: #{$ce-radius-input};
+
+    --mdc-outlined-text-field-outline-color: #{$ce-border-input};
+    --mdc-outlined-text-field-hover-outline-color: #{$ce-border-hover};
+    --mdc-outlined-text-field-focus-outline-color: #{$ce-accent};
+    --mdc-outlined-text-field-input-text-color: #{$ce-text};
+    --mdc-outlined-text-field-caret-color: #{$ce-accent};
+    --mdc-outlined-text-field-container-shape: #{$ce-radius-input};
+
+    // ── O rótulo sai de dentro da borda ──────────────────────────────────────
+    //
+    // O MDC desenha o rótulo dentro de um "entalhe" na borda superior. O
+    // `.ce-field` próprio o põe ACIMA do campo, em uppercase — e com os dois
+    // lado a lado a diferença salta aos olhos.
+    //
+    // A saída é tirar o rótulo do fluxo do entalhe e posicioná-lo por cima,
+    // onde o `<span>` do `ce-field` ficaria. O `notched-outline` perde a
+    // abertura, e a borda volta a ser contínua.
+    .mdc-notched-outline__notch {
+      border-right: none;
+    }
+
+    // O MDC controla o tamanho do rótulo por variável e aplica uma escala no
+    // estado flutuado; `font-size` sozinho não vence nenhum dos dois.
+    --mdc-outlined-text-field-label-text-size: #{$ce-label-size};
+    --mdc-outlined-text-field-label-text-weight: #{$ce-label-weight};
+    --mdc-outlined-text-field-label-text-tracking: #{$ce-label-tracking};
+
+    .mdc-floating-label,
+    .mdc-floating-label--float-above {
+      // Sai do entalhe: posição fixa acima do campo, sem escala nem
+      // deslocamento do MDC. O `-29px` alinha a linha de base com o `<span>`
+      // do `ce-field` ao lado.
+      top: -29px !important;
+      left: 0 !important;
+      transform: none !important;
+      font-size: $ce-label-size !important;
+      font-weight: $ce-label-weight !important;
+      letter-spacing: $ce-label-tracking !important;
+      text-transform: uppercase;
+      color: $ce-text-label !important;
+      overflow: visible;
+      white-space: nowrap;
+    }
+
+    // O entalhe fica sem rótulo dentro, então não precisa de largura reservada.
+    .mdc-notched-outline--notched .mdc-notched-outline__notch {
+      padding: 0;
+      border-top: 1px solid var(--mdc-outlined-text-field-outline-color);
+    }
+
+    // ── Altura e tipografia iguais às do campo próprio ───────────────────────
+    //
+    // O padrão do MDC é 56px de altura e 16px de fonte; o `.ce-field` usa
+    // ~44px e 14px. Sem isto os dois ficam visivelmente diferentes lado a
+    // lado.
+    .mat-mdc-text-field-wrapper {
+      background-color: $ce-surface-input;
+      border-radius: $ce-radius-input;
+    }
+
+    // A altura vem da variável do próprio MDC, não de um `min-height` que
+    // brigaria com o `padding` que ele calcula a partir dela.
+    --mat-form-field-container-height: 44px;
+    --mat-form-field-container-vertical-padding: 11px;
+    --mat-form-field-filled-with-label-container-padding-top: 11px;
+    --mat-form-field-filled-with-label-container-padding-bottom: 11px;
+
+    .mat-mdc-form-field-flex {
+      align-items: center;
+    }
+
+    .mat-mdc-form-field-infix {
+      min-height: 44px;
+      padding-top: 11px;
+      padding-bottom: 11px;
+    }
+
+    .mat-mdc-input-element,
+    .mat-mdc-select-value-text {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    &.mat-focused .mat-mdc-text-field-wrapper {
+      background-color: $ce-surface;
+    }
+
+    // ── Espaço abaixo ────────────────────────────────────────────────────────
+    //
+    // `margin-top` abre o espaço que o rótulo reposicionado passou a ocupar; o
+    // `subscript` só reserva altura quando há mensagem de fato.
+    margin-top: 20px;
+
+    .mat-mdc-form-field-subscript-wrapper {
+      font-size: 11.5px;
+    }
+
+    &:not(.mat-form-field-invalid) .mat-mdc-form-field-subscript-wrapper:not(:has(.mat-mdc-form-field-hint)) {
+      height: 0;
+      min-height: 0;
+    }
+
+    .mat-mdc-form-field-error {
+      color: $ce-danger-data;
+      font-weight: 600;
+    }
+
+    .mat-mdc-form-field-hint {
+      color: $ce-text-muted;
+    }
+
+    .mat-mdc-select-arrow,
+    .mat-datepicker-toggle,
+    .mat-mdc-form-field-icon-suffix,
+    .mat-mdc-form-field-icon-prefix {
+      color: $ce-text-muted;
+    }
+  }
+}
+
+// ── Segmented control (pílula de alternância) ────────────────────────────────
+// Grupo de botões tipo pílula (lista ↔ grid, mês/ano). O item ativo tem
+// classe `.is-active`.
+@mixin ce-segmented {
+  display: inline-flex;
+  padding: 4px;
+  gap: 2px;
+  border-radius: $ce-radius-pill;
+  background: $ce-surface-track;
+  border: 1px solid $ce-border-input;
+
+  > button {
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: $ce-text-secondary;
+    padding: 6px 14px;
+    border-radius: $ce-radius-pill;
+    font: inherit;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background-color $ce-transition-card, color $ce-transition-card;
+
+    &:hover {
+      color: $ce-text;
+    }
+
+    &.is-active {
+      background: $ce-surface;
+      color: $ce-text;
+      box-shadow: $ce-shadow-segmented-active;
+    }
+  }
+}

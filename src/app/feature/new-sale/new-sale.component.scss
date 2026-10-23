@@ -1,333 +1,404 @@
-@import "../../shared/style/colors";
+@use "../../shared/style/tokens" as *;
+@use "../../shared/style/breakpoints" as *;
+@use "../../shared/style/admin-ui" as *;
 
-.page {
-  min-height: 100vh;
+:host {
+  display: block;
+}
+
+// ── Panel ────────────────────────────────────────────────────────────────────
+.new-sale-form {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 70px 16px 32px;
+  gap: $ce-section-gap;
 }
 
-.header {
-  width: 100%;
-  max-width: 540px;
-  margin-bottom: 16px;
+.alert-block {
+  display: block;
 }
 
-.page-title {
-  font-size: 22px;
-  font-weight: 600;
-  color: #fff;
-}
-
-.page-content {
-  width: 100%;
-  max-width: 540px;
-}
-
-.form-card {
-  background: #fff;
-  border-radius: 14px;
-  padding: 18px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+// Seções agrupam campos relacionados.
+.ns-section {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.fields {
+.ns-section-head {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+
+  .ce-section-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    > mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      color: $ce-accent;
+    }
+
+    .ns-itens-count {
+      font-weight: 500;
+      font-size: 13px;
+      color: $ce-text-muted;
+    }
+  }
 }
 
-.field-full {
+// ── Grid de 2 colunas ────────────────────────────────────────────────────────
+.ns-row-2 {
+  display: grid;
+  gap: $ce-gap;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  // mat-form-field tem margin-top: 20px (reservado para a label flutuada),
+  // enquanto .ce-field nativo tem a label no fluxo. Alinhar os inputs pelo
+  // fim do container iguala as linhas de base nas duas colunas.
+  align-items: end;
+}
+
+.ns-field {
   width: 100%;
 }
 
-.cliente-wrap {
+// ── Cliente autocomplete ─────────────────────────────────────────────────────
+.ns-cliente-wrap {
+  position: relative;
+}
+
+// O label é relative para o ícone poder se posicionar sobre o input filho.
+.ns-cliente-field {
   position: relative;
 
-  .hint {
-    margin: -6px 0 8px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    color: #2e7d32;
-    font-size: 12px;
+  > .ns-cliente-icon {
+    position: absolute;
+    left: 12px;
+    bottom: 11px;
+    color: $ce-text-muted;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    pointer-events: none;
+  }
 
-    mat-icon {
-      font-size: 16px;
-      width: 16px;
-      height: 16px;
-    }
+  > input {
+    padding-left: 40px;
   }
 }
 
-.suggestions-list {
+.ns-suggestions {
   position: absolute;
   z-index: 5;
-  top: 56px;
+  top: 100%;
   left: 0;
   right: 0;
+  margin: 4px 0 0;
+  padding: 4px;
   list-style: none;
-  margin: 0;
-  padding: 4px 0;
-  background: #fff;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
-  border-radius: 8px;
-  max-height: 220px;
+  background: $ce-surface;
+  border: 1px solid $ce-border;
+  border-radius: $ce-radius-sm;
+  box-shadow: $ce-shadow-panel;
+  max-height: 240px;
   overflow-y: auto;
-
-  li {
-    .suggestion-btn {
-      width: 100%;
-      text-align: left;
-      padding: 10px 14px;
-      background: transparent;
-      border: 0;
-      cursor: pointer;
-      font-size: 14px;
-      color: #1a1a1a;
-
-      &:hover {
-        background: rgba($c-primary, 0.07);
-      }
-    }
-  }
 }
 
-.item-input-section {
-  background: rgba($c-primary, 0.05);
-  border-radius: 10px;
-  padding: 12px 12px 4px;
-  margin-top: 4px;
+.ns-suggestion-btn {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-
-  .section-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    margin-bottom: 4px;
-  }
-
-  .section-label {
-    font-size: 12px;
-    font-weight: 700;
-    color: $c-primary;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  .btn-padrao {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    background: #fff;
-    border: 1px solid rgba($c-primary, 0.4);
-    color: $c-primary;
-    border-radius: 999px;
-    padding: 4px 10px;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.12s ease, color 0.12s ease;
-
-    mat-icon {
-      font-size: 14px;
-      width: 14px;
-      height: 14px;
-    }
-
-    &:hover {
-      background: $c-primary;
-      color: #fff;
-    }
-  }
-}
-
-.itens-padrao-chips {
-  display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: 6px;
-  margin-bottom: 6px;
-
-  .chips-label {
-    font-size: 11px;
-    color: #555;
-    margin-right: 2px;
-  }
-
-  .chip-padrao {
-    background: #fff;
-    border: 1px solid rgba($c-primary, 0.4);
-    color: $c-primary;
-    border-radius: 999px;
-    padding: 4px 10px;
-    font-size: 12px;
-    cursor: pointer;
-    transition: background 0.12s ease, color 0.12s ease;
-
-    &:hover {
-      background: $c-primary;
-      color: #fff;
-    }
-  }
-}
-
-.item-row-2 {
-  display: flex;
-  flex-wrap: wrap;
   gap: 8px;
-  align-items: flex-start;
+  width: 100%;
+  padding: 10px 12px;
+  background: transparent;
+  border: none;
+  border-radius: $ce-radius-sm;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  font-size: 14px;
+  color: $ce-text;
+  transition: background-color $ce-transition-card;
 
-  .field-qtd {
-    width: 100%;
+  &:hover,
+  &:focus-visible {
+    background: $ce-accent-soft;
+    color: $ce-accent-ink;
   }
 
-  input-moeda {
-    flex: 1;
+  &:focus-visible {
+    outline: 2px solid $ce-accent;
+    outline-offset: -2px;
   }
-
-  .btn-add-item {
-    margin-top: 4px;
-    flex-shrink: 0;
-  }
-}
-
-.itens-section {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-top: 8px;
-}
-
-.itens-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 4px;
-
-  .itens-titulo {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-weight: 600;
-    color: $c-primary-dark;
-
-    mat-icon {
-      color: $c-primary;
-    }
-  }
-
-  .itens-count {
-    font-size: 12px;
-    color: #888;
-    flex: 1;
-  }
-
-  .btn-limpar {
-    color: #c62828 !important;
-    font-size: 12px !important;
-    line-height: 28px !important;
-    height: 28px !important;
-    padding: 0 8px !important;
-    min-width: 0 !important;
-
-    mat-icon {
-      font-size: 16px;
-      width: 16px;
-      height: 16px;
-      margin-right: 2px;
-    }
-  }
-}
-
-.item-card {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #fff;
-  border: 1px solid #e0e0e0;
-  border-radius: 10px;
-  padding: 8px 4px 8px 12px;
-  gap: 6px;
-
-  .btn-edit mat-icon {
-    color: $c-primary;
-  }
-}
-
-.item-card-info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-  flex: 1;
-}
-
-.item-card-desc {
-  font-weight: 600;
-  color: #1a1a1a;
-}
-
-.item-card-meta {
-  font-size: 12px;
-  color: #555;
-}
-
-.total-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: linear-gradient(135deg, $c-primary 0%, $c-primary-dark 100%);
-  color: #fff;
-  border-radius: 10px;
-  padding: 10px 14px;
-  margin-top: 6px;
-
-  .total-label {
-    font-weight: 600;
-    text-transform: uppercase;
-    font-size: 13px;
-    letter-spacing: 0.5px;
-  }
-
-  .total-value {
-    font-size: 20px;
-    font-weight: 700;
-  }
-}
-
-.actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 6px;
-}
-
-.a-receber-check {
-  margin-top: 4px;
-}
-
-.a-receber-hint {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin: 0;
-  font-size: 12px;
-  color: #ef6c00;
-  background: #fff3e0;
-  padding: 6px 10px;
-  border-radius: 8px;
 
   mat-icon {
     font-size: 16px;
     width: 16px;
     height: 16px;
+    color: $ce-text-muted;
   }
+}
+
+// Hint fica absoluta abaixo do input: não empurra o container e não
+// desalinha os campos vizinhos do grid (que usa `align-items: end`).
+.ns-hint {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 4px 0 0;
+  font-size: 12.5px;
+  pointer-events: none;
+
+  mat-icon {
+    font-size: 15px;
+    width: 15px;
+    height: 15px;
+  }
+}
+
+.ns-hint--novo {
+  color: $ce-success;
+}
+
+// ── Item: input e chips padrão ───────────────────────────────────────────────
+.ns-btn-padrao {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: $ce-surface;
+  border: 1px solid $ce-accent-border;
+  color: $ce-accent-ink;
+  border-radius: $ce-radius-pill;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color $ce-transition-card, color $ce-transition-card;
+
+  mat-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+  }
+
+  &:hover,
+  &:focus-visible {
+    background: $ce-accent;
+    color: $ce-surface;
+    border-color: $ce-accent;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $ce-accent;
+    outline-offset: 2px;
+  }
+}
+
+.ns-chips {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ns-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.ns-chip-padrao {
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  transition: background-color $ce-transition-card, color $ce-transition-card;
+
+  &:hover,
+  &:focus-visible {
+    background: $ce-accent !important;
+    color: $ce-surface !important;
+    border-color: $ce-accent !important;
+  }
+}
+
+// Linha quantidade + valor + botão. align-items: end alinha os inputs pelo
+// fim porque o mat-form-field (input-moeda) tem margin-top do mixin.
+.ns-item-row {
+  display: grid;
+  grid-template-columns: 110px 1fr auto;
+  gap: $ce-gap;
+  align-items: end;
+
+  // Descompensa o margin-top do mat-form-field no `.ce-field` nativo para
+  // que a borda inferior de Qtd fique alinhada com Valor unitário.
+  .ns-field-qtd {
+    margin-bottom: 0;
+  }
+
+  @include mobile {
+    grid-template-columns: 1fr 1fr;
+
+    .ns-btn-add-item {
+      grid-column: 1 / -1;
+    }
+  }
+}
+
+.ns-field-qtd {
+  width: 100%;
+}
+
+.ns-field-valor {
+  // input-moeda é um componente externo. Dá flex para o field ocupar a
+  // altura certa quando a label do input-moeda tem subscript.
+  display: flex;
+  align-items: stretch;
+
+  ::ng-deep input-moeda {
+    display: block;
+    width: 100%;
+  }
+}
+
+.ns-btn-add-item {
+  min-height: 44px;
+}
+
+// ── Lista de itens adicionados ───────────────────────────────────────────────
+.ns-itens-list {
+  padding: 0;
+}
+
+.ns-item-row-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid $ce-border-divider;
+  background: $ce-surface;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.ns-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+
+  > strong {
+    font-size: 14.5px;
+    font-weight: 650;
+    color: $ce-text-strong;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.ns-item-meta {
+  font-size: 12.5px;
+  color: $ce-text-muted;
+  font-variant-numeric: tabular-nums;
+
+  strong {
+    color: $ce-text;
+    font-weight: 700;
+  }
+}
+
+.ns-item-actions {
+  display: flex;
+  gap: 2px;
+  flex: 0 0 auto;
+}
+
+.ns-item-del {
+  &:hover,
+  &:focus-visible {
+    color: $ce-danger-action !important;
+    background: $ce-danger-soft !important;
+  }
+}
+
+.ns-btn-limpar {
+  min-height: 32px;
+  padding: 0 10px;
+  font-size: 12.5px;
+  color: $ce-danger-data;
+
+  &:hover:not([disabled]) {
+    background: $ce-danger-soft;
+  }
+}
+
+// ── Total ────────────────────────────────────────────────────────────────────
+.ns-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: $ce-gradient-dark;
+  color: $ce-text-on-ink;
+  border-radius: $ce-radius-inner;
+  box-shadow: $ce-shadow-accent;
+}
+
+.ns-total-label {
+  font-size: $ce-label-size;
+  font-weight: $ce-label-weight;
+  letter-spacing: $ce-label-tracking;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.ns-total-value {
+  font-size: 22px;
+  font-weight: $ce-display-weight;
+  letter-spacing: $ce-display-tracking;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+}
+
+// ── Observação ───────────────────────────────────────────────────────────────
+.ns-obs {
+  width: 100%;
+}
+
+// ── A receber ────────────────────────────────────────────────────────────────
+.ns-areceber {
+  display: block;
+}
+
+.ns-areceber-label {
+  font-weight: 600;
+  color: $ce-text-strong;
+  font-size: 14px;
+  margin-right: 4px;
+}
+
+.ns-areceber-help {
+  font-size: 13px;
+  color: $ce-text-muted;
+  font-weight: 400;
+}
+
+.ns-areceber-hint {
+  margin: 0;
+}
+
+// ── Ações ────────────────────────────────────────────────────────────────────
+.ns-actions {
+  padding-top: 6px;
 }

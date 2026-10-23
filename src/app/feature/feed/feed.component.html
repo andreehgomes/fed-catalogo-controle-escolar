@@ -1,20 +1,34 @@
-<div class="feed-page">
-  <div class="logo-wrap">
-    <img src="../../../assets/imagens/logo.png" alt="Logo" class="logo" />
-    <span class="brand-name">Controle de Campanhas</span>
-    <span class="brand-tagline">Vendas escolares organizadas</span>
-  </div>
+<section class="ce-page feed-page">
+  <!-- Hero: card escuro de boas-vindas, no estilo dos irmãos. -->
+  <header class="feed-hero">
+    <div class="feed-hero-brand">
+      <div class="feed-hero-logo">
+        <mat-icon>school</mat-icon>
+      </div>
+      <div class="feed-hero-text">
+        <span class="feed-hero-eyebrow">Controle de Campanhas Escolares</span>
+        <h1 class="feed-hero-title">Bem-vindo(a) de volta</h1>
+        <p class="feed-hero-desc">
+          Escolha abaixo o atalho para a área que você quer trabalhar agora.
+        </p>
+      </div>
+    </div>
+  </header>
 
-  <div class="cards-grid">
-    <button *ngFor="let card of cards"
-            class="feed-card"
-            [class.card-primary]="card.color === 'primary'"
-            [class.card-accent]="card.color === 'accent'"
-            [class.card-success]="card.color === 'success'"
-            [class.card-warn]="card.color === 'warn'"
-            (click)="goTo(card.route)">
-      <mat-icon>{{ card.icon }}</mat-icon>
-      <span>{{ card.label }}</span>
+  <!-- Atalhos: grid auto-fit de cards claros com ícone colorido. -->
+  <nav class="feed-shortcuts" aria-label="Atalhos">
+    <button
+      *ngFor="let card of cards"
+      type="button"
+      class="feed-card"
+      [attr.data-color]="card.color"
+      (click)="goTo(card.route)"
+    >
+      <span class="feed-card-icon">
+        <mat-icon>{{ card.icon }}</mat-icon>
+      </span>
+      <span class="feed-card-label">{{ card.label }}</span>
+      <mat-icon class="feed-card-chevron">chevron_right</mat-icon>
     </button>
-  </div>
-</div>
+  </nav>
+</section>

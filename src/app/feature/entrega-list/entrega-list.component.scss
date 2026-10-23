@@ -1,240 +1,331 @@
-.entrega-list-container {
-  padding: 70px 16px 32px;
-  max-width: 720px;
-  margin: 0 auto;
+@use "../../shared/style/tokens" as *;
+@use "../../shared/style/breakpoints" as *;
+@use "../../shared/style/admin-ui" as *;
+
+:host {
+  display: block;
 }
 
-:host ::ng-deep {
-  .mat-mdc-tab .mdc-tab__text-label {
-    color: rgba(255, 255, 255, 0.7);
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// ── Busca ────────────────────────────────────────────────────────────────────
+// Ícone de busca à esquerda; botão "limpar" à direita só com valor.
+.ce-field--search {
+  position: relative;
+
+  .ce-field-prefix-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $ce-text-muted;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    pointer-events: none;
   }
 
-  .mat-mdc-tab.mdc-tab--active .mdc-tab__text-label,
-  .mat-mdc-tab:focus .mdc-tab__text-label,
-  .mat-mdc-tab.mdc-tab--active:focus .mdc-tab__text-label {
-    color: #fff;
-  }
-
-  .mat-mdc-tab-header {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-  }
-
-  .mat-mdc-tab-body-wrapper {
-    background-color: transparent;
-  }
-
-  // estado de foco/clique claro para fundo escuro
-  .mat-mdc-tab .mdc-tab__ripple::after {
-    background-color: #fff !important;
-  }
-
-  .mat-mdc-tab .mat-ripple-element {
-    background-color: rgba(255, 255, 255, 0.15) !important;
+  input {
+    padding-left: 40px;
+    padding-right: 44px;
   }
 }
 
-.busca-wrap {
-  margin-bottom: 8px;
-}
-
-.busca-field {
-  width: 100%;
-}
-
-.tab-content {
-  padding: 16px 0;
-}
-
-// ─── Contadores de itens ──────────────────────────────────────────────────────
-
-.contadores-itens {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-.contador-item {
-  flex: 1;
-  display: flex;
+.ce-field-clear {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  border-radius: 8px;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: $ce-text-muted;
+  border-radius: $ce-radius-pill;
+  cursor: pointer;
+  transition: background-color $ce-transition-card, color $ce-transition-card;
+
+  &:hover,
+  &:focus-visible {
+    background: $ce-surface-subtle;
+    color: $ce-text;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $ce-accent;
+    outline-offset: 1px;
+  }
 
   mat-icon {
-    font-size: 22px;
-    height: 22px;
-    width: 22px;
-    flex-shrink: 0;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
   }
 }
 
-.contador-conteudo {
+// ── Contadores (summary tiles coloridos) ─────────────────────────────────────
+.contadores {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $ce-gap;
+
+  @include mobile {
+    gap: 10px;
+  }
+}
+
+.contador {
+  flex-direction: row;
+  align-items: center;
+  gap: 14px;
+
+  > mat-icon {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: $ce-radius-inner;
+    font-size: 24px;
+  }
+}
+
+.contador-corpo {
   display: flex;
   flex-direction: column;
-  line-height: 1.1;
+  gap: 2px;
   min-width: 0;
 }
 
-.contador-valor {
-  font-size: 18px;
-  font-weight: 700;
-}
+// Variantes mantêm as tags semânticas usuais do DS: success / danger.
+.contador--entregue {
+  border-color: $ce-success-border;
 
-.contador-label {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-  opacity: 0.85;
-}
+  > mat-icon {
+    background: $ce-success-soft;
+    color: $ce-success;
+  }
 
-.contador-item--entregue {
-  background: #e8f5e9;
-  color: #2e7d32;
-}
-
-.contador-item--pendente {
-  background: #fce4ec;
-  color: #c62828;
-}
-
-// ─── Contador nas abas ────────────────────────────────────────────────────────
-
-.tab-count-pill {
-  margin-left: 8px;
-  font-size: 10px;
-  font-weight: 700;
-  padding: 1px 7px;
-  border-radius: 999px;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-}
-
-.tab-count-pill--pendente {
-  background: #fce4ec;
-  color: #c62828;
-}
-
-.tab-count-pill--entregue {
-  background: #e8f5e9;
-  color: #2e7d32;
-}
-
-// ─── Cards ────────────────────────────────────────────────────────────────────
-
-.sale-card {
-  margin-bottom: 12px;
-  cursor: pointer;
-  transition: box-shadow 0.2s;
-
-  &:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  .ce-summary-value {
+    color: $ce-success;
   }
 }
 
-.card-header {
+.contador--pendente {
+  border-color: $ce-danger-border;
+
+  > mat-icon {
+    background: $ce-danger-soft;
+    color: $ce-danger-data;
+  }
+
+  .ce-summary-value {
+    color: $ce-danger-data;
+  }
+}
+
+// ── Tabs ─────────────────────────────────────────────────────────────────────
+.entrega-tabs {
+  // mat-tab-body-wrapper tem fundo cinza no tema; o canvas aqui é claro.
+  ::ng-deep .mat-mdc-tab-body-wrapper {
+    background: transparent;
+  }
+}
+
+.entrega-tab-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.entrega-tab-badge {
+  padding: 0 8px;
+  min-width: 22px;
+  height: 20px;
+  font-weight: 700;
+  font-size: 11px;
+}
+
+.entrega-tab-badge--pendente {
+  background: $ce-danger-soft;
+  color: $ce-danger-data;
+}
+
+.entrega-tab-badge--entregue {
+  background: $ce-success-soft;
+  color: $ce-success;
+}
+
+.tab-content {
+  padding: 16px 0 4px;
+  display: flex;
+  flex-direction: column;
+  gap: $ce-gap;
+}
+
+// ── Card de venda ────────────────────────────────────────────────────────────
+// Mesmo molde da sale-list, com algumas variações para o fluxo de entrega.
+.sale-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  background: $ce-surface;
+  border: 1px solid $ce-border;
+  border-radius: $ce-radius-card;
+  box-shadow: $ce-shadow-card;
+  cursor: pointer;
+  transition: border-color $ce-transition-card, box-shadow $ce-transition-card,
+    transform $ce-transition-card;
+
+  &:hover {
+    border-color: $ce-border-hover;
+    box-shadow: $ce-shadow-hover;
+    transform: translateY(-1px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $ce-accent;
+    outline-offset: 2px;
+  }
+}
+
+.sale-top {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 6px;
+  gap: 10px;
 }
 
-.card-cliente {
-  font-weight: 600;
+.sale-cliente {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
+  color: $ce-text-strong;
+  font-weight: 650;
   font-size: 15px;
+  letter-spacing: -0.005em;
+
+  mat-icon {
+    flex: 0 0 auto;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: $ce-text-muted;
+  }
+
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
-.card-info {
+.sale-info {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  font-size: 12.5px;
+  color: $ce-text-body;
+
+  li {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  mat-icon {
+    flex: 0 0 auto;
+    font-size: 15px;
+    width: 15px;
+    height: 15px;
+    color: $ce-text-muted;
+  }
+
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.sale-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+// Mapeia os status das entregas e dos pagamentos para a paleta semântica
+// comum do DS (não inventar nova paleta).
+.ce-chip.pag--quitado,
+.ce-chip.entrega--entregue {
+  @include ce-chip($ce-success, $ce-success-soft, $ce-success-border);
+}
+
+.ce-chip.pag--parcial,
+.ce-chip.entrega--parcial {
+  @include ce-chip($ce-warn, $ce-warn-soft, transparent);
+}
+
+.ce-chip.pag--nao-pago {
+  @include ce-chip($ce-danger-data, $ce-danger-soft, $ce-danger-border);
+}
+
+.ce-chip.entrega--pendente {
+  @include ce-chip($ce-info, $ce-info-soft, $ce-info-border);
+}
+
+// Rodapé do card entregue: pills + botão de comprovante.
+.sale-foot {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding-top: 10px;
+  border-top: 1px solid $ce-border-divider;
+
+  .sale-pills {
+    flex: 1 1 auto;
+  }
+}
+
+// Comprovante é verde (semântica de "entregue + emitido com sucesso").
+.sale-comprovante {
+  min-height: 36px;
+  padding: 0 12px;
   font-size: 13px;
-  color: #666;
-}
+  color: $ce-success;
+  border-color: $ce-success-border;
 
-.card-actions {
-  margin-top: 10px;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.btn-comprovante {
-  font-size: 12px;
-  height: 30px;
-  line-height: 30px;
-  padding: 0 10px;
-  color: #2e7d32;
-  border-color: #a5d6a7;
+  &:hover:not([disabled]) {
+    background: $ce-success-soft;
+    border-color: $ce-success-border;
+  }
 
   mat-icon {
     font-size: 16px;
-    height: 16px;
     width: 16px;
-    margin-right: 4px;
-    vertical-align: middle;
+    height: 16px;
   }
-}
-
-// ─── Status pills (mesmo padrão de entrega-detail) ────────────────────────────
-
-.status-pill {
-  font-size: 10px;
-  font-weight: 700;
-  padding: 2px 8px;
-  border-radius: 999px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.entrega-pill--pendente {
-  background: #e3f2fd;
-  color: #1565c0;
-}
-
-.entrega-pill--parcial {
-  background: #fff3e0;
-  color: #c04000;
-}
-
-.entrega-pill--entregue {
-  background: #e8f5e9;
-  color: #2e7d32;
-}
-
-.pag-pill--quitado {
-  background: #e8f5e9;
-  color: #2e7d32;
-}
-
-.pag-pill--parcial {
-  background: #fff3e0;
-  color: #c04000;
-}
-
-.pag-pill--nao-pago {
-  background: #fce4ec;
-  color: #c62828;
-}
-
-.pills-wrap {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-  margin-top: 10px;
-}
-
-.card-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 10px;
-
-  .pills-wrap {
-    margin-top: 0;
-  }
-}
-
-.empty-msg {
-  text-align: center;
-  color: #999;
-  padding: 24px 0;
 }

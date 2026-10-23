@@ -1,312 +1,501 @@
-<div class="entrega-detail-container" *ngIf="!carregando && sale">
-
-  <!-- Cabeçalho da venda -->
-  <mat-card class="section-card">
-    <mat-card-content>
-      <h2 class="cliente-nome">{{ sale.clienteNome }}</h2>
-      <div class="venda-info">
-        <span><mat-icon class="info-icon">campaign</mat-icon>{{ sale.campaignNome }}</span>
-        <span><mat-icon class="info-icon">calendar_today</mat-icon>{{ fmtDate(sale.dataCriacao) }}</span>
+<section
+  class="ce-page ce-page--detalhe entrega-detail"
+  *ngIf="!carregando && sale"
+>
+  <!-- ─── Cabeçalho da venda ─────────────────────────────────────────────── -->
+  <article class="ce-card entrega-head">
+    <header class="entrega-head-top">
+      <div class="entrega-head-title">
+        <mat-icon class="entrega-head-icon">person</mat-icon>
+        <div>
+          <h1 class="entrega-cliente">{{ sale.clienteNome }}</h1>
+          <ul class="entrega-meta">
+            <li>
+              <mat-icon>campaign</mat-icon>
+              <span>{{ sale.campaignNome }}</span>
+            </li>
+            <li>
+              <mat-icon>event</mat-icon>
+              <span>{{ fmtDate(sale.dataCriacao) }}</span>
+            </li>
+          </ul>
+        </div>
       </div>
-      <!-- Pills de status -->
-      <div class="status-pills-row">
-        <span [ngClass]="'status-pill entrega-pill--' + (sale.entregaStatus ?? 'pendente')">
-          {{ sale.entregaStatus === 'entregue' ? 'Entregue' : sale.entregaStatus === 'parcial' ? 'Entregue parcial' : 'Entrega pendente' }}
+
+      <div class="entrega-pills">
+        <span class="ce-chip" [ngClass]="'entrega--' + (sale.entregaStatus ?? 'pendente')">
+          {{
+            sale.entregaStatus === 'entregue' ? 'Entregue'
+              : sale.entregaStatus === 'parcial' ? 'Entregue parcial'
+              : 'Entrega pendente'
+          }}
         </span>
-        <span [ngClass]="'status-pill pagamento-pill--' + statusPagamento">
-          {{ statusPagamento === 'quitado' ? 'Quitado' : statusPagamento === 'parcial' ? 'Pagamento parcial' : 'Pagamento pendente' }}
+        <span class="ce-chip" [ngClass]="'pag--' + statusPagamento">
+          {{
+            statusPagamento === 'quitado' ? 'Quitado'
+              : statusPagamento === 'parcial' ? 'Pagamento parcial'
+              : 'Pagamento pendente'
+          }}
         </span>
       </div>
+    </header>
 
-      <!-- Saldo financeiro -->
-      <div class="saldo-financeiro">
-        <span>Total: <strong>{{ sale.valorTotal | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</strong></span>
-        <span>Recebido: <strong class="valor-recebido">{{ (sale.valorRecebido ?? 0) | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</strong></span>
-        <span *ngIf="statusPagamento !== 'quitado'">
-          Saldo: <strong class="valor-saldo">{{ saldoDevedor | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</strong>
+    <!-- Saldo financeiro: três summary tiles em grid. -->
+    <div class="entrega-saldo">
+      <div class="ce-summary saldo-tile">
+        <span class="ce-summary-label">Total</span>
+        <span class="ce-summary-value">
+          {{ sale.valorTotal | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
         </span>
       </div>
-
-      <!-- Botão registrar recebimento -->
-      <div *ngIf="statusPagamento !== 'quitado' && !showFormRecebimento" class="btn-recebimento-wrap">
-        <button mat-stroked-button color="accent" class="btn-recebimento" (click)="abrirFormRecebimento()">
-          <mat-icon>payments</mat-icon> Receber
-        </button>
+      <div class="ce-summary saldo-tile saldo-tile--recebido">
+        <span class="ce-summary-label">Recebido</span>
+        <span class="ce-summary-value">
+          {{ (sale.valorRecebido ?? 0) | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+        </span>
       </div>
+      <div
+        *ngIf="statusPagamento !== 'quitado'"
+        class="ce-summary saldo-tile saldo-tile--saldo"
+      >
+        <span class="ce-summary-label">Saldo</span>
+        <span class="ce-summary-value">
+          {{ saldoDevedor | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+        </span>
+      </div>
+    </div>
 
-      <!-- Formulário inline de recebimento -->
-      <form *ngIf="showFormRecebimento" [formGroup]="formRecebimento" (ngSubmit)="salvarRecebimento()" class="form-recebimento">
+    <!-- Botão receber + formulário inline -->
+    <div
+      *ngIf="statusPagamento !== 'quitado' && !showFormRecebimento"
+      class="entrega-receber-wrap"
+    >
+      <button
+        type="button"
+        class="ce-btn-primary entrega-receber"
+        (click)="abrirFormRecebimento()"
+      >
+        <mat-icon>payments</mat-icon>
+        Receber
+      </button>
+    </div>
+
+    <form
+      *ngIf="showFormRecebimento"
+      [formGroup]="formRecebimento"
+      (ngSubmit)="salvarRecebimento()"
+      class="ce-block form-inline"
+    >
+      <h3 class="ce-section-title">Novo recebimento</h3>
+      <div class="form-inline-grid">
         <mat-form-field appearance="outline">
           <mat-label>Data</mat-label>
           <input matInput type="date" formControlName="data" />
         </mat-form-field>
         <input-moeda formControlName="valor" label="Valor recebido" />
-        <mat-form-field appearance="outline" class="obs-field">
+        <mat-form-field appearance="outline" class="form-inline-wide">
           <mat-label>Descrição (opcional)</mat-label>
           <input matInput formControlName="descricao" />
         </mat-form-field>
-        <div class="form-acoes">
-          <button mat-flat-button color="primary" type="submit" [disabled]="formRecebimento.invalid">Salvar</button>
-          <button mat-button type="button" (click)="cancelarRecebimento()">Cancelar</button>
-        </div>
-      </form>
-    </mat-card-content>
-  </mat-card>
+      </div>
+      <div class="ce-form-actions form-inline-actions">
+        <button
+          type="button"
+          class="ce-btn-ghost"
+          (click)="cancelarRecebimento()"
+        >
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          class="ce-btn-primary"
+          [disabled]="formRecebimento.invalid"
+        >
+          Salvar recebimento
+        </button>
+      </div>
+    </form>
+  </article>
 
-  <!-- Itens com progresso -->
-  <mat-card class="section-card">
-    <mat-card-header>
-      <mat-card-title>Progresso de entrega</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <div
+  <!-- ─── Progresso de entrega ───────────────────────────────────────────── -->
+  <article class="ce-card">
+    <header class="ce-card-head">
+      <h2 class="ce-section-title">Progresso de entrega</h2>
+    </header>
+
+    <ul class="itens-progresso">
+      <li
         *ngFor="let item of sale.itens; let i = index; trackBy: trackByIndex"
         class="item-progresso"
       >
-        <div class="item-header">
+        <div class="item-progresso-top">
           <span class="item-descricao">{{ item.descricao }}</span>
-          <span class="item-qtd">{{ quantidadesEntregues[i] ?? 0 }} / {{ item.quantidade }}</span>
+          <span class="item-qtd">
+            {{ quantidadesEntregues[i] ?? 0 }} / {{ item.quantidade }}
+          </span>
         </div>
-        <mat-progress-bar
-          mode="determinate"
-          [value]="progressoPct(i)"
-          [color]="progressoPct(i) === 100 ? 'primary' : 'accent'"
-        ></mat-progress-bar>
+        <div
+          class="item-barra"
+          [class.completa]="progressoPct(i) === 100"
+        >
+          <div class="fill" [style.--ce-progress-value.%]="progressoPct(i)"></div>
+        </div>
         <span class="item-pct">{{ progressoPct(i) }}%</span>
+      </li>
+    </ul>
+  </article>
+
+  <!-- ─── Ações de entrega ───────────────────────────────────────────────── -->
+  <article class="ce-card" *ngIf="sale.entregaStatus !== 'entregue'">
+    <header class="ce-card-head">
+      <h2 class="ce-section-title">Ações de entrega</h2>
+    </header>
+
+    <!-- Dois CTAs -->
+    <ng-container *ngIf="!showFormParcial && !showFormTotal && !editandoKey">
+      <div class="acoes-btns">
+        <button
+          type="button"
+          class="ce-btn-primary acoes-btn"
+          (click)="abrirFormTotal()"
+        >
+          <mat-icon>check_circle</mat-icon>
+          Entrega total
+        </button>
+        <button
+          type="button"
+          class="ce-btn-secondary acoes-btn"
+          (click)="abrirFormParcial()"
+        >
+          <mat-icon>splitscreen</mat-icon>
+          Entrega parcial
+        </button>
       </div>
-    </mat-card-content>
-  </mat-card>
+    </ng-container>
 
-  <!-- Ações (ocultas se já entregue) -->
-  <mat-card class="section-card" *ngIf="sale.entregaStatus !== 'entregue'">
-    <mat-card-header>
-      <mat-card-title>Ações de entrega</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-
-      <!-- Botões principais -->
-      <ng-container *ngIf="!showFormParcial && !showFormTotal && !editandoKey">
-        <div class="acoes-btns">
-          <button mat-flat-button color="primary" class="acoes-btn" (click)="abrirFormTotal()">
-            <mat-icon>check_circle</mat-icon> Entrega Total
-          </button>
-          <button mat-stroked-button color="primary" class="acoes-btn" (click)="abrirFormParcial()">
-            <mat-icon>splitscreen</mat-icon> Entrega Parcial
-          </button>
-        </div>
-      </ng-container>
-
-      <!-- Confirmação de entrega total -->
-      <ng-container *ngIf="showFormTotal">
+    <!-- Confirmação de entrega total -->
+    <ng-container *ngIf="showFormTotal">
+      <div class="ce-block form-inline">
+        <h3 class="ce-section-title">Confirmar entrega total</h3>
         <mat-form-field appearance="outline" class="obs-field">
           <mat-label>Observação (opcional)</mat-label>
           <textarea matInput [formControl]="obsTotalCtrl" rows="2"></textarea>
         </mat-form-field>
-        <div class="form-acoes">
-          <button mat-flat-button color="primary" (click)="entregarTotal()">
-            <mat-icon>check_circle</mat-icon> Confirmar entrega total
-          </button>
-          <button mat-button type="button" (click)="cancelarTotal()">Cancelar</button>
-        </div>
-      </ng-container>
-
-      <!-- Formulário de entrega parcial -->
-      <form *ngIf="showFormParcial" [formGroup]="formParcial" (ngSubmit)="salvarParcial()">
-        <div formArrayName="quantidades">
-          <div
-            *ngFor="let item of sale.itens; let i = index; trackBy: trackByIndex"
-            class="item-form-row"
+        <div class="ce-form-actions form-inline-actions">
+          <button
+            type="button"
+            class="ce-btn-ghost"
+            (click)="cancelarTotal()"
           >
-            <div class="item-form-info">
-              <span class="item-form-label">{{ item.descricao }}</span>
-              <span class="item-saldo">Saldo: {{ saldoRestante(i) }}</span>
-            </div>
-            <mat-form-field appearance="outline" class="item-form-field">
-              <mat-label>Qtd a entregar</mat-label>
-              <input
-                matInput
-                type="number"
-                [formControlName]="i"
-                min="0"
-                [max]="saldoRestante(i)"
-              />
-              <mat-error *ngIf="quantidadesControles.at(i).hasError('max')">
-                Máximo: {{ saldoRestante(i) }}
-              </mat-error>
-              <mat-error *ngIf="quantidadesControles.at(i).hasError('min')">
-                Mínimo: 0
-              </mat-error>
-            </mat-form-field>
-          </div>
-        </div>
-        <mat-form-field appearance="outline" class="obs-field">
-          <mat-label>Observação (opcional)</mat-label>
-          <textarea matInput formControlName="observacao" rows="2"></textarea>
-        </mat-form-field>
-        <div class="form-acoes">
-          <button mat-flat-button color="primary" type="submit" [disabled]="formParcial.invalid">
-            Salvar entrega parcial
+            Cancelar
           </button>
-          <button mat-button type="button" (click)="cancelarParcial()">Cancelar</button>
+          <button
+            type="button"
+            class="ce-btn-primary"
+            (click)="entregarTotal()"
+          >
+            <mat-icon>check_circle</mat-icon>
+            Confirmar entrega total
+          </button>
         </div>
-      </form>
+      </div>
+    </ng-container>
 
-    </mat-card-content>
-  </mat-card>
+    <!-- Formulário de entrega parcial -->
+    <form
+      *ngIf="showFormParcial"
+      [formGroup]="formParcial"
+      (ngSubmit)="salvarParcial()"
+      class="ce-block form-inline"
+    >
+      <h3 class="ce-section-title">Entrega parcial</h3>
+      <div formArrayName="quantidades" class="qtd-list">
+        <div
+          *ngFor="let item of sale.itens; let i = index; trackBy: trackByIndex"
+          class="qtd-row"
+        >
+          <div class="qtd-info">
+            <span class="qtd-label">{{ item.descricao }}</span>
+            <span class="qtd-saldo">Saldo: {{ saldoRestante(i) }}</span>
+          </div>
+          <mat-form-field appearance="outline" class="qtd-field">
+            <mat-label>Qtd a entregar</mat-label>
+            <input
+              matInput
+              type="number"
+              [formControlName]="i"
+              min="0"
+              [max]="saldoRestante(i)"
+            />
+            <mat-error *ngIf="quantidadesControles.at(i).hasError('max')">
+              Máximo: {{ saldoRestante(i) }}
+            </mat-error>
+            <mat-error *ngIf="quantidadesControles.at(i).hasError('min')">
+              Mínimo: 0
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+      <mat-form-field appearance="outline" class="obs-field">
+        <mat-label>Observação (opcional)</mat-label>
+        <textarea matInput formControlName="observacao" rows="2"></textarea>
+      </mat-form-field>
+      <div class="ce-form-actions form-inline-actions">
+        <button type="button" class="ce-btn-ghost" (click)="cancelarParcial()">
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          class="ce-btn-primary"
+          [disabled]="formParcial.invalid"
+        >
+          Salvar entrega parcial
+        </button>
+      </div>
+    </form>
+  </article>
 
-  <!-- Histórico de entregas -->
-  <mat-card class="section-card">
-    <mat-card-header>
-      <mat-card-title>Histórico de entregas</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
+  <!-- ─── Histórico de entregas ─────────────────────────────────────────── -->
+  <article class="ce-card">
+    <header class="ce-card-head">
+      <h2 class="ce-section-title">Histórico de entregas</h2>
+    </header>
 
-      <p *ngIf="entregasArray.length === 0" class="empty-msg">
-        Nenhuma entrega registrada ainda.
-      </p>
+    <div *ngIf="entregasArray.length === 0" class="ce-empty-inline">
+      Nenhuma entrega registrada ainda.
+    </div>
 
-      <div
+    <ul class="historico-list">
+      <li
         *ngFor="let item of entregasArray; trackBy: trackByEntregaKey"
         class="historico-item"
       >
-        <!-- Visualização normal -->
         <ng-container *ngIf="editandoKey !== item.key">
-          <div class="historico-header">
-            <span class="historico-data">{{ fmtDate(item.entrega.data) }}</span>
-            <span [ngClass]="'status-pill tipo-pill--' + item.entrega.tipo">
+          <div class="historico-top">
+            <span class="historico-data">
+              <mat-icon>event</mat-icon>
+              {{ fmtDate(item.entrega.data) }}
+            </span>
+            <span class="ce-chip" [ngClass]="'tipo--' + item.entrega.tipo">
               {{ item.entrega.tipo === 'total' ? 'Total' : 'Parcial' }}
             </span>
           </div>
 
-          <div class="historico-itens">
-            <span
-              *ngFor="let ei of item.entrega.itens; trackBy: trackByIndex"
-              class="historico-item-line"
-            >
-              {{ ei.descricao }}: {{ ei.quantidadeEntregue }}
-            </span>
-          </div>
+          <ul class="historico-itens">
+            <li *ngFor="let ei of item.entrega.itens; trackBy: trackByIndex">
+              <span class="historico-item-nome">{{ ei.descricao }}</span>
+              <span class="historico-item-qtd">{{ ei.quantidadeEntregue }}</span>
+            </li>
+          </ul>
 
           <p *ngIf="item.entrega.observacao" class="historico-obs">
             {{ item.entrega.observacao }}
           </p>
 
           <div class="historico-acoes">
-            <button mat-stroked-button color="primary" (click)="gerarComprovante(item.entrega)">
-              <mat-icon>receipt</mat-icon> Comprovante
+            <button
+              type="button"
+              class="ce-btn-secondary"
+              (click)="gerarComprovante(item.entrega)"
+            >
+              <mat-icon>receipt</mat-icon>
+              Comprovante
             </button>
-            <button mat-button (click)="abrirEditar(item.key, item.entrega)">
-              <mat-icon>edit</mat-icon> Editar
+            <button
+              type="button"
+              class="ce-btn-ghost"
+              (click)="abrirEditar(item.key, item.entrega)"
+            >
+              <mat-icon>edit</mat-icon>
+              Editar
             </button>
-            <button mat-button color="warn" (click)="excluirEntrega(item.key, item.entrega)">
-              <mat-icon>delete</mat-icon> Excluir
+            <button
+              type="button"
+              class="ce-btn-danger"
+              (click)="excluirEntrega(item.key, item.entrega)"
+            >
+              <mat-icon>delete</mat-icon>
+              Excluir
             </button>
           </div>
         </ng-container>
 
-        <!-- Formulário de edição inline -->
+        <!-- Edição inline -->
         <ng-container *ngIf="editandoKey === item.key">
-          <p class="editar-titulo">Editando entrega de {{ fmtDate(item.entrega.data) }}</p>
-          <form [formGroup]="formEditar" (ngSubmit)="salvarEditar(item.entrega)">
-            <div formArrayName="quantidades">
-              <div
-                *ngFor="let si of sale.itens; let i = index; trackBy: trackByIndex"
-                class="item-form-row"
-              >
-                <div class="item-form-info">
-                  <span class="item-form-label">{{ si.descricao }}</span>
-                  <span class="item-saldo">Máx: {{ maxParaEditar(item.entrega, i) }}</span>
+          <div class="ce-block form-inline">
+            <h3 class="ce-section-title">
+              Editando entrega de {{ fmtDate(item.entrega.data) }}
+            </h3>
+            <form [formGroup]="formEditar" (ngSubmit)="salvarEditar(item.entrega)">
+              <div formArrayName="quantidades" class="qtd-list">
+                <div
+                  *ngFor="let si of sale.itens; let i = index; trackBy: trackByIndex"
+                  class="qtd-row"
+                >
+                  <div class="qtd-info">
+                    <span class="qtd-label">{{ si.descricao }}</span>
+                    <span class="qtd-saldo">
+                      Máx: {{ maxParaEditar(item.entrega, i) }}
+                    </span>
+                  </div>
+                  <mat-form-field appearance="outline" class="qtd-field">
+                    <mat-label>Qtd entregue</mat-label>
+                    <input
+                      matInput
+                      type="number"
+                      [formControlName]="i"
+                      min="0"
+                      [max]="maxParaEditar(item.entrega, i)"
+                    />
+                    <mat-error
+                      *ngIf="quantidadesEditarControles.at(i).hasError('max')"
+                    >
+                      Máximo: {{ maxParaEditar(item.entrega, i) }}
+                    </mat-error>
+                  </mat-form-field>
                 </div>
-                <mat-form-field appearance="outline" class="item-form-field">
-                  <mat-label>Qtd entregue</mat-label>
-                  <input
-                    matInput
-                    type="number"
-                    [formControlName]="i"
-                    min="0"
-                    [max]="maxParaEditar(item.entrega, i)"
-                  />
-                  <mat-error *ngIf="quantidadesEditarControles.at(i).hasError('max')">
-                    Máximo: {{ maxParaEditar(item.entrega, i) }}
-                  </mat-error>
+              </div>
+              <mat-form-field appearance="outline" class="obs-field">
+                <mat-label>Observação (opcional)</mat-label>
+                <textarea
+                  matInput
+                  formControlName="observacao"
+                  rows="2"
+                ></textarea>
+              </mat-form-field>
+              <div class="ce-form-actions form-inline-actions">
+                <button
+                  type="button"
+                  class="ce-btn-ghost"
+                  (click)="cancelarEditar()"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  class="ce-btn-primary"
+                  [disabled]="formEditar.invalid"
+                >
+                  Salvar alterações
+                </button>
+              </div>
+            </form>
+          </div>
+        </ng-container>
+      </li>
+    </ul>
+  </article>
+
+  <!-- ─── Recebimentos desta entrega ────────────────────────────────────── -->
+  <article class="ce-card" *ngIf="recebimentosDaEntrega.length > 0">
+    <header class="ce-card-head">
+      <h2 class="ce-section-title">Recebimentos desta entrega</h2>
+    </header>
+
+    <ul class="historico-list">
+      <li
+        *ngFor="let item of recebimentosDaEntrega; trackBy: trackByRecebimentoKey"
+        class="historico-item"
+      >
+        <ng-container *ngIf="editandoRecKey !== item.key">
+          <div class="historico-top">
+            <span class="historico-data">
+              <mat-icon>event</mat-icon>
+              {{ fmtDate(item.r.data) }}
+            </span>
+            <span class="rec-valor">
+              {{ item.r.valor | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+            </span>
+          </div>
+
+          <p *ngIf="item.r.descricao" class="historico-obs">
+            {{ item.r.descricao }}
+          </p>
+
+          <div class="historico-acoes">
+            <button
+              type="button"
+              class="ce-btn-secondary"
+              (click)="gerarComprovanteRecebimento(item.key, item.r)"
+            >
+              <mat-icon>receipt</mat-icon>
+              Comprovante
+            </button>
+            <button
+              type="button"
+              class="ce-btn-ghost"
+              (click)="abrirEditarRec(item.key, item.r)"
+            >
+              <mat-icon>edit</mat-icon>
+              Editar
+            </button>
+            <button
+              type="button"
+              class="ce-btn-danger"
+              (click)="excluirRecebimento(item.key)"
+            >
+              <mat-icon>delete</mat-icon>
+              Excluir
+            </button>
+          </div>
+        </ng-container>
+
+        <!-- Edição inline -->
+        <ng-container *ngIf="editandoRecKey === item.key">
+          <div class="ce-block form-inline">
+            <h3 class="ce-section-title">
+              Editando recebimento de {{ fmtDate(item.r.data) }}
+            </h3>
+            <form
+              [formGroup]="formEditarRec"
+              (ngSubmit)="salvarEditarRec(item.key, item.r)"
+            >
+              <div class="form-inline-grid">
+                <mat-form-field appearance="outline">
+                  <mat-label>Data</mat-label>
+                  <input matInput type="date" formControlName="data" />
+                </mat-form-field>
+                <input-moeda formControlName="valor" label="Valor recebido" />
+                <mat-form-field appearance="outline" class="form-inline-wide">
+                  <mat-label>Descrição (opcional)</mat-label>
+                  <input matInput formControlName="descricao" />
                 </mat-form-field>
               </div>
-            </div>
-            <mat-form-field appearance="outline" class="obs-field">
-              <mat-label>Observação (opcional)</mat-label>
-              <textarea matInput formControlName="observacao" rows="2"></textarea>
-            </mat-form-field>
-            <div class="form-acoes">
-              <button mat-flat-button color="primary" type="submit" [disabled]="formEditar.invalid">
-                Salvar alterações
-              </button>
-              <button mat-button type="button" (click)="cancelarEditar()">Cancelar</button>
-            </div>
-          </form>
-        </ng-container>
-
-      </div>
-
-    </mat-card-content>
-  </mat-card>
-
-  <!-- Recebimentos desta entrega -->
-  <mat-card class="section-card" *ngIf="recebimentosDaEntrega.length > 0">
-    <mat-card-header>
-      <mat-card-title>Recebimentos desta entrega</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <div
-        *ngFor="let item of recebimentosDaEntrega; trackBy: trackByRecebimentoKey"
-        class="recebimento-item"
-      >
-
-        <!-- Visualização normal -->
-        <ng-container *ngIf="editandoRecKey !== item.key">
-          <div class="recebimento-header">
-            <span class="recebimento-data">{{ fmtDate(item.r.data) }}</span>
-            <span class="recebimento-valor">{{ item.r.valor | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</span>
-          </div>
-          <p *ngIf="item.r.descricao" class="historico-obs">{{ item.r.descricao }}</p>
-          <div class="historico-acoes">
-            <button mat-stroked-button color="primary" (click)="gerarComprovanteRecebimento(item.key, item.r)">
-              <mat-icon>receipt</mat-icon> Comprovante
-            </button>
-            <button mat-button (click)="abrirEditarRec(item.key, item.r)">
-              <mat-icon>edit</mat-icon> Editar
-            </button>
-            <button mat-button color="warn" (click)="excluirRecebimento(item.key)">
-              <mat-icon>delete</mat-icon> Excluir
-            </button>
+              <div class="ce-form-actions form-inline-actions">
+                <button
+                  type="button"
+                  class="ce-btn-ghost"
+                  (click)="cancelarEditarRec()"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  class="ce-btn-primary"
+                  [disabled]="formEditarRec.invalid"
+                >
+                  Salvar
+                </button>
+              </div>
+            </form>
           </div>
         </ng-container>
+      </li>
+    </ul>
+  </article>
+</section>
 
-        <!-- Formulário de edição inline -->
-        <ng-container *ngIf="editandoRecKey === item.key">
-          <p class="editar-titulo">Editando recebimento de {{ fmtDate(item.r.data) }}</p>
-          <form [formGroup]="formEditarRec" (ngSubmit)="salvarEditarRec(item.key, item.r)">
-            <mat-form-field appearance="outline">
-              <mat-label>Data</mat-label>
-              <input matInput type="date" formControlName="data" />
-            </mat-form-field>
-            <input-moeda formControlName="valor" label="Valor recebido" />
-            <mat-form-field appearance="outline" class="obs-field">
-              <mat-label>Descrição (opcional)</mat-label>
-              <input matInput formControlName="descricao" />
-            </mat-form-field>
-            <div class="form-acoes">
-              <button mat-flat-button color="primary" type="submit" [disabled]="formEditarRec.invalid">Salvar</button>
-              <button mat-button type="button" (click)="cancelarEditarRec()">Cancelar</button>
-            </div>
-          </form>
-        </ng-container>
-
-      </div>
-    </mat-card-content>
-  </mat-card>
-
-</div>
-
-<div *ngIf="!carregando && !sale" class="empty-msg">
-  Venda não encontrada.
-</div>
+<section
+  class="ce-page ce-page--detalhe"
+  *ngIf="!carregando && !sale"
+>
+  <div class="ce-empty-state">
+    <mat-icon>search_off</mat-icon>
+    <h3>Venda não encontrada</h3>
+    <p>Essa venda pode ter sido excluída ou o link está incorreto.</p>
+    <a class="ce-btn-primary" [routerLink]="['/' + routes.ENTREGA_LIST]">
+      <mat-icon>arrow_back</mat-icon>
+      Voltar para entregas
+    </a>
+  </div>
+</section>

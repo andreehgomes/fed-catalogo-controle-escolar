@@ -1,56 +1,112 @@
-<div class="page">
-  <div class="header">
-    <span class="page-title">Campanhas</span>
-    <button mat-mini-fab color="accent" class="btn-add" (click)="novaCampanha()">
+<section class="ce-page campaign-list">
+  <header class="ce-page-header">
+    <div class="ce-page-title">
+      <h1>Campanhas</h1>
+      <span class="ce-page-subtitle">
+        {{ campaigns.length }} {{ campaigns.length === 1 ? 'campanha' : 'campanhas' }}
+      </span>
+    </div>
+    <div class="ce-page-actions">
+      <button type="button" class="ce-btn-primary" (click)="novaCampanha()">
+        <mat-icon>add</mat-icon>
+        Nova campanha
+      </button>
+    </div>
+  </header>
+
+  <!-- Busca. Label + input nativo com ícone absoluto, no mesmo molde do DS. -->
+  <label class="ce-field ce-field--search">
+    <span class="sr-only">Buscar campanha</span>
+    <mat-icon class="ce-field-prefix-icon">search</mat-icon>
+    <input
+      type="search"
+      [formControl]="searchCtrl"
+      placeholder="Buscar campanha…"
+      autocomplete="off"
+    />
+  </label>
+
+  <!-- Lista: grid auto-fit de cards. Vazio: ce-empty-state. -->
+  <div *ngIf="campaigns.length === 0" class="ce-empty-state">
+    <mat-icon>campaign</mat-icon>
+    <h3>Nenhuma campanha encontrada</h3>
+    <p>Crie a primeira campanha para começar a registrar vendas e metas.</p>
+    <button type="button" class="ce-btn-primary" (click)="novaCampanha()">
       <mat-icon>add</mat-icon>
+      Nova campanha
     </button>
   </div>
 
-  <div class="page-content">
-    <mat-form-field appearance="outline" color="accent" class="field-full">
-      <mat-label>Buscar</mat-label>
-      <mat-icon matPrefix>search</mat-icon>
-      <input matInput [formControl]="searchCtrl" autocomplete="off" />
-    </mat-form-field>
-
-    <div *ngIf="campaigns.length === 0" class="empty">
-      <mat-icon>info</mat-icon>
-      <span>Nenhuma campanha encontrada.</span>
-    </div>
-
-    <div class="campaign-card" *ngFor="let c of campaigns" (click)="abrirDetalhe(c)">
-      <div class="campaign-top">
-        <div class="campaign-titulo-wrap">
-          <span class="campaign-nome">{{ c.nome }}</span>
-          <span class="campaign-status" [class.encerrada]="c.status === 'encerrada'">
+  <div class="campaign-grid" *ngIf="campaigns.length > 0">
+    <article
+      *ngFor="let c of campaigns"
+      class="campaign-card"
+      tabindex="0"
+      (click)="abrirDetalhe(c)"
+      (keyup.enter)="abrirDetalhe(c)"
+    >
+      <header class="campaign-card-top">
+        <div class="campaign-head">
+          <h2 class="campaign-nome">{{ c.nome }}</h2>
+          <span
+            class="ce-chip"
+            [class.success]="c.status === 'ativa'"
+            [class.danger]="c.status !== 'ativa'"
+          >
             {{ c.status === 'ativa' ? 'Ativa' : 'Encerrada' }}
           </span>
         </div>
         <div class="campaign-actions">
-          <button mat-icon-button (click)="editar(c, $event)">
+          <button
+            type="button"
+            class="ce-btn-icon"
+            aria-label="Editar"
+            matTooltip="Editar"
+            (click)="editar(c, $event)"
+          >
             <mat-icon>edit</mat-icon>
           </button>
-          <button mat-icon-button (click)="excluir(c, $event)">
+          <button
+            type="button"
+            class="ce-btn-icon campaign-del"
+            aria-label="Excluir"
+            matTooltip="Excluir"
+            (click)="excluir(c, $event)"
+          >
             <mat-icon>delete</mat-icon>
           </button>
         </div>
-      </div>
+      </header>
 
-      <div class="campaign-desc" *ngIf="c.descricao">{{ c.descricao }}</div>
+      <p class="campaign-desc" *ngIf="c.descricao">{{ c.descricao }}</p>
 
-      <div class="campaign-info">
-        <span><mat-icon>event</mat-icon> {{ fmtData(c.dataInicio) }}<span *ngIf="c.dataFim"> – {{ fmtData(c.dataFim) }}</span></span>
-        <span><mat-icon>shopping_cart</mat-icon> {{ qtdVendas(c.key) }} {{ qtdVendas(c.key) === 1 ? 'venda' : 'vendas' }}</span>
-        <span><mat-icon>payments</mat-icon> R$ {{ fmt(totalArrecadado(c.key)) }}</span>
-      </div>
+      <ul class="campaign-info">
+        <li>
+          <mat-icon>event</mat-icon>
+          <span>
+            {{ fmtData(c.dataInicio) }}<ng-container *ngIf="c.dataFim"> – {{ fmtData(c.dataFim) }}</ng-container>
+          </span>
+        </li>
+        <li>
+          <mat-icon>shopping_cart</mat-icon>
+          <span>{{ qtdVendas(c.key) }} {{ qtdVendas(c.key) === 1 ? 'venda' : 'vendas' }}</span>
+        </li>
+        <li class="campaign-info-value">
+          <mat-icon>payments</mat-icon>
+          <span>R$ {{ fmt(totalArrecadado(c.key)) }}</span>
+        </li>
+      </ul>
 
+      <!-- Barra de meta. Usa a variável do mixin ce-progress para largura. -->
       <div class="campaign-meta" *ngIf="c.meta && c.meta > 0">
-        <div class="meta-header">
-          <span>Meta: R$ {{ fmt(c.meta) }}</span>
-          <span class="meta-pct">{{ pctMeta(c) }}%</span>
+        <div class="campaign-meta-top">
+          <span class="ce-label">Meta: R$ {{ fmt(c.meta) }}</span>
+          <span class="campaign-meta-pct">{{ pctMeta(c) }}%</span>
         </div>
-        <mat-progress-bar mode="determinate" color="accent" [value]="pctMeta(c)"></mat-progress-bar>
+        <div class="campaign-progress">
+          <div class="fill" [style.--ce-progress-value.%]="pctMeta(c)"></div>
+        </div>
       </div>
-    </div>
+    </article>
   </div>
-</div>
+</section>

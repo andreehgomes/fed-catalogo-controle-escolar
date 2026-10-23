@@ -1,306 +1,413 @@
-.entrega-detail-container {
-  padding: 70px 16px 32px;
-  max-width: 720px;
-  margin: 0 auto;
+@use "../../shared/style/tokens" as *;
+@use "../../shared/style/breakpoints" as *;
+@use "../../shared/style/admin-ui" as *;
+
+:host {
+  display: block;
+}
+
+// ── Cabeçalho da venda ──────────────────────────────────────────────────────
+.entrega-head {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-.section-card {
-  width: 100%;
-}
-
-::ng-deep .section-card .mat-mdc-card-title {
-  font-size: 15px !important;
-  font-weight: 600;
-}
-
-.cliente-nome {
-  margin: 0 0 8px 0;
-  font-size: 20px;
-  font-weight: 600;
-}
-
-.venda-info {
+.entrega-head-top {
   display: flex;
-  gap: 16px;
-  font-size: 13px;
-  color: #555;
-  margin-bottom: 8px;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+  flex-wrap: wrap;
+}
 
-  span {
-    display: flex;
+.entrega-head-title {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+  flex: 1;
+}
+
+.entrega-head-icon {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: $ce-radius-inner;
+  background: $ce-accent-soft;
+  color: $ce-accent-ink;
+  font-size: 24px;
+}
+
+.entrega-cliente {
+  margin: 0 0 4px;
+  font-size: clamp(19px, 2.4vw, 23px);
+  font-weight: $ce-display-weight;
+  letter-spacing: $ce-display-tracking;
+  color: $ce-text-strong;
+}
+
+.entrega-meta {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  font-size: 13px;
+  color: $ce-text-body;
+
+  li {
+    display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
+  }
+
+  mat-icon {
+    font-size: 15px;
+    width: 15px;
+    height: 15px;
+    color: $ce-text-muted;
   }
 }
 
-.info-icon {
-  font-size: 16px;
-  width: 16px;
-  height: 16px;
+.entrega-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
 }
 
-.status-pill {
-  font-size: 10px;
-  font-weight: 700;
-  padding: 2px 8px;
-  border-radius: 999px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+// Chips semânticos — mesmos nomes da entrega-list.
+.ce-chip.pag--quitado,
+.ce-chip.entrega--entregue,
+.ce-chip.tipo--total {
+  @include ce-chip($ce-success, $ce-success-soft, $ce-success-border);
 }
 
-.entrega-pill--pendente {
-  background: #e3f2fd;
-  color: #1565c0;
+.ce-chip.pag--parcial,
+.ce-chip.entrega--parcial,
+.ce-chip.tipo--parcial {
+  @include ce-chip($ce-warn, $ce-warn-soft, transparent);
 }
 
-.entrega-pill--parcial {
-  background: #fff3e0;
-  color: #c04000;
+.ce-chip.pag--nao-pago {
+  @include ce-chip($ce-danger-data, $ce-danger-soft, $ce-danger-border);
 }
 
-.entrega-pill--entregue {
-  background: #e8f5e9;
-  color: #2e7d32;
+.ce-chip.entrega--pendente {
+  @include ce-chip($ce-info, $ce-info-soft, $ce-info-border);
+}
+
+// Saldo financeiro: três tiles.
+.entrega-saldo {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: $ce-gap;
+}
+
+.saldo-tile {
+  padding: 14px 16px;
+
+  .ce-summary-value {
+    font-size: 20px;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.saldo-tile--recebido {
+  border-color: $ce-success-border;
+
+  .ce-summary-value {
+    color: $ce-success;
+  }
+}
+
+.saldo-tile--saldo {
+  border-color: $ce-danger-border;
+
+  .ce-summary-value {
+    color: $ce-danger-data;
+  }
+}
+
+.entrega-receber-wrap {
+  display: flex;
+}
+
+.entrega-receber {
+  width: 100%;
+}
+
+// ── Card header interno ─────────────────────────────────────────────────────
+.ce-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+// ── Progresso ───────────────────────────────────────────────────────────────
+.itens-progresso {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
 .item-progresso {
-  margin-bottom: 16px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 10px;
+  align-items: baseline;
 }
 
-.item-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 4px;
-  font-size: 14px;
+.item-progresso-top {
+  display: contents;
+
+  // Nome ocupa a primeira coluna; qtd a segunda.
 }
 
 .item-descricao {
-  font-weight: 500;
+  font-weight: 600;
+  color: $ce-text-strong;
+  font-size: 14px;
 }
 
 .item-qtd {
-  color: #555;
+  font-size: 13px;
+  color: $ce-text-body;
+  font-variant-numeric: tabular-nums;
+}
+
+.item-barra {
+  grid-column: 1 / -1;
+  @include ce-progress(8px);
+
+  &.completa .fill {
+    background: $ce-success;
+  }
 }
 
 .item-pct {
-  font-size: 11px;
-  color: #888;
+  grid-column: 1 / -1;
+  justify-self: end;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: $ce-accent-ink;
+  font-variant-numeric: tabular-nums;
+
+  .item-barra.completa + & {
+    color: $ce-success;
+  }
 }
 
-.obs-field {
-  width: 100%;
-  margin-bottom: 8px;
-}
-
-
+// ── Ações de entrega ────────────────────────────────────────────────────────
 .acoes-btns {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 8px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+
+  @include mobile {
+    grid-template-columns: 1fr;
+  }
 }
 
 .acoes-btn {
   width: 100%;
-  font-weight: 500;
-  letter-spacing: 0.3px;
 }
 
-.item-form-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  margin-bottom: 4px;
-  flex-wrap: wrap;
-}
-
-.item-form-info {
+// ── Blocos inline (formulários dentro de card) ──────────────────────────────
+.form-inline {
   display: flex;
   flex-direction: column;
-  flex: 1;
-  min-width: 120px;
-  padding-top: 16px;
-}
+  gap: 10px;
+  margin-top: 6px;
 
-.item-form-label {
-  font-size: 14px;
-  font-weight: 500;
-}
+  mat-form-field {
+    width: 100%;
 
-.item-saldo {
-  font-size: 12px;
-  color: #888;
-}
-
-.item-form-field {
-  width: 160px;
-}
-
-.form-acoes {
-  display: flex;
-  gap: 4px;
-  margin-top: 8px;
-  align-items: center;
-}
-
-.historico-item {
-  padding: 12px 0;
-  border-bottom: 1px solid #e0e0e0;
-
-  &:last-child {
-    border-bottom: none;
+    // Reduz o gap do subscript (mat-error / hint) — a margem padrão do
+    // Material deixa os blocos muito espaçados.
+    ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+      min-height: 0;
+    }
   }
 }
 
-.historico-header {
+.form-inline-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+}
+
+.form-inline-wide {
+  grid-column: 1 / -1;
+}
+
+.form-inline-actions {
+  justify-content: flex-end;
+
+  > :first-child,
+  > :last-child {
+    flex: 0 0 auto;
+  }
+}
+
+.obs-field {
+  width: 100%;
+}
+
+// ── Lista de quantidades (entrega parcial / editar) ─────────────────────────
+.qtd-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.qtd-row {
+  display: grid;
+  grid-template-columns: 1fr 180px;
+  gap: 10px;
+  align-items: center;
+
+  @include mobile {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+}
+
+.qtd-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.qtd-label {
+  font-weight: 600;
+  color: $ce-text-strong;
+  font-size: 14px;
+}
+
+.qtd-saldo {
+  font-size: 12px;
+  color: $ce-text-muted;
+}
+
+.qtd-field {
+  width: 100%;
+}
+
+// ── Histórico ───────────────────────────────────────────────────────────────
+.historico-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.historico-item {
+  padding: 14px 0;
+  border-bottom: 1px solid $ce-border-divider;
+
+  &:first-child {
+    padding-top: 0;
+  }
+
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+}
+
+.historico-top {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 6px;
+  gap: 8px;
+  margin-bottom: 8px;
 }
 
 .historico-data {
-  font-weight: 500;
-}
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  color: $ce-text-strong;
+  font-size: 14px;
 
-.tipo-pill--total {
-  background: #e8f5e9;
-  color: #2e7d32;
-}
-
-.tipo-pill--parcial {
-  background: #fff3e0;
-  color: #c04000;
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: $ce-text-muted;
+  }
 }
 
 .historico-itens {
+  list-style: none;
+  margin: 0 0 8px;
+  padding: 0;
   display: flex;
   flex-direction: column;
   gap: 2px;
-  margin-bottom: 4px;
+
+  li {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 13px;
+    color: $ce-text-body;
+  }
 }
 
-.historico-item-line {
-  font-size: 13px;
-  color: #444;
+.historico-item-nome {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.historico-item-qtd {
+  font-weight: 700;
+  color: $ce-text;
+  font-variant-numeric: tabular-nums;
+  flex: 0 0 auto;
 }
 
 .historico-obs {
-  font-size: 12px;
-  color: #666;
+  margin: 6px 0;
+  font-size: 12.5px;
+  color: $ce-text-muted;
   font-style: italic;
-  margin: 4px 0;
 }
 
 .historico-acoes {
   display: flex;
-  gap: 4px;
-  margin-top: 8px;
   flex-wrap: wrap;
-}
+  gap: 8px;
+  margin-top: 10px;
 
-.editar-titulo {
-  font-size: 13px;
-  font-weight: 500;
-  color: #555;
-  margin: 0 0 12px 0;
-}
-
-.empty-msg {
-  text-align: center;
-  color: #999;
-  padding: 24px 0;
-}
-
-// ─── Pagamento ──────────────────────────────────────────────────────────────
-
-.status-pills-row {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  margin: 6px 0;
-}
-
-.saldo-financeiro {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  font-size: 13px;
-  color: #555;
-}
-
-.valor-recebido {
-  color: #2e7d32;
-}
-
-.valor-saldo {
-  color: #c62828;
-}
-
-.pagamento-pill--nao-pago {
-  background: #fce4ec;
-  color: #c62828;
-}
-
-.pagamento-pill--parcial {
-  background: #fff3e0;
-  color: #c04000;
-}
-
-.pagamento-pill--quitado {
-  background: #e8f5e9;
-  color: #2e7d32;
-}
-
-.btn-recebimento-wrap {
-  display: flex;
-  justify-content: center;
-  margin-top: 12px;
-}
-
-.btn-recebimento {
-  width: 100%;
-}
-
-.form-recebimento {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-top: 12px;
-
-  mat-form-field {
-    width: 100%;
+  // Nos cards de histórico os botões podem ficar compactos.
+  .ce-btn-secondary,
+  .ce-btn-ghost,
+  .ce-btn-danger {
+    min-height: 36px;
+    padding: 0 12px;
+    font-size: 13px;
   }
 }
 
-// ─── Recebimentos da entrega ─────────────────────────────────────────────────
-
-.recebimento-item {
-  padding: 12px 0;
-  border-bottom: 1px solid #e0e0e0;
-
-  &:last-child {
-    border-bottom: none;
-  }
-}
-
-.recebimento-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 4px;
-}
-
-.recebimento-data {
-  font-weight: 500;
-  font-size: 14px;
-}
-
-.recebimento-valor {
-  font-weight: 600;
-  font-size: 14px;
-  color: #2e7d32;
+// ── Recebimentos ────────────────────────────────────────────────────────────
+.rec-valor {
+  font-weight: 700;
+  color: $ce-success;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
 }

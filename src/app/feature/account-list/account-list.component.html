@@ -1,43 +1,109 @@
-<div class="page">
-  <div class="header">
-    <span class="page-title">Usuários</span>
-    <button mat-mini-fab color="accent" class="btn-add" (click)="novoUsuario()" aria-label="Novo usuário">
+<section class="ce-page account-list">
+  <header class="ce-page-header">
+    <div class="ce-page-title">
+      <h1>Usuários</h1>
+      <span class="ce-page-subtitle">
+        {{ filtered.length }}
+        {{ filtered.length === 1 ? 'usuário' : 'usuários' }}
+      </span>
+    </div>
+    <div class="ce-page-actions">
+      <button type="button" class="ce-btn-primary" (click)="novoUsuario()">
+        <mat-icon>person_add</mat-icon>
+        Novo usuário
+      </button>
+    </div>
+  </header>
+
+  <!-- Busca -->
+  <label class="ce-field ce-field--search">
+    <span class="sr-only">Buscar por nome ou e-mail</span>
+    <mat-icon class="ce-field-prefix-icon">search</mat-icon>
+    <input
+      type="search"
+      [formControl]="searchCtrl"
+      placeholder="Buscar por nome ou e-mail…"
+      autocomplete="off"
+    />
+  </label>
+
+  <!-- Vazio -->
+  <div *ngIf="filtered.length === 0" class="ce-empty-state">
+    <mat-icon>group</mat-icon>
+    <h3>Nenhum usuário encontrado</h3>
+    <p *ngIf="accounts.length === 0">
+      Cadastre o primeiro usuário para liberar o acesso ao app.
+    </p>
+    <p *ngIf="accounts.length > 0">
+      Nenhum usuário bate com a busca atual.
+    </p>
+    <button
+      *ngIf="accounts.length === 0"
+      type="button"
+      class="ce-btn-primary"
+      (click)="novoUsuario()"
+    >
       <mat-icon>person_add</mat-icon>
+      Novo usuário
     </button>
   </div>
 
-  <div class="page-content">
-    <mat-form-field appearance="outline" color="accent" class="field-full">
-      <mat-label>Buscar por nome ou e-mail</mat-label>
-      <mat-icon matPrefix>search</mat-icon>
-      <input matInput [formControl]="searchCtrl" aria-label="Buscar usuário" autocomplete="off" />
-    </mat-form-field>
-
-    <div *ngIf="filtered.length === 0" class="empty">
-      <mat-icon>info</mat-icon>
-      <span>Nenhum usuário encontrado.</span>
-    </div>
-
-    <div class="account-card" *ngFor="let a of filtered">
-      <div class="account-info">
-        <span class="account-nome">{{ a.nome }}</span>
-        <span class="account-email" *ngIf="a.email">{{ a.email }}</span>
-        <span class="account-cel" *ngIf="a.celular">{{ a.celular }}</span>
-        <mat-chip [ngClass]="chipColor(a.perfil)" class="perfil-chip">
-          {{ a.perfil || 'sem perfil' }}
-        </mat-chip>
+  <!-- Lista densa de usuários -->
+  <ul class="ce-list ce-card account-list-ul" *ngIf="filtered.length > 0">
+    <li *ngFor="let a of filtered" class="ce-list-row account-row">
+      <div class="account-avatar" aria-hidden="true">
+        {{ (a.nome || '?').charAt(0).toUpperCase() }}
       </div>
-      <div class="account-actions">
-        <button mat-icon-button [attr.aria-label]="'Editar ' + a.nome" (click)="editar(a, $event)">
+
+      <div class="ce-list-row-main">
+        <strong>
+          {{ a.nome }}
+          <span *ngIf="a.uid === currentUserUid" class="account-eu-label">
+            · você
+          </span>
+        </strong>
+        <span class="account-contato" *ngIf="a.email || a.celular">
+          <span *ngIf="a.email" class="account-email">
+            <mat-icon>mail</mat-icon>
+            {{ a.email }}
+          </span>
+          <span *ngIf="a.celular" class="account-cel">
+            <mat-icon>phone</mat-icon>
+            {{ a.celular }}
+          </span>
+        </span>
+      </div>
+
+      <span
+        class="ce-chip account-perfil"
+        [class.success]="chipColor(a.perfil) === 'chip-master'"
+        [class.info]="chipColor(a.perfil) === 'chip-admin'"
+        [class.danger]="chipColor(a.perfil) === 'chip-estagiario'"
+      >
+        {{ a.perfil || 'sem perfil' }}
+      </span>
+
+      <div class="account-row-actions">
+        <button
+          type="button"
+          class="ce-btn-icon"
+          [attr.aria-label]="'Editar ' + a.nome"
+          matTooltip="Editar"
+          (click)="editar(a, $event)"
+        >
           <mat-icon>edit</mat-icon>
         </button>
-        <button mat-icon-button
-                [attr.aria-label]="'Excluir ' + a.nome"
-                [disabled]="a.uid === currentUserUid"
-                (click)="excluir(a, $event)">
+        <button
+          type="button"
+          class="ce-btn-icon account-del"
+          [attr.aria-label]="'Excluir ' + a.nome"
+          [disabled]="a.uid === currentUserUid"
+          [matTooltip]="a.uid === currentUserUid ? 'Não pode excluir você mesmo' : 'Excluir'"
+          (click)="excluir(a, $event)"
+        >
           <mat-icon>delete</mat-icon>
         </button>
       </div>
-    </div>
-  </div>
-</div>
+    </li>
+  </ul>
+</section>

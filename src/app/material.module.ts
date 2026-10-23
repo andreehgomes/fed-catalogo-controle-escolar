@@ -22,6 +22,7 @@ import { MatPaginatorModule } from "@angular/material/paginator";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 //Formatos para ajustar input de data datepicker
 const MY_FORMATS = {
@@ -63,6 +64,7 @@ const MY_FORMATS = {
     MatCheckboxModule,
     MatProgressBarModule,
     MatSnackBarModule,
+    MatTooltipModule,
   ],
   providers: [{ provide: MAT_DATE_FORMATS, useValue: MY_FORMATS }],
 })

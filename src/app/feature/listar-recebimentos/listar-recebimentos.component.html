@@ -1,75 +1,117 @@
-<div class="page">
-  <div class="header">
-    <span class="page-title">Recebimentos</span>
+<section class="ce-page listar-recebimentos">
+  <header class="ce-page-header">
+    <div class="ce-page-title">
+      <h1>Recebimentos</h1>
+      <span class="ce-page-subtitle">
+        {{ filteredRecebimentos.length }}
+        {{ filteredRecebimentos.length === 1 ? 'recebimento' : 'recebimentos' }}
+        <ng-container *ngIf="filteredRecebimentos.length > 0">
+          · R$ {{ fmt(totalRecebido) }}
+        </ng-container>
+      </span>
+    </div>
+  </header>
+
+  <!-- Filtros -->
+  <div class="rec-filtros">
+    <label class="ce-field ce-field--search rec-filter-busca">
+      <span class="sr-only">Buscar cliente</span>
+      <mat-icon class="ce-field-prefix-icon">search</mat-icon>
+      <input
+        type="search"
+        [formControl]="filterControl"
+        placeholder="Buscar cliente…"
+        autocomplete="off"
+      />
+    </label>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>De</mat-label>
+      <mat-icon matPrefix>calendar_today</mat-icon>
+      <input matInput type="date" [formControl]="dataInicio" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Até</mat-label>
+      <mat-icon matPrefix>calendar_today</mat-icon>
+      <input matInput type="date" [formControl]="dataFim" />
+    </mat-form-field>
+
+    <button
+      *ngIf="filterControl.value || dataInicio.value || dataFim.value"
+      type="button"
+      class="ce-btn-ghost rec-filter-clear"
+      (click)="limparFiltros()"
+    >
+      <mat-icon>filter_alt_off</mat-icon>
+      Limpar
+    </button>
   </div>
 
-  <div class="page-content">
-    <div class="filtros">
-      <mat-form-field appearance="outline" color="accent" class="field-full" subscriptSizing="dynamic">
-        <mat-label>Buscar cliente</mat-label>
-        <mat-icon matPrefix>search</mat-icon>
-        <input matInput [formControl]="filterControl" autocomplete="off" />
-      </mat-form-field>
+  <!-- Resumo (quando há itens) -->
+  <div class="ce-summary rec-resumo" *ngIf="filteredRecebimentos.length > 0">
+    <span class="ce-summary-label">Total recebido no período</span>
+    <span class="ce-summary-value">R$ {{ fmt(totalRecebido) }}</span>
+  </div>
 
-      <div class="row-2">
-        <mat-form-field appearance="outline" color="accent" class="field-half" subscriptSizing="dynamic">
-          <mat-label>De</mat-label>
-          <input matInput type="date" [formControl]="dataInicio" />
-        </mat-form-field>
+  <!-- Vazio -->
+  <div *ngIf="filteredRecebimentos.length === 0" class="ce-empty-state">
+    <mat-icon>payments</mat-icon>
+    <h3>Nenhum recebimento encontrado</h3>
+    <p>Ajuste os filtros ou registre um recebimento em Contas a receber.</p>
+  </div>
 
-        <mat-form-field appearance="outline" color="accent" class="field-half" subscriptSizing="dynamic">
-          <mat-label>Até</mat-label>
-          <input matInput type="date" [formControl]="dataFim" />
-        </mat-form-field>
+  <!-- Cards -->
+  <div class="rec-list" *ngIf="filteredRecebimentos.length > 0">
+    <article class="ce-card rec-card" *ngFor="let item of filteredRecebimentos">
+      <header class="rec-top">
+        <button
+          type="button"
+          class="rec-cliente"
+          (click)="goToClientDetail(item)"
+          [attr.aria-label]="'Abrir cliente ' + item.clienteNome"
+        >
+          <mat-icon>person</mat-icon>
+          <span>{{ item.clienteNome }}</span>
+        </button>
+        <span class="rec-data">
+          <mat-icon>event</mat-icon>
+          {{ item.data | date:'dd/MM/yyyy' }}
+        </span>
+      </header>
+
+      <div class="rec-campanha">
+        <mat-icon>campaign</mat-icon>
+        <span>{{ item.campaignNome }}</span>
       </div>
 
-      <button mat-button class="btn-clear" (click)="limparFiltros()">
-        <mat-icon>filter_alt_off</mat-icon> Limpar
-      </button>
-    </div>
-
-    <div class="resumo" *ngIf="filteredRecebimentos.length > 0">
-      <div class="resumo-row">
-        <span>{{ filteredRecebimentos.length }} recebimento(s)</span>
-        <span class="resumo-total">Total: <strong>R$ {{ fmt(totalRecebido) }}</strong></span>
-      </div>
-    </div>
-
-    <p class="empty-msg" *ngIf="filteredRecebimentos.length === 0">
-      <mat-icon>info</mat-icon> Nenhum recebimento encontrado.
-    </p>
-
-    <mat-card *ngFor="let item of filteredRecebimentos" class="rec-card">
-      <div class="card-header">
-        <span class="client-name" (click)="goToClientDetail(item)">{{ item.clienteNome }}</span>
-        <span class="rec-data">{{ item.data | date:'dd/MM/yyyy' }}</span>
-      </div>
-
-      <div class="campaign-info">
-        <mat-icon>campaign</mat-icon>{{ item.campaignNome }}
-      </div>
-
-      <div class="info-grid">
-        <div class="info-item">
-          <span class="info-label">Valor recebido</span>
-          <span class="info-value valor">R$ {{ fmt(item.valor) }}</span>
+      <div class="rec-info-grid">
+        <div class="rec-info">
+          <span class="ce-label">Valor recebido</span>
+          <span class="rec-info-value rec-info-valor">
+            R$ {{ fmt(item.valor) }}
+          </span>
         </div>
-        <div class="info-item">
-          <span class="info-label">Total da venda</span>
-          <span class="info-value">R$ {{ fmt(item.valorTotalVenda) }}</span>
+        <div class="rec-info">
+          <span class="ce-label">Total da venda</span>
+          <span class="rec-info-value">R$ {{ fmt(item.valorTotalVenda) }}</span>
         </div>
-        <div class="info-item full" *ngIf="item.descricao">
-          <span class="info-label">Descrição</span>
-          <span class="info-value">{{ item.descricao }}</span>
+        <div class="rec-info rec-info--wide" *ngIf="item.descricao">
+          <span class="ce-label">Descrição</span>
+          <span class="rec-info-value rec-info-desc">{{ item.descricao }}</span>
         </div>
       </div>
 
-      <div class="card-actions">
-        <button mat-button color="primary" (click)="gerarComprovante(item)">
+      <footer class="rec-actions">
+        <button
+          type="button"
+          class="ce-btn-secondary rec-comprovante"
+          (click)="gerarComprovante(item)"
+        >
           <mat-icon>receipt_long</mat-icon>
           Comprovante
         </button>
-      </div>
-    </mat-card>
+      </footer>
+    </article>
   </div>
-</div>
+</section>

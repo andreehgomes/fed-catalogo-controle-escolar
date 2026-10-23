@@ -7,11 +7,12 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/x-icon" href="./assets/imagens/logo.png" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+
     <style type="text/css">
-      .mat-typography {
-        background-color: #0a1929;
-      }
+      /* Canvas claro do redesign — remove o gradiente escuro antigo. */
+      html, body { margin: 0; background: #f4f6fb; }
 
       #splash-screen {
         position: fixed;
@@ -20,13 +21,13 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background: linear-gradient(135deg, #0a1929 0%, #102a43 100%);
+        background: linear-gradient(168deg, #0b1f3f 0%, #112a52 55%, #1a3f7a 100%);
         animation: splashFadeOut 0.7s ease forwards 1.8s;
       }
 
       #splash-screen img {
         width: 280px;
-        opacity: 0.18;
+        opacity: 0.3;
       }
 
       @keyframes splashFadeOut {
@@ -37,10 +38,17 @@
         }
       }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&display=swap"
+      rel="stylesheet"
+    />
   </head>
-  <body class="mat-typography">
+  <body>
     <div id="splash-screen">
       <img src="./assets/imagens/logo.png" alt="Logo" />
     </div>

@@ -1,0 +1,139 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Design tokens — Controle Escolar
+// Guia: docs/design-system.md
+// Convivem com _colors.scss durante a migração; as variáveis `$c-*` daquele
+// arquivo foram reapontadas para `$ce-*` e só serão removidas na Fase 7,
+// quando nenhum arquivo as referenciar.
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ── Casca (azul escolar) ─────────────────────────────────────────────────────
+$ce-ink-900:        #0b1f3f; // início dos gradientes; rodapé sólido
+$ce-ink-800:        #112a52; // stop 55% do gradiente do sidebar
+$ce-ink-750:        #163466; // stop 60% dos gradientes de login e hero
+$ce-ink-700:        #1a3f7a; // fim dos gradientes; ícone/ação secundária
+$ce-ink-600:        #2353a0; // topo das barras do gráfico mensal
+$ce-ink-500:        #2d64b8; // hover do botão "Buscar"
+$ce-ink-400:        #4a7fc9; // acento sobre casca escura
+
+$ce-ink-soft:       #eef3fb; // chips sobre branco, avatar
+$ce-ink-soft-hover: #dde6f6; // hover de chip
+
+// ── Acento (azul-tinta — CTA, foco, link) ────────────────────────────────────
+$ce-accent:         #1a3f7a; // CTA, botão primário, foco de input
+$ce-accent-ink:     #112a52; // valores destacados, link sobre branco
+$ce-accent-soft:    #eef3fb; // fundo de chip ativo, opção selecionada
+$ce-accent-border:  #c7d6ee; // borda de chip, borda de opção ativa
+$ce-accent-hover:   #e2eafb; // hover de botão ghost
+
+// ── Gradientes ───────────────────────────────────────────────────────────────
+$ce-gradient-shell:   linear-gradient(168deg, #0b1f3f 0%, #112a52 55%, #1a3f7a 100%);
+$ce-gradient-hero:    linear-gradient(165deg, #0b1f3f 0%, #163466 60%, #1a3f7a 100%);
+$ce-gradient-dark:    linear-gradient(150deg, #0b1f3f 0%, #1a3f7a 100%);
+$ce-gradient-avatar:  linear-gradient(150deg, #1a3f7a, #2d64b8);
+$ce-gradient-success: linear-gradient(90deg, #1b6942, #50886c);
+$ce-gradient-bar:     linear-gradient(180deg, #2353a0, #1a3f7a);
+
+// ── Superfícies e bordas ─────────────────────────────────────────────────────
+$ce-bg:             #f4f6fb; // tela do app
+$ce-surface:        #ffffff; // cards, header
+$ce-surface-input:  #fbfcfe; // input em repouso (vira #fff no foco)
+$ce-surface-subtle: #f7f9fd; // blocos internos, hover de linha
+$ce-surface-muted:  #f1f4fa; // trilho de barra, pílula de quantidade
+$ce-surface-warm:   #fdfaf5; // destaque leve âmbar (pendentes)
+$ce-surface-hover:  #fbfcfe; // hover de linha de lista
+$ce-surface-track:  #e9eef7; // trilho de progresso e fundo de segmented
+
+$ce-border:         #e3e8f1; // borda padrão de card e header
+$ce-border-input:   #d6ddea; // borda de input, select, botão ghost
+$ce-border-divider: #ecf0f7; // divisória interna de card
+$ce-border-soft:    #f1f4fa; // divisória sutil
+$ce-border-hover:   #ccd5e5; // hover de borda do card de KPI
+$ce-border-dashed:  #c7d1e3; // tracejado 1.5px do upload de foto
+$ce-scrollbar:      #d0d7e4;
+
+// ── Rampa de texto ───────────────────────────────────────────────────────────
+$ce-text:             #0f172a; // base, títulos, valores
+$ce-text-strong:      #1e293b; // forte sobre branco
+$ce-text-body:        #334155; // corpo de parágrafo
+$ce-text-secondary:   #475569; // apoio, chips, "Cancelar"
+$ce-text-muted:       #64748b; // subtítulos, metadados
+$ce-text-label:       #7a8699; // rótulos uppercase (mais frequente)
+$ce-text-placeholder: #a0a9bb; // placeholder
+$ce-text-disabled:    #b4bbca; // chevron fechado, desabilitado
+$ce-text-header-user: #475569; // rótulo "Escola" no header
+$ce-text-on-ink:      #f4f6fb; // texto sobre casca escura
+
+// ── Semânticas ───────────────────────────────────────────────────────────────
+$ce-success:        #1b6942;
+$ce-success-2:      #50886c;
+$ce-success-soft:   #ebfde3;
+$ce-success-hover:  #d9f7cb;
+$ce-success-border: #c9ebb6;
+$ce-success-label:  #5c8a6f; // rótulo sobre bloco verde claro
+
+$ce-info:        #3174da;
+$ce-info-soft:   #e3f2fd;
+$ce-info-border: #bcd8f7;
+
+$ce-warn:      #a54600; // texto sobre âmbar (AA)
+$ce-warn-soft: #ffecb3;
+$ce-warn-fill: #ff6f00; // preenchimento (uso único — legenda do dashboard)
+
+// Dois vermelhos distintos — ver docs/design-system.md. Não unificar.
+$ce-danger-data:   #a51d13; // saldos vencidos, chips, valores
+$ce-danger-action: #e42a1d; // ícones de excluir, warning_amber
+$ce-danger-strong: #721c24;
+$ce-danger-soft:   #f8d7da;
+$ce-danger-border: #f5c6cb;
+$ce-danger-label:  #b07a80; // rótulo sobre bloco vermelho claro
+
+// ── Tipografia ───────────────────────────────────────────────────────────────
+$ce-font:       'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+$ce-font-mono:  ui-monospace, SFMono-Regular, Menlo, monospace;
+// Pilha de sistema para html2canvas (campaign-public, comprovantes).
+$ce-font-print: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+$ce-label-size:      10px;
+$ce-label-weight:    700;
+$ce-label-tracking:  0.11em;
+$ce-display-weight:  650;
+$ce-display-tracking: -0.03em;
+
+// ── Raio ─────────────────────────────────────────────────────────────────────
+$ce-radius-card:  18px;
+$ce-radius-panel: 22px;
+$ce-radius-inner: 14px;
+$ce-radius-kpi:   16px;
+$ce-radius-input: 12px;
+$ce-radius-sm:    10px;
+$ce-radius-icon:  9px;
+$ce-radius-pill:  999px;
+
+// ── Sombra ───────────────────────────────────────────────────────────────────
+$ce-shadow-hairline:         0 1px 2px rgba(15, 23, 42, 0.04);
+$ce-shadow-card:             0 1px 2px rgba(15, 23, 42, 0.04), 0 14px 34px -26px rgba(15, 23, 42, 0.3);
+$ce-shadow-hover:            0 18px 38px -22px rgba(15, 23, 42, 0.4);
+$ce-shadow-lift-sm:          0 18px 38px -24px rgba(15, 23, 42, 0.38);
+$ce-shadow-panel:            0 1px 2px rgba(15, 23, 42, 0.04), 0 20px 50px -34px rgba(15, 23, 42, 0.35);
+$ce-shadow-accent:           0 12px 26px -12px rgba(26, 63, 122, 0.85);
+$ce-shadow-accent-fab:       0 14px 28px -12px rgba(26, 63, 122, 0.9);
+$ce-shadow-drawer:           18px 0 60px -20px rgba(0, 0, 0, 0.6);
+$ce-shadow-dark-card:        0 20px 46px -28px rgba(0, 0, 0, 0.7);
+$ce-shadow-modal:            0 40px 90px -30px rgba(0, 0, 0, 0.6);
+$ce-shadow-segmented-active: 0 2px 8px -2px rgba(15, 23, 42, 0.25);
+
+// ── Layout ───────────────────────────────────────────────────────────────────
+$ce-rail-width:        76px;
+$ce-nav-width:         264px;
+$ce-drawer-width:      272px;
+$ce-breakpoint-narrow: 900px;
+$ce-content-max:       1180px;
+$ce-detail-max:        1080px;
+$ce-form-max:          940px;
+$ce-page-padding:      clamp(16px, 3.4vw, 34px);
+$ce-gap:               14px;
+$ce-section-gap:       20px;
+
+// ── Transições ───────────────────────────────────────────────────────────────
+$ce-ease:            cubic-bezier(0.4, 0, 0.2, 1);
+$ce-transition-card: 0.18s ease;

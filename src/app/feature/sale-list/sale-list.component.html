@@ -1,65 +1,133 @@
-<div class="page">
-  <div class="header">
-    <span class="page-title">Vendas</span>
-    <button mat-mini-fab color="accent" class="btn-add" (click)="novaVenda()">
-      <mat-icon>add</mat-icon>
+<section class="ce-page sale-list">
+  <header class="ce-page-header">
+    <div class="ce-page-title">
+      <h1>Vendas</h1>
+      <span class="ce-page-subtitle">
+        {{ filtered.length }}
+        {{ filtered.length === 1 ? 'venda' : 'vendas' }}
+        <ng-container *ngIf="filtered.length !== allSales.length">
+          de {{ allSales.length }}
+        </ng-container>
+      </span>
+    </div>
+    <div class="ce-page-actions">
+      <button type="button" class="ce-btn-primary" (click)="novaVenda()">
+        <mat-icon>add</mat-icon>
+        Nova venda
+      </button>
+    </div>
+  </header>
+
+  <!-- Filtros. Busca (nativo) + select (Material, overlay) + ghost "Limpar". -->
+  <div class="sale-filters">
+    <label class="ce-field ce-field--search">
+      <span class="sr-only">Buscar cliente</span>
+      <mat-icon class="ce-field-prefix-icon">search</mat-icon>
+      <input
+        type="search"
+        [formControl]="searchCtrl"
+        placeholder="Buscar cliente…"
+        autocomplete="off"
+      />
+    </label>
+
+    <mat-form-field appearance="outline" class="sale-filter-campanha">
+      <mat-label>Campanha</mat-label>
+      <mat-icon matPrefix>campaign</mat-icon>
+      <mat-select [formControl]="campaignCtrl">
+        <mat-option [value]="">Todas</mat-option>
+        <mat-option *ngFor="let c of campaigns" [value]="c.key">{{ c.nome }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <button
+      *ngIf="searchCtrl.value || campaignCtrl.value"
+      type="button"
+      class="ce-btn-ghost sale-filter-clear"
+      (click)="limparFiltros()"
+    >
+      <mat-icon>filter_alt_off</mat-icon>
+      Limpar
     </button>
   </div>
 
-  <div class="page-content">
-    <div class="filtros">
-      <mat-form-field appearance="outline" color="accent" class="field-full">
-        <mat-label>Buscar cliente</mat-label>
-        <mat-icon matPrefix>search</mat-icon>
-        <input matInput [formControl]="searchCtrl" autocomplete="off" />
-      </mat-form-field>
+  <!-- Vazio -->
+  <div *ngIf="filtered.length === 0" class="ce-empty-state">
+    <mat-icon>receipt_long</mat-icon>
+    <h3>Nenhuma venda encontrada</h3>
+    <p *ngIf="allSales.length === 0">
+      Registre a primeira venda para acompanhar valores e pagamentos.
+    </p>
+    <p *ngIf="allSales.length > 0">
+      Nenhuma venda bate com os filtros atuais.
+    </p>
+    <button
+      *ngIf="allSales.length === 0"
+      type="button"
+      class="ce-btn-primary"
+      (click)="novaVenda()"
+    >
+      <mat-icon>add</mat-icon>
+      Nova venda
+    </button>
+  </div>
 
-      <mat-form-field appearance="outline" color="accent" class="field-full">
-        <mat-label>Campanha</mat-label>
-        <mat-icon matPrefix>campaign</mat-icon>
-        <mat-select [formControl]="campaignCtrl">
-          <mat-option [value]="">Todas</mat-option>
-          <mat-option *ngFor="let c of campaigns" [value]="c.key">{{ c.nome }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-
-      <button mat-button class="btn-clear"
-              *ngIf="searchCtrl.value || campaignCtrl.value"
-              (click)="limparFiltros()">
-        <mat-icon>filter_alt_off</mat-icon> Limpar
-      </button>
-    </div>
-
-    <div *ngIf="filtered.length === 0" class="empty">
-      <mat-icon>info</mat-icon>
-      <span>Nenhuma venda encontrada.</span>
-    </div>
-
-    <div class="sale-card" *ngFor="let s of filtered" (click)="editar(s)">
-      <div class="sale-top">
-        <span class="sale-cliente">{{ s.clienteNome }}</span>
+  <!-- Grid de cards de venda -->
+  <div class="sale-grid" *ngIf="filtered.length > 0">
+    <article
+      *ngFor="let s of filtered"
+      class="sale-card"
+      tabindex="0"
+      (click)="editar(s)"
+      (keyup.enter)="editar(s)"
+    >
+      <header class="sale-top">
+        <div class="sale-cliente">
+          <mat-icon>person</mat-icon>
+          <span>{{ s.clienteNome }}</span>
+        </div>
         <span class="sale-valor">R$ {{ fmt(s.valorTotal) }}</span>
-      </div>
+      </header>
+
       <div class="sale-status-row" *ngIf="s.status">
-        <span class="status-pill" [class.quitado]="s.status === 'quitado'">
+        <span
+          class="ce-chip"
+          [class.success]="s.status === 'quitado'"
+          [class.warn]="s.status !== 'quitado'"
+        >
           {{ s.status === 'quitado' ? 'Quitado' : 'A receber' }}
         </span>
-        <span *ngIf="s.status === 'pendente'" class="saldo-info">
-          Saldo: R$ {{ fmt(s.valorTotal - (s.valorRecebido ?? 0)) }}
+        <span *ngIf="s.status === 'pendente'" class="sale-saldo">
+          Saldo R$ {{ fmt(s.valorTotal - (s.valorRecebido ?? 0)) }}
         </span>
       </div>
-      <div class="sale-mid">
-        <span class="sale-campaign">
-          <mat-icon>campaign</mat-icon>{{ s.campaignNome }}
-        </span>
-        <span class="sale-data">{{ fmtData(s.dataCriacao) }}</span>
-      </div>
-      <div class="sale-bottom">
-        <span class="sale-itens">{{ s.itens.length }} {{ s.itens.length === 1 ? 'item' : 'itens' }}</span>
-        <button mat-icon-button class="btn-del" (click)="excluir(s, $event)">
+
+      <ul class="sale-info">
+        <li>
+          <mat-icon>campaign</mat-icon>
+          <span>{{ s.campaignNome }}</span>
+        </li>
+        <li>
+          <mat-icon>event</mat-icon>
+          <span>{{ fmtData(s.dataCriacao) }}</span>
+        </li>
+        <li>
+          <mat-icon>inventory_2</mat-icon>
+          <span>{{ s.itens.length }} {{ s.itens.length === 1 ? 'item' : 'itens' }}</span>
+        </li>
+      </ul>
+
+      <footer class="sale-foot">
+        <button
+          type="button"
+          class="ce-btn-icon sale-del"
+          aria-label="Excluir venda"
+          matTooltip="Excluir"
+          (click)="excluir(s, $event)"
+        >
           <mat-icon>delete</mat-icon>
         </button>
-      </div>
-    </div>
+      </footer>
+    </article>
   </div>
-</div>
+</section>
